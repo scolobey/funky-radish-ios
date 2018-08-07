@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		42DE2861AF5F9ABB56C6ADC2 /* Pods_funky_radish.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 762D354A87E157AF590FF918 /* Pods_funky_radish.framework */; };
+		CC184B4F2118DEED00603333 /* RealmService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC184B4E2118DEED00603333 /* RealmService.swift */; };
 		CC2D5EE720FA937E0002FB73 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2D5EE620FA937E0002FB73 /* BaseViewController.swift */; };
 		CC6D92F2210E55D60044C600 /* JSONSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6D92F1210E55D60044C600 /* JSONSerializer.swift */; };
 		CC6D92F42110E2000044C600 /* Ingredient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6D92F32110E2000044C600 /* Ingredient.swift */; };
@@ -36,6 +37,7 @@
 		762D354A87E157AF590FF918 /* Pods_funky_radish.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_funky_radish.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F201DA218421CEC7A28A1D5 /* Pods-funky-radish.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-funky-radish.release.xcconfig"; path = "Pods/Target Support Files/Pods-funky-radish/Pods-funky-radish.release.xcconfig"; sourceTree = "<group>"; };
 		94193DA97C05EDDF13590117 /* Pods-funky-radish.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-funky-radish.debug.xcconfig"; path = "Pods/Target Support Files/Pods-funky-radish/Pods-funky-radish.debug.xcconfig"; sourceTree = "<group>"; };
+		CC184B4E2118DEED00603333 /* RealmService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmService.swift; sourceTree = "<group>"; };
 		CC2D5EE620FA937E0002FB73 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		CC6D92F1210E55D60044C600 /* JSONSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONSerializer.swift; sourceTree = "<group>"; };
 		CC6D92F32110E2000044C600 /* Ingredient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ingredient.swift; sourceTree = "<group>"; };
@@ -139,6 +141,7 @@
 				CC6D92F52110E4130044C600 /* Direction.swift */,
 				CC6D92F72110E4430044C600 /* User.swift */,
 				CC6D92F92110E56B0044C600 /* Recipe.swift */,
+				CC184B4E2118DEED00603333 /* RealmService.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -344,6 +347,7 @@
 				CC8177BC20EBD56F00D02783 /* LogInViewController.swift in Sources */,
 				CC739D0C20F6CFF00031AAB2 /* RecipeSearchViewController.swift in Sources */,
 				CC6D92FA2110E56B0044C600 /* Recipe.swift in Sources */,
+				CC184B4F2118DEED00603333 /* RealmService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

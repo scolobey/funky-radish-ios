@@ -9,11 +9,8 @@
 import UIKit
 import RealmSwift
 
-let realm = try! Realm()
+let realm = RealmService.shared.realm
 
-//var recipes = [Recipe]()
-//var recipesRefined = [Recipe]()
-//var recipeFilter = String()
 var selectedRecipe = 0
 
 var localRecipes = realm.objects(Recipe.self)
@@ -27,25 +24,12 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        //  Find your recipes
         loadRecipes()
-        setupTableView()
-    }
 
-    func setupTableView() {
-        recipeList.sectionHeaderHeight = 0.0
-        recipeList.backgroundColor = UIColor.clear
-        recipeList.clipsToBounds = false
-
-        recipeList.layer.shadowColor = UIColor.black.cgColor
-        recipeList.layer.shadowOpacity = 0.5
-        recipeList.layer.shadowOffset = CGSize(width: 0.5, height: 1)
-        recipeList.layer.shadowRadius = 2
-
-        recipeList.separatorStyle = UITableViewCellSeparatorStyle.none
-
-        let inset = UIEdgeInsets(top: 0, left: 0, bottom: 45, right: 0)
-        recipeList.contentInset = inset
-        applyBackgroundGradient(view: self.view)
+        //  Style 'em out
+        setupRecipeListView(recipeList)
+        applyBackgroundGradient(self.view)
     }
 
 //    override func viewWillAppear(_ animated: Bool) {
@@ -63,7 +47,6 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         // How do we decide if a recipe has been deleted?
 
         if (localRecipes.count > 0) {
-            print(localRecipes.description)
             recipeList.reloadData()
         }
         else {
@@ -77,25 +60,8 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         URLSession.shared.dataTask(with: downloadURL, completionHandler: {(data, response, error) in
             guard let data = data, error == nil, response != nil else {print(error!); return}
 
-//            let decoder = JSONDecoder()
-//            let recipeData = try! decoder.decode([RealmRecipe].self, from: data)
-
             let serializer = JSONSerializer()
             serializer.serialize(input: data)
-
-            print(serializer)
-
-//            recipes = recipeData
-//            recipesRefined = recipes
-
-//            for recipe in recipes {
-//                let recipeToAdd = RealmRecipe()
-//                recipeToAdd.title = recipe.title
-//                recipeToAdd.id = recipe._id
-//                recipeToAdd.ingredients = recipe.ingredients
-//                recipeToAdd.directions = recipe.directions
-//                recipeToAdd.writeToRealm()
-//            }
 
             DispatchQueue.main.async {
                 self.recipeList.reloadData()
@@ -198,23 +164,4 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         self.performSegue(withIdentifier: "recipeSegue", sender: self)
     }
 
-    public func reload() {
-        self.recipeList.reloadData()
-    }
-
-}
-
-extension UIView {
-
-    func roundCorners(corners:UIRectCorner, radius: CGFloat) {
-        DispatchQueue.main.async {
-            let path = UIBezierPath(roundedRect: self.bounds,
-                                    byRoundingCorners: corners,
-                                    cornerRadii: CGSize(width: radius, height: radius))
-            let maskLayer = CAShapeLayer()
-            maskLayer.frame = self.bounds
-            maskLayer.path = path.cgPath
-            self.layer.mask = maskLayer
-        }
-    }
 }

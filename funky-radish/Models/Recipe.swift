@@ -10,9 +10,9 @@ import Foundation
 import Realm
 import RealmSwift
 
-class Recipe: Object, Decodable {
-    @objc dynamic var _id : String? = ""
-    @objc dynamic var title : String? = ""
+@objcMembers class Recipe: Object, Decodable {
+    dynamic var _id : String? = ""
+    dynamic var title : String? = ""
 
     var ingredients = List<Ingredient>()
     var directions = List<Direction>()
@@ -87,5 +87,25 @@ extension Recipe {
         try! uiRealm.write {
             uiRealm.add(self, update: true)
         }
+    }
+
+    func writeIngredientsFromArray(ingredients: [String]) {
+        //convert to Realm list and save
+        let ingredientArray = ingredients.map({
+            (name: String) -> Ingredient in
+            let ingToAdd = Ingredient()
+            ingToAdd.name = name
+            return ingToAdd
+        })
+
+        let ingredientRealmList = List<Ingredient>()
+        ingredientRealmList.append(objectsIn: ingredientArray)
+
+        try! uiRealm.write {
+            localRecipes[selectedRecipe].ingredients = ingredientRealmList
+        }
+
+        print(ingredientRealmList.description)
+        print(localRecipes[selectedRecipe].ingredients.description)
     }
 }

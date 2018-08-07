@@ -22,7 +22,9 @@ class JSONSerializer {
             }
             do {
                 let recipes = try jsonDecoder.decode([Recipe].self, from: data)
-                let realm = try! Realm()
+
+                let realm = RealmService.shared.realm
+
                 for recipe in recipes {
                     print(recipe)
                     try! realm.write {
