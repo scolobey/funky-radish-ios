@@ -13,6 +13,7 @@ class SignUpViewController: UIViewController {
     @IBOutlet weak var usernameField: UITextField!
     @IBOutlet weak var emailField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
+
     @IBAction func signUpButton(_ sender: Any) {
         if (emailField.text?.isEmpty)! {
             print(emailField.text!)
@@ -20,6 +21,10 @@ class SignUpViewController: UIViewController {
 
     }
     
+    @IBAction func dismissSignUp(_ sender: UIButton) {
+        dismiss(animated: true)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpProperties()

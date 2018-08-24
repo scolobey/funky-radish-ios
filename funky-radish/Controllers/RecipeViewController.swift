@@ -7,8 +7,9 @@
 //
 
 import UIKit
-import Realm
 import RealmSwift
+
+let realm = try! Realm()
 
 class RecipeViewController: BaseViewController {
 
@@ -18,7 +19,8 @@ class RecipeViewController: BaseViewController {
 
     @IBOutlet weak var recipeTitle: UILabel!
     @IBOutlet weak var recipeInfo: UITextView!
-
+    @IBOutlet weak var contentLabel: UILabel!
+    
     @IBAction func saveRecipeButton(_ sender: Any) {
 
         if (ingredientView) {
@@ -35,7 +37,7 @@ class RecipeViewController: BaseViewController {
 
             do {
                 try realm.write {
-                    localRecipes[selectedRecipe].setValue(ingredientRealmList, forKey: "directions")
+                    localRecipes[selectedRecipe].setValue(ingredientRealmList, forKey: "ingredients")
                 }
             }
             catch {
@@ -43,7 +45,7 @@ class RecipeViewController: BaseViewController {
             }
         }
 
-        else {
+        else {      
             //convert to Realm list and save
             let directionArray = recipeInfo.text.components(separatedBy: "\n").map({
                 (text: String) -> Direction in
@@ -67,14 +69,51 @@ class RecipeViewController: BaseViewController {
 
     }
 
+    @IBAction func deleteRecipeButton(_ sender: Any) {
+        let deleteId = localRecipes[selectedRecipe]._id
+
+        // Warn the user these changes are permanent.
+        let alertController = UIAlertController(title: "Fair warning!", message: "Once you delete this recipe, it will be lost forever.", preferredStyle: .alert)
+
+        let approveAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.default) { UIAlertAction in
+            do {
+                try realm.write {
+                    realm.delete(localRecipes[selectedRecipe])
+                }
+
+                // Delete the recipe from the API if it has an id
+                if (deleteId != nil) {
+                    print(deleteId!.description)
+                }
+                else {
+                    print("not in the ap1")
+                }
+            }
+            catch {
+                print(error)
+            }
+        }
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) { UIAlertAction in
+            print("Delete Canceled")
+        }
+
+        alertController.addAction(approveAction)
+        alertController.addAction(cancelAction)
+
+        self.present(alertController, animated: true, completion: nil)
+    }
+
     @IBAction func recipeToggle(_ sender: UISwitch) {
         if (sender.isOn == true) {
             ingredientView = false
             recipeInfo.text = directionText
+            contentLabel.text = "Directions"
         }
         else {
             ingredientView = true
             recipeInfo.text = ingredientText
+            contentLabel.text = "Ingredients"
         }
     }
 
@@ -85,11 +124,12 @@ class RecipeViewController: BaseViewController {
         let boldRecipeFont = UIFont(descriptor: recipeBoldFontDescriptor, size: 18.0)
 
         recipeTitle.text = localRecipes[selectedRecipe].title
-        recipeTitle.font = boldRecipeFont
-
         prepareTextForDisplay(recipe: localRecipes[selectedRecipe])
 
+        contentLabel.text = "Directions"
+
         recipeInfo.text = directionText
+        recipeTitle.font = boldRecipeFont
 
         recipeInfo.layer.masksToBounds = false
         recipeInfo.layer.shadowColor = UIColor.black.cgColor

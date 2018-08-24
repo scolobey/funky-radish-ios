@@ -16,7 +16,26 @@ class LogInViewController: UIViewController {
     @IBAction func loginButton(_ sender: Any) {
         // validate email
         // validate password
-        getToken()
+        let email = emailField.text!
+        let pw = passwordField.text!
+
+        //  Get an authorization token and handle possible errors.
+        do {
+            try getToken(email: email, pw: pw)
+        }
+        catch RecipeError.invalidLogin {
+            print("those aren't the right credentials")
+        }
+        catch {
+            print("other errors")
+        }
+
+        // if token is valid, pop the view.
+        // else display an error
+    }
+
+    @IBAction func dismissLoginButton(_ sender: UIButton) {
+        dismiss(animated: true)
     }
 
     override func viewDidLoad() {
@@ -32,18 +51,20 @@ class LogInViewController: UIViewController {
         return true
     }
 
-    func getToken() {
+    func getToken(email: String, pw: String) throws {
 
-        APIManager.sharedInstance.getToken(email: emailField.text!, password: passwordField.text!, onSuccess: {
+        // Should we load from API?
+        let API = APIManager()
+
+        try API.getToken(email: email, password: pw, onSuccess: {
+            print("looks like you got a token.")
+
             DispatchQueue.main.async {
-                print("token should be loaded")
+                self.navigationController?.popViewController(animated: true)
             }
-        }, onFailure: { error in
-            let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
-            self.show(alert, sender: nil)
+        },
+                         onFailure: { error in
+                                print(error)
         })
-
     }
-
 }

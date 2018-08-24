@@ -15,7 +15,15 @@ struct Token: Decodable {
     let token: String
 }
 
+enum RecipeError: Error {
+    case noToken
+    case invalidToken
+    case noInternetConnection
+    case invalidLogin
+}
+
 class APIManager: NSObject {
+    // TODO: do we really need a sharedInstance?
 
     let baseURL = "https://funky-radish-api.herokuapp.com/"
 
@@ -26,11 +34,56 @@ class APIManager: NSObject {
     static let getAuthEndpoint = "authenticate"
     static let getRecipesEndpoint = "recipes"
 
-    func getToken(email: String, password: String, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
+    func loadRecipes(onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
+        print("lets try loading some recipes.")
 
+        // Check the internet connection
+        if !Reachability.isConnectedToNetwork() {
+            throw RecipeError.noInternetConnection
+        }
+
+        // Check the keychain for an authorization token.
+        guard let retrievedToken: String = KeychainWrapper.standard.string(forKey: "fr_token") else {
+            throw RecipeError.noToken
+        }
+
+        // Token in hand, we can request our recipes from the API.
+        let url : String = baseURL + APIManager.getRecipesEndpoint
+        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
+        request.httpMethod = "GET"
+        request.addValue(retrievedToken, forHTTPHeaderField: "x-access-token")
+
+        URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) in
+
+            guard let data = data, error == nil, response != nil else {onFailure(error!); return}
+
+            do {
+                try JSONSerializer().serialize(input: data)
+
+                onSuccess()
+
+                // If recipes are returned we need to check dif between Realm and API
+                // If there is a dif, ask the user if they'd like to synch to the latest version.
+            }
+            catch {
+                print("Encountered an error when decoding recipe response.")
+                // If no recipes return, we need to let the user know with a notification.
+                onFailure(error)
+            }
+        }).resume()
+    }
+
+    func getToken(email: String, password: String, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
+
+        print("lets try and get you a token.")
+
+        // Check the internet connection
+        if !Reachability.isConnectedToNetwork() {
+            throw RecipeError.noInternetConnection
+        }
+
+        // Setup the request
         let url : String = baseURL + APIManager.getAuthEndpoint
-
-        let session = URLSession.shared
         let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
 
         request.httpMethod = "POST"
@@ -38,32 +91,79 @@ class APIManager: NSObject {
         let paramString = "email=" + email + "&password=" + password
         request.httpBody = paramString.data(using: String.Encoding.utf8)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
-            if(error != nil){
-                onFailure(error!)
-            }
-                //Perhaps check that response is 200
-            else{
-                do {
-                    guard let data = data else { return }
-                    let token = try JSONDecoder().decode(Token.self, from: data)
+        // I think the error structuring on this can be improved.
+        URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) in
 
-                    print(token.token)
-                    let saveSuccessful: Bool = KeychainWrapper.standard.set(token.token, forKey: "fr_token")
-                    if (saveSuccessful) {
-                        print("Token stored.")
-                    }
-                    else {
-                        print("something wrong. U A pendejo")
-                    }
-                }
-                catch {
-                    print(error)
+            guard let data = data, error == nil, response != nil else {print(error!); return}
+
+            do {
+                // I think that the line below should be refactored into a call to our JSON serializer
+                let token = try JSONDecoder().decode(Token.self, from: data)
+                let saveSuccessful = KeychainWrapper.standard.set(token.token, forKey: "fr_token")
+                if (saveSuccessful) {
+                    print("Authorization token recorded.")
                 }
             }
-        })
-        task.resume()
+            catch {
+                print("Encountered an error when decoding authorization token.")
+            }
 
+        }).resume()
+    }
+
+    func addRecipe(recipe: Recipe, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
+        let url : String = baseURL + APIManager.getRecipesEndpoint
+
+        let session = URLSession.shared
+        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
+
+        request.httpMethod = "POST"
+        request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
+
+        let accessToken: String? = KeychainWrapper.standard.string(forKey: "fr_token")
+
+        if (accessToken == nil) {
+
+
+
+            print("no token")
+//            APIManager.sharedInstance.getToken(email: "stinky@gmail.com", password: "winky", onSuccess: {
+//                DispatchQueue.main.async {
+//                    print("token should be loaded")
+//
+//                    request.addValue(accessToken!, forHTTPHeaderField: "x-access-token")
+//                    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+//
+//                    let json: [String: Any] = [
+//                        "title": "Milk Cheese",
+//                        "ingredients": ["milk", "bacon", "cheeese", "anise"],
+//                        "directions": ["Eat your heart out", "happy days", "fonzie"]
+//                    ]
+//
+//                    let jsonData = try? JSONSerialization.data(withJSONObject: json)
+//                    request.httpBody = jsonData
+//
+//                    let task = session.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
+//                        if(error != nil){
+//                            onFailure(error!)
+//                        }
+//                            //Perhaps check that response is 200
+//                        else{
+//                            do {
+//                                guard let data = data else { return }
+//                                print(data)
+//                            }
+//                            catch {
+//                                print(error)
+//                            }
+//                        }
+//                    })
+//                    task.resume()
+//                }
+//            }, onFailure: { error in
+//                print(error)
+//            })
+        }
     }
 
 }

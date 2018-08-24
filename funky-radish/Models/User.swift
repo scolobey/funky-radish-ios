@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Realm
 import RealmSwift
 
 class User: Object {
@@ -18,13 +17,5 @@ class User: Object {
 
     override static func primaryKey() -> String? {
         return "email"
-    }
-}
-
-extension User {
-    func writeToRealm() {
-        try! uiRealm.write {
-            uiRealm.add(self, update: true)
-        }
     }
 }

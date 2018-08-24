@@ -1,4 +1,4 @@
-//
+ //
 //  AppDelegate.swift
 //  funky-radish
 //
@@ -8,8 +8,6 @@
 
 import UIKit
 import RealmSwift
-
-var uiRealm = try! Realm()
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

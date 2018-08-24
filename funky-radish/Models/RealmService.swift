@@ -14,9 +14,10 @@ class RealmService {
     private init() {}
     static let shared = RealmService()
 
-    var realm = try! Realm()
+    let realm = try! Realm()
 
     func create<T: Object>(_ object: T) {
+        print(type(of: object))
         do {
             try realm.write {
                 realm.add(object)
@@ -63,4 +64,6 @@ class RealmService {
     func stopObservingErrors(in vc: UIViewController) {
         NotificationCenter.default.removeObserver(vc, name: NSNotification.Name("RealmError"), object: nil)
     }
+
 }
+

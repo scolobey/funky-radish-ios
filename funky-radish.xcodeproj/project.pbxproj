@@ -7,8 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		42DE2861AF5F9ABB56C6ADC2 /* Pods_funky_radish.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 762D354A87E157AF590FF918 /* Pods_funky_radish.framework */; };
+		18537D625A0A3533F4D88AF8 /* Pods_FunkyRadishTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB64E4577B74D25797DEA44E /* Pods_FunkyRadishTests.framework */; };
+		1A93CC99345C53A4D450C6D7 /* Pods_funky_radish.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9189DDA363271AF31D2CA986 /* Pods_funky_radish.framework */; };
 		CC184B4F2118DEED00603333 /* RealmService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC184B4E2118DEED00603333 /* RealmService.swift */; };
+		CC184B52211E300400603333 /* RecipeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC184B51211E300400603333 /* RecipeController.swift */; };
+		CC184B5A2120A1A600603333 /* FunkyRadishTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC184B592120A1A600603333 /* FunkyRadishTests.swift */; };
 		CC2D5EE720FA937E0002FB73 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2D5EE620FA937E0002FB73 /* BaseViewController.swift */; };
 		CC6D92F2210E55D60044C600 /* JSONSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6D92F1210E55D60044C600 /* JSONSerializer.swift */; };
 		CC6D92F42110E2000044C600 /* Ingredient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6D92F32110E2000044C600 /* Ingredient.swift */; };
@@ -27,17 +30,35 @@
 		CC8177C020EBDE8200D02783 /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC8177BF20EBDE8200D02783 /* AuthViewController.swift */; };
 		CC8177C320EBE1FF00D02783 /* CustomNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC8177C220EBE1FF00D02783 /* CustomNavigationController.swift */; };
 		CCE3E26D210A3CC5005EB7A9 /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE3E26C210A3CC5005EB7A9 /* APIManager.swift */; };
+		CCF221D221220CB100FD5C9E /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF221D121220CB100FD5C9E /* SwiftyJSON.framework */; };
+		CCF221DC2128BD0F00FD5C9E /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF221DB2128BD0F00FD5C9E /* Reachability.swift */; };
 		CCF2A1FC210A4E130027080F /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF2A1FB210A4E130027080F /* Realm.framework */; };
 		CCF2A1FE210A4E130027080F /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF2A1FD210A4E130027080F /* RealmSwift.framework */; };
 		CCF2A200210A4E130027080F /* SwiftKeychainWrapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF2A1FF210A4E130027080F /* SwiftKeychainWrapper.framework */; };
-		CCF2A202210A4E130027080F /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF2A201210A4E130027080F /* SwiftyJSON.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		CC184B5C2120A1A600603333 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CC81779B20EBBF9900D02783 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CC8177A220EBBF9900D02783;
+			remoteInfo = "funky-radish";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
-		762D354A87E157AF590FF918 /* Pods_funky_radish.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_funky_radish.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		7F201DA218421CEC7A28A1D5 /* Pods-funky-radish.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-funky-radish.release.xcconfig"; path = "Pods/Target Support Files/Pods-funky-radish/Pods-funky-radish.release.xcconfig"; sourceTree = "<group>"; };
-		94193DA97C05EDDF13590117 /* Pods-funky-radish.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-funky-radish.debug.xcconfig"; path = "Pods/Target Support Files/Pods-funky-radish/Pods-funky-radish.debug.xcconfig"; sourceTree = "<group>"; };
+		9189DDA363271AF31D2CA986 /* Pods_funky_radish.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_funky_radish.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A15F402B02AAFD44C6FF1E94 /* Pods-FunkyRadishTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FunkyRadishTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FunkyRadishTests/Pods-FunkyRadishTests.debug.xcconfig"; sourceTree = "<group>"; };
+		AD27E87458801B677AF03C41 /* Pods-funky-radish.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-funky-radish.debug.xcconfig"; path = "Pods/Target Support Files/Pods-funky-radish/Pods-funky-radish.debug.xcconfig"; sourceTree = "<group>"; };
+		B9E868050C94BE6F792BEA9F /* Pods-funky-radish.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-funky-radish.release.xcconfig"; path = "Pods/Target Support Files/Pods-funky-radish/Pods-funky-radish.release.xcconfig"; sourceTree = "<group>"; };
+		BB64E4577B74D25797DEA44E /* Pods_FunkyRadishTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FunkyRadishTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BDB3441BDB06D19CA1718F5D /* Pods-FunkyRadishTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FunkyRadishTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-FunkyRadishTests/Pods-FunkyRadishTests.release.xcconfig"; sourceTree = "<group>"; };
 		CC184B4E2118DEED00603333 /* RealmService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmService.swift; sourceTree = "<group>"; };
+		CC184B51211E300400603333 /* RecipeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeController.swift; sourceTree = "<group>"; };
+		CC184B572120A1A600603333 /* FunkyRadishTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FunkyRadishTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC184B592120A1A600603333 /* FunkyRadishTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunkyRadishTests.swift; sourceTree = "<group>"; };
+		CC184B5B2120A1A600603333 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CC2D5EE620FA937E0002FB73 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		CC6D92F1210E55D60044C600 /* JSONSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONSerializer.swift; sourceTree = "<group>"; };
 		CC6D92F32110E2000044C600 /* Ingredient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ingredient.swift; sourceTree = "<group>"; };
@@ -47,6 +68,10 @@
 		CC739D0B20F6CFF00031AAB2 /* RecipeSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeSearchViewController.swift; sourceTree = "<group>"; };
 		CC739D1120F84AF50031AAB2 /* RecipeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeViewController.swift; sourceTree = "<group>"; };
 		CC739D1420F926560031AAB2 /* StyleHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleHelpers.swift; sourceTree = "<group>"; };
+		CC79C5F1212206550019C189 /* Realm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Realm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC79C5F3212206580019C189 /* SwiftKeychainWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftKeychainWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC79C5F52122065E0019C189 /* RealmSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC79C5F7212206640019C189 /* SwiftyJSON.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftyJSON.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC8177A320EBBF9900D02783 /* funky-radish.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "funky-radish.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC8177A620EBBF9900D02783 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CC8177AB20EBBF9900D02783 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -60,6 +85,10 @@
 		CCE3E26C210A3CC5005EB7A9 /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
 		CCEB7A47210252530071A8B3 /* Realm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Realm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCEB7A492102525F0071A8B3 /* RealmSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCF221D121220CB100FD5C9E /* SwiftyJSON.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftyJSON.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCF221D521220CE900FD5C9E /* SwiftyJSON.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftyJSON.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCF221DB2128BD0F00FD5C9E /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		CCF221DD212D056600FD5C9E /* DeepDiff.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DeepDiff.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCF2A1FB210A4E130027080F /* Realm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Realm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCF2A1FD210A4E130027080F /* RealmSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCF2A1FF210A4E130027080F /* SwiftKeychainWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftKeychainWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -67,42 +96,77 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		CC184B542120A1A600603333 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				18537D625A0A3533F4D88AF8 /* Pods_FunkyRadishTests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CC8177A020EBBF9900D02783 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CCF221D221220CB100FD5C9E /* SwiftyJSON.framework in Frameworks */,
 				CCF2A1FC210A4E130027080F /* Realm.framework in Frameworks */,
 				CCF2A1FE210A4E130027080F /* RealmSwift.framework in Frameworks */,
 				CCF2A200210A4E130027080F /* SwiftKeychainWrapper.framework in Frameworks */,
-				CCF2A202210A4E130027080F /* SwiftyJSON.framework in Frameworks */,
-				42DE2861AF5F9ABB56C6ADC2 /* Pods_funky_radish.framework in Frameworks */,
+				1A93CC99345C53A4D450C6D7 /* Pods_funky_radish.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0D8C87DB9196770CC1012344 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				94193DA97C05EDDF13590117 /* Pods-funky-radish.debug.xcconfig */,
-				7F201DA218421CEC7A28A1D5 /* Pods-funky-radish.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 		6702C2AB1BF77CC901FF4828 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CCF221DD212D056600FD5C9E /* DeepDiff.framework */,
+				CCF221D521220CE900FD5C9E /* SwiftyJSON.framework */,
+				CCF221D121220CB100FD5C9E /* SwiftyJSON.framework */,
+				CC79C5F7212206640019C189 /* SwiftyJSON.framework */,
+				CC79C5F52122065E0019C189 /* RealmSwift.framework */,
+				CC79C5F3212206580019C189 /* SwiftKeychainWrapper.framework */,
+				CC79C5F1212206550019C189 /* Realm.framework */,
 				CCF2A1FB210A4E130027080F /* Realm.framework */,
 				CCF2A1FD210A4E130027080F /* RealmSwift.framework */,
 				CCF2A1FF210A4E130027080F /* SwiftKeychainWrapper.framework */,
 				CCF2A201210A4E130027080F /* SwiftyJSON.framework */,
 				CCEB7A492102525F0071A8B3 /* RealmSwift.framework */,
 				CCEB7A47210252530071A8B3 /* Realm.framework */,
-				762D354A87E157AF590FF918 /* Pods_funky_radish.framework */,
+				BB64E4577B74D25797DEA44E /* Pods_FunkyRadishTests.framework */,
+				9189DDA363271AF31D2CA986 /* Pods_funky_radish.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		701283D96809F37654405C0B /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A15F402B02AAFD44C6FF1E94 /* Pods-FunkyRadishTests.debug.xcconfig */,
+				BDB3441BDB06D19CA1718F5D /* Pods-FunkyRadishTests.release.xcconfig */,
+				AD27E87458801B677AF03C41 /* Pods-funky-radish.debug.xcconfig */,
+				B9E868050C94BE6F792BEA9F /* Pods-funky-radish.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		CC184B50211E2FF000603333 /* ModelControllers */ = {
+			isa = PBXGroup;
+			children = (
+				CC184B51211E300400603333 /* RecipeController.swift */,
+			);
+			path = ModelControllers;
+			sourceTree = "<group>";
+		};
+		CC184B582120A1A600603333 /* FunkyRadishTests */ = {
+			isa = PBXGroup;
+			children = (
+				CC184B592120A1A600603333 /* FunkyRadishTests.swift */,
+				CC184B5B2120A1A600603333 /* Info.plist */,
+			);
+			path = FunkyRadishTests;
 			sourceTree = "<group>";
 		};
 		CC6D92F0210A74CA0044C600 /* AuthControllers */ = {
@@ -118,6 +182,8 @@
 		CC739D0E20F840610031AAB2 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				CC8177C220EBE1FF00D02783 /* CustomNavigationController.swift */,
+				CC184B50211E2FF000603333 /* ModelControllers */,
 				CC6D92F0210A74CA0044C600 /* AuthControllers */,
 				CC2D5EE620FA937E0002FB73 /* BaseViewController.swift */,
 				CC739D0B20F6CFF00031AAB2 /* RecipeSearchViewController.swift */,
@@ -151,6 +217,7 @@
 			children = (
 				CC739D1420F926560031AAB2 /* StyleHelpers.swift */,
 				CC6D92F1210E55D60044C600 /* JSONSerializer.swift */,
+				CCF221DB2128BD0F00FD5C9E /* Reachability.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -159,9 +226,10 @@
 			isa = PBXGroup;
 			children = (
 				CC8177A520EBBF9900D02783 /* funky-radish */,
+				CC184B582120A1A600603333 /* FunkyRadishTests */,
 				CC8177A420EBBF9900D02783 /* Products */,
 				6702C2AB1BF77CC901FF4828 /* Frameworks */,
-				0D8C87DB9196770CC1012344 /* Pods */,
+				701283D96809F37654405C0B /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -169,6 +237,7 @@
 			isa = PBXGroup;
 			children = (
 				CC8177A320EBBF9900D02783 /* funky-radish.app */,
+				CC184B572120A1A600603333 /* FunkyRadishTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -180,20 +249,11 @@
 				CC739D1320F8FA370031AAB2 /* Helpers */,
 				CC8177B220EBBF9A00D02783 /* Info.plist */,
 				CC8177D220ED3BD500D02783 /* Supporting Files */,
-				CC8177C120EBE18A00D02783 /* custom */,
 				CC739D1020F840C10031AAB2 /* Models */,
 				CC739D0F20F8409F0031AAB2 /* Views */,
 				CC739D0E20F840610031AAB2 /* Controllers */,
 			);
 			path = "funky-radish";
-			sourceTree = "<group>";
-		};
-		CC8177C120EBE18A00D02783 /* custom */ = {
-			isa = PBXGroup;
-			children = (
-				CC8177C220EBE1FF00D02783 /* CustomNavigationController.swift */,
-			);
-			path = custom;
 			sourceTree = "<group>";
 		};
 		CC8177D220ED3BD500D02783 /* Supporting Files */ = {
@@ -217,15 +277,34 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		CC184B562120A1A600603333 /* FunkyRadishTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CC184B5E2120A1A600603333 /* Build configuration list for PBXNativeTarget "FunkyRadishTests" */;
+			buildPhases = (
+				74B2F898B5FAADA7529AA042 /* [CP] Check Pods Manifest.lock */,
+				CC184B532120A1A600603333 /* Sources */,
+				CC184B542120A1A600603333 /* Frameworks */,
+				CC184B552120A1A600603333 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CC184B5D2120A1A600603333 /* PBXTargetDependency */,
+			);
+			name = FunkyRadishTests;
+			productName = FunkyRadishTests;
+			productReference = CC184B572120A1A600603333 /* FunkyRadishTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		CC8177A220EBBF9900D02783 /* funky-radish */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CC8177B520EBBF9A00D02783 /* Build configuration list for PBXNativeTarget "funky-radish" */;
 			buildPhases = (
-				F72104A211DD4D1398A73988 /* [CP] Check Pods Manifest.lock */,
+				FE0A75BC6055727AD36E4014 /* [CP] Check Pods Manifest.lock */,
 				CC81779F20EBBF9900D02783 /* Sources */,
 				CC8177A020EBBF9900D02783 /* Frameworks */,
 				CC8177A120EBBF9900D02783 /* Resources */,
-				71A2DBA04F6AC442A2780CCF /* [CP] Embed Pods Frameworks */,
+				AA37E59EC4E1341A64C883C8 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -246,6 +325,10 @@
 				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = kayso;
 				TargetAttributes = {
+					CC184B562120A1A600603333 = {
+						CreatedOnToolsVersion = 9.3.1;
+						TestTargetID = CC8177A220EBBF9900D02783;
+					};
 					CC8177A220EBBF9900D02783 = {
 						CreatedOnToolsVersion = 9.3.1;
 					};
@@ -265,11 +348,19 @@
 			projectRoot = "";
 			targets = (
 				CC8177A220EBBF9900D02783 /* funky-radish */,
+				CC184B562120A1A600603333 /* FunkyRadishTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		CC184B552120A1A600603333 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CC8177A120EBBF9900D02783 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -283,7 +374,25 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		71A2DBA04F6AC442A2780CCF /* [CP] Embed Pods Frameworks */ = {
+		74B2F898B5FAADA7529AA042 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-FunkyRadishTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		AA37E59EC4E1341A64C883C8 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -307,7 +416,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-funky-radish/Pods-funky-radish-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F72104A211DD4D1398A73988 /* [CP] Check Pods Manifest.lock */ = {
+		FE0A75BC6055727AD36E4014 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -328,6 +437,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		CC184B532120A1A600603333 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CC184B5A2120A1A600603333 /* FunkyRadishTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CC81779F20EBBF9900D02783 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -336,6 +453,7 @@
 				CC8177C020EBDE8200D02783 /* AuthViewController.swift in Sources */,
 				CC6D92F42110E2000044C600 /* Ingredient.swift in Sources */,
 				CC6D92F82110E4430044C600 /* User.swift in Sources */,
+				CC184B52211E300400603333 /* RecipeController.swift in Sources */,
 				CC739D1520F926560031AAB2 /* StyleHelpers.swift in Sources */,
 				CC8177C320EBE1FF00D02783 /* CustomNavigationController.swift in Sources */,
 				CC8177A720EBBF9900D02783 /* AppDelegate.swift in Sources */,
@@ -345,6 +463,7 @@
 				CC2D5EE720FA937E0002FB73 /* BaseViewController.swift in Sources */,
 				CC739D1220F84AF50031AAB2 /* RecipeViewController.swift in Sources */,
 				CC8177BC20EBD56F00D02783 /* LogInViewController.swift in Sources */,
+				CCF221DC2128BD0F00FD5C9E /* Reachability.swift in Sources */,
 				CC739D0C20F6CFF00031AAB2 /* RecipeSearchViewController.swift in Sources */,
 				CC6D92FA2110E56B0044C600 /* Recipe.swift in Sources */,
 				CC184B4F2118DEED00603333 /* RealmService.swift in Sources */,
@@ -352,6 +471,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CC184B5D2120A1A600603333 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CC8177A220EBBF9900D02783 /* funky-radish */;
+			targetProxy = CC184B5C2120A1A600603333 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		CC8177AA20EBBF9900D02783 /* Main.storyboard */ = {
@@ -373,6 +500,58 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		CC184B5F2120A1A600603333 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A15F402B02AAFD44C6FF1E94 /* Pods-FunkyRadishTests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = P4KPPF3X57;
+				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
+				ENABLE_ON_DEMAND_RESOURCES = NO;
+				INFOPLIST_FILE = FunkyRadishTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = kayso.FunkyRadishTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
+				SKIP_INSTALL = NO;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/funky-radish.app/funky-radish";
+			};
+			name = Debug;
+		};
+		CC184B602120A1A600603333 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BDB3441BDB06D19CA1718F5D /* Pods-FunkyRadishTests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = P4KPPF3X57;
+				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
+				ENABLE_ON_DEMAND_RESOURCES = NO;
+				INFOPLIST_FILE = FunkyRadishTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = kayso.FunkyRadishTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
+				SKIP_INSTALL = NO;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/funky-radish.app/funky-radish";
+			};
+			name = Release;
+		};
 		CC8177B320EBBF9A00D02783 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -489,11 +668,13 @@
 		};
 		CC8177B620EBBF9A00D02783 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 94193DA97C05EDDF13590117 /* Pods-funky-radish.debug.xcconfig */;
+			baseConfigurationReference = AD27E87458801B677AF03C41 /* Pods-funky-radish.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = P4KPPF3X57;
+				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
+				ENABLE_ON_DEMAND_RESOURCES = NO;
 				INFOPLIST_FILE = "funky-radish/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -509,11 +690,13 @@
 		};
 		CC8177B720EBBF9A00D02783 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7F201DA218421CEC7A28A1D5 /* Pods-funky-radish.release.xcconfig */;
+			baseConfigurationReference = B9E868050C94BE6F792BEA9F /* Pods-funky-radish.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = P4KPPF3X57;
+				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
+				ENABLE_ON_DEMAND_RESOURCES = NO;
 				INFOPLIST_FILE = "funky-radish/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -530,6 +713,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		CC184B5E2120A1A600603333 /* Build configuration list for PBXNativeTarget "FunkyRadishTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CC184B5F2120A1A600603333 /* Debug */,
+				CC184B602120A1A600603333 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		CC81779E20EBBF9900D02783 /* Build configuration list for PBXProject "funky-radish" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

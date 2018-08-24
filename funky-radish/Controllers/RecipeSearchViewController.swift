@@ -8,66 +8,109 @@
 
 import UIKit
 import RealmSwift
-
-let realm = RealmService.shared.realm
+import SwiftKeychainWrapper
 
 var selectedRecipe = 0
-
+var newRecipe = false
+var offline = false
 var localRecipes = realm.objects(Recipe.self)
 
 class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITableViewDataSource{
-
-    final let url = URL(string: "https://funky-radish-api.herokuapp.com/")
 
     @IBOutlet weak var recipeList: UITableView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        //  Find your recipes
-        loadRecipes()
+        // Find your recipes
+        do {
+            try loadRecipes()
+            print("success")
+        }
+        catch RecipeError.noInternetConnection {
+            self.navigationController!.showToast(message: "Unable to synch recipes. No internet connection.")
+        }
+        catch RecipeError.noToken {
+            let alert = UIAlertController(title: "Hello", message: "How would you like to get started?", preferredStyle: .alert)
+            let signupAction = UIAlertAction(title: "Sign Up", style: .default) { (alert: UIAlertAction!) -> Void in
+                self.performSegue(withIdentifier: "signUpSegue", sender: nil)
+            }
+            let loginAction = UIAlertAction(title: "Login", style: .default) { (alert: UIAlertAction!) -> Void in
+                self.performSegue(withIdentifier: "loginSegue", sender: nil)
+            }
+            let continueAction = UIAlertAction(title: "Continue Offline", style: .destructive) { (alert: UIAlertAction!) -> Void in
 
-        //  Style 'em out
+                self.navigationController!.showToast(message: "Offline mode")
+                // Probably means user would like to remain in offline mode for the time being.
+            }
+
+            alert.addAction(signupAction)
+            alert.addAction(loginAction)
+            alert.addAction(continueAction)
+
+            present(alert, animated: true, completion: nil)
+        }
+        catch {
+             self.navigationController!.showToast(message: "Sorry. There was an unidentified error loading your recipes.")
+        }
+
+        // Styles
         setupRecipeListView(recipeList)
         applyBackgroundGradient(self.view)
     }
 
-//    override func viewWillAppear(_ animated: Bool) {
-//        if (recipeFilter.count > 0){
-//            self.filterTableView(text: recipeFilter)
-//        }
-//    }
+    override func viewWillAppear(_ animated: Bool) {
+        recipeList.reloadData()
+    }
 
-    func loadRecipes() {
-        // Check Realm for recipes
-        // else check for a token and download
-        // reconcile Realm db with json result
+    func loadRecipes() throws {
+        // TODO: Probably should have a loading indicator here
+        // TODO: Realm recipe needs an id and an archive boolean
 
-        // todo: Realm recipe needs an id and an archive boolean
-        // How do we decide if a recipe has been deleted?
-
+        // If recipes load from Realm, reload the table before synch
         if (localRecipes.count > 0) {
             recipeList.reloadData()
         }
         else {
-            downloadRecipes()
+            print("no recipes in Realm")
         }
+
+        if (!offline) {
+            // Call the API
+            try APIManager().loadRecipes(
+            onSuccess: {
+                print("recipes loaded")
+            },
+            onFailure: { error in
+                print(error)
+            })
+        }
+        else {
+            print("offline mode enabled")
+        }
+
     }
 
-    func downloadRecipes() {
-        guard let downloadURL = url else {return}
+    //    override func viewWillAppear(_ animated: Bool) {
+    //        if (recipeFilter.count > 0){
+    //            self.filterTableView(text: recipeFilter)
+    //        }
+    //    }
 
-        URLSession.shared.dataTask(with: downloadURL, completionHandler: {(data, response, error) in
-            guard let data = data, error == nil, response != nil else {print(error!); return}
-
-            let serializer = JSONSerializer()
-            serializer.serialize(input: data)
-
-            DispatchQueue.main.async {
-                self.recipeList.reloadData()
-            }
-        }).resume()
-    }
+//    func downloadRecipes() {
+//        guard let downloadURL = url else {return}
+//
+//        URLSession.shared.dataTask(with: downloadURL, completionHandler: {(data, response, error) in
+//            guard let data = data, error == nil, response != nil else {print(error!); return}
+//
+//            let serializer = JSONSerializer()
+//            serializer.serialize(input: data)
+//
+//            DispatchQueue.main.async {
+//                self.recipeList.reloadData()
+//            }
+//        }).resume()
+//    }
 
 //    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
 //        self.filterTableView(text: searchText)
@@ -90,7 +133,6 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("rows: " + localRecipes[section].ingredients.count.description)
         return localRecipes[section].ingredients.count + 1
     }
 
@@ -123,14 +165,23 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
 
         // Top cell
         if (indexPath.row == 0) {
-            print(localRecipes[indexPath.section].ingredients[indexPath.row])
             let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
             let recipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
 
-            cell.textLabel?.text = localRecipes[indexPath.section].ingredients[indexPath.row].name
-            cell.textLabel?.font = recipeFont
+            if(localRecipes[indexPath.section].ingredients.count < 1) {
+                let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell-Bold", size: 18.0)
+                let boldRecipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
 
-            cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 0.0)
+                cell.textLabel?.text = localRecipes[indexPath.section].title
+                cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 10.0)
+                cell.textLabel?.font = boldRecipeFont
+            }
+            else {
+                cell.textLabel?.text = localRecipes[indexPath.section].ingredients[indexPath.row].name
+                cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 0.0)
+                cell.textLabel?.font = recipeFont
+            }
+
             cell.roundCorners(corners: [.topLeft, .topRight], radius: 10.0)
         }
 
@@ -160,6 +211,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print(indexPath.section)
         selectedRecipe = indexPath.section
         self.performSegue(withIdentifier: "recipeSegue", sender: self)
     }
