@@ -4,7 +4,7 @@
 //
 //  Created by Ryn Goodwin on 7/26/18.
 //  Copyright © 2018 kayso. All rights reserved.
-//
+
 
 import UIKit
 import SwiftKeychainWrapper
@@ -20,6 +20,7 @@ enum RecipeError: Error {
     case invalidToken
     case noInternetConnection
     case invalidLogin
+    case createUserError
 }
 
 class APIManager: NSObject {
@@ -31,45 +32,47 @@ class APIManager: NSObject {
 
     static let sharedInstance = APIManager()
 
-    static let getAuthEndpoint = "authenticate"
-    static let getRecipesEndpoint = "recipes"
+    //TODO: Remove crud def from endpoints because they aren't limited.
+    static let authEndpoint = "authenticate"
+    static let recipesEndpoint = "recipes"
+    static let deleteRecipeEndpoint = "recipe"
+    static let userEndpoint = "users"
 
-    func loadRecipes(onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
-        print("lets try loading some recipes.")
+    // User
+    func createUser(email: String, username: String, password: String, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
 
-        // Check the internet connection
-        if !Reachability.isConnectedToNetwork() {
-            throw RecipeError.noInternetConnection
-        }
+        let url : String = baseURL + APIManager.userEndpoint
 
-        // Check the keychain for an authorization token.
-        guard let retrievedToken: String = KeychainWrapper.standard.string(forKey: "fr_token") else {
-            throw RecipeError.noToken
-        }
-
-        // Token in hand, we can request our recipes from the API.
-        let url : String = baseURL + APIManager.getRecipesEndpoint
         let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
-        request.httpMethod = "GET"
-        request.addValue(retrievedToken, forHTTPHeaderField: "x-access-token")
+
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let json: [String: Any] = [
+            "name": username,
+            "email": email,
+            "password": password,
+            "admin": false
+        ]
+
+        let jsonData = try? JSONSerialization.data(withJSONObject: json)
+        request.httpBody = jsonData
 
         URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) in
 
             guard let data = data, error == nil, response != nil else {onFailure(error!); return}
 
             do {
-                try JSONSerializer().serialize(input: data)
+                try JSONSerializer().serializeUser(input: data)
 
                 onSuccess()
-
-                // If recipes are returned we need to check dif between Realm and API
-                // If there is a dif, ask the user if they'd like to synch to the latest version.
             }
             catch {
-                print("Encountered an error when decoding recipe response.")
-                // If no recipes return, we need to let the user know with a notification.
+                print("Encountered an error when decoding user response.")
+                // If no user object is returned, we need to let the user know with a notification.
                 onFailure(error)
             }
+
         }).resume()
     }
 
@@ -83,7 +86,7 @@ class APIManager: NSObject {
         }
 
         // Setup the request
-        let url : String = baseURL + APIManager.getAuthEndpoint
+        let url : String = baseURL + APIManager.authEndpoint
         let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
 
         request.httpMethod = "POST"
@@ -102,6 +105,7 @@ class APIManager: NSObject {
                 let saveSuccessful = KeychainWrapper.standard.set(token.token, forKey: "fr_token")
                 if (saveSuccessful) {
                     print("Authorization token recorded.")
+                    onSuccess()
                 }
             }
             catch {
@@ -111,8 +115,43 @@ class APIManager: NSObject {
         }).resume()
     }
 
+    // Recipes
+    func loadRecipes(onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
+        print("lets try loading some recipes.")
+
+        // Check the internet connection
+        if !Reachability.isConnectedToNetwork() {
+            throw RecipeError.noInternetConnection
+        }
+
+        // Check the keychain for an authorization token.
+        guard let retrievedToken: String = KeychainWrapper.standard.string(forKey: "fr_token") else {
+            throw RecipeError.noToken
+        }
+
+        // Token in hand, we can request our recipes from the API.
+        let url : String = baseURL + APIManager.recipesEndpoint
+
+        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
+        request.httpMethod = "GET"
+        request.addValue(retrievedToken, forHTTPHeaderField: "x-access-token")
+
+        URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) in
+            guard let data = data, error == nil, response != nil else {onFailure(error!); return}
+
+            do {
+                try JSONSerializer().serialize(input: data)
+                onSuccess()
+            }
+            catch {
+                // If no recipes return, we need to let the user know with a notification.
+                onFailure(error)
+            }
+        }).resume()
+    }
+
     func addRecipe(recipe: Recipe, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
-        let url : String = baseURL + APIManager.getRecipesEndpoint
+        let url : String = baseURL + APIManager.recipesEndpoint
 
         let session = URLSession.shared
         let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
@@ -122,47 +161,135 @@ class APIManager: NSObject {
 
         let accessToken: String? = KeychainWrapper.standard.string(forKey: "fr_token")
 
+        request.addValue(accessToken!, forHTTPHeaderField: "x-access-token")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let ingredients = recipe.ingredients.map({$0.name})
+        let directions = recipe.directions.map({$0.text})
+
+        let json: [String: Any] = [
+            "title": recipe.title!,
+            "ingredients": ingredients,
+            "directions": directions
+            // , "author": recipe.author!
+        ]
+
+        let jsonData = try? JSONSerialization.data(withJSONObject: json)
+        request.httpBody = jsonData
+
         if (accessToken == nil) {
-
-
-
             print("no token")
-//            APIManager.sharedInstance.getToken(email: "stinky@gmail.com", password: "winky", onSuccess: {
-//                DispatchQueue.main.async {
-//                    print("token should be loaded")
-//
-//                    request.addValue(accessToken!, forHTTPHeaderField: "x-access-token")
-//                    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-//
-//                    let json: [String: Any] = [
-//                        "title": "Milk Cheese",
-//                        "ingredients": ["milk", "bacon", "cheeese", "anise"],
-//                        "directions": ["Eat your heart out", "happy days", "fonzie"]
-//                    ]
-//
-//                    let jsonData = try? JSONSerialization.data(withJSONObject: json)
-//                    request.httpBody = jsonData
-//
-//                    let task = session.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
-//                        if(error != nil){
-//                            onFailure(error!)
-//                        }
-//                            //Perhaps check that response is 200
-//                        else{
-//                            do {
-//                                guard let data = data else { return }
-//                                print(data)
-//                            }
-//                            catch {
-//                                print(error)
-//                            }
-//                        }
-//                    })
-//                    task.resume()
-//                }
-//            }, onFailure: { error in
-//                print(error)
-//            })
+        }
+
+        else {
+            let task = session.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
+                if(error != nil){
+                    onFailure(error!)
+                }
+
+                //Perhaps check that response is 200
+                else{
+                    do {
+                        guard let data = data else { return }
+                        print(data)
+                    }
+                }
+            })
+            task.resume()
+        }
+    }
+
+    func bulkInsertRecipes(recipes: [Recipe], onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
+
+        // Check the internet connection
+        if !Reachability.isConnectedToNetwork() {
+            throw RecipeError.noInternetConnection
+        }
+
+        // Check the keychain for an authorization token.
+        guard let retrievedToken: String = KeychainWrapper.standard.string(forKey: "fr_token") else {
+            throw RecipeError.noToken
+        }
+
+        // Now let's prepare the API request.
+        let url : String = baseURL + APIManager.recipesEndpoint
+
+        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
+        request.httpMethod = "POST"
+        request.addValue(retrievedToken, forHTTPHeaderField: "x-access-token")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
+
+        // Format recipes for the request body.
+        var json = Array<Any>()
+
+        // Author is set on server via token data
+        for recipe in recipes {
+            var ing = Array<String>()
+            for ingredient in recipe.ingredients {
+                ing.append(ingredient.name)
+            }
+
+            var dir = Array<String>()
+            for direction in recipe.directions {
+                dir.append(direction.text)
+            }
+
+            let element = [
+                "title": recipe.title!,
+                "ingredients": ing,
+                "directions": dir
+            ] as [String : Any]
+
+            json.append(element)
+        }
+
+        print(json)
+
+        let jsonData = try? JSONSerialization.data(withJSONObject: json)
+        request.httpBody = jsonData
+
+        // Send the request.
+        URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
+            guard let data = data, error == nil, response != nil else {onFailure(error!); return}
+            //TODO: should try and serialize the response and look for the proper response code.
+            print(data)
+        }).resume()
+    }
+
+    func deleteRecipe(id: String, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
+        let url : String = baseURL + APIManager.deleteRecipeEndpoint + "/" + id
+
+        let session = URLSession.shared
+        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
+
+        request.httpMethod = "DELETE"
+        request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
+
+        let accessToken: String? = KeychainWrapper.standard.string(forKey: "fr_token")
+
+        if (accessToken == nil) {
+            print("no token")
+        }
+        else {
+            request.addValue(accessToken!, forHTTPHeaderField: "x-access-token")
+
+            print("calling: " + url)
+
+            let task = session.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
+                if(error != nil){
+                    onFailure(error!)
+                }
+
+                //Perhaps check that response is 200
+                else{
+                    do {
+                        guard let data = data else { return }
+                        print(data)
+                    }
+                }
+            })
+            task.resume()
         }
     }
 

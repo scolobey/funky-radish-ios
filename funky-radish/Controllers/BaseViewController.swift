@@ -8,7 +8,11 @@
 
 import UIKit
 
-class BaseViewController: UIViewController, UISearchBarDelegate {
+var settingsOpen = false
+
+class BaseViewController: UIViewController, UISearchBarDelegate{
+
+    let searchBar:UISearchBar = UISearchBar()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -16,10 +20,36 @@ class BaseViewController: UIViewController, UISearchBarDelegate {
     }
 
     func setupNavBar() {
-        let searchController = UISearchController(searchResultsController: nil)
-        navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = false
-        navigationItem.searchController?.searchBar.delegate = self
+        searchBar.delegate = self
+        searchBar.placeholder = "Search Recipes"
+        navigationItem.titleView = searchBar
+
+        var image = UIImage(named: "menu.png")
+        image = scaleImage(image: image!, newWidth: 30.0)
+
+        let button = UIButton()
+        button.setBackgroundImage(image, for: UIControlState.normal)
+        button.frame = CGRect(x: 0.0, y: 0.0, width: 10.0, height: 10.0)
+        button.addTarget(self, action: #selector(toggleSettings), for: .touchUpInside)
+
+        let userButton = UIBarButtonItem()
+        userButton.customView = button
+
+        navigationItem.setRightBarButton(userButton, animated: false)
     }
 
+    func setSearchText(_ filterText: String) {
+        searchBar.text = filterText
+    }
+
+    @objc func toggleSettings() {
+        if (settingsOpen) {
+            settingsOpen = false
+            self.navigationController?.popViewController(animated: false)
+        }
+        else {
+            settingsOpen = true
+            self.navigationController?.performSegue(withIdentifier: "settingsSegue", sender: nil)
+        }
+    }
 }

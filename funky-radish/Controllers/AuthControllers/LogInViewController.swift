@@ -30,17 +30,26 @@ class LogInViewController: UIViewController {
             print("other errors")
         }
 
-        // if token is valid, pop the view.
+        // TODO if token is valid, pop the view.
         // else display an error
+
     }
 
     @IBAction func dismissLoginButton(_ sender: UIButton) {
-        dismiss(animated: true)
+        print("back to the bottom")
+        self.navigationController?.popToRootViewController(animated: true)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpProperties()
+    }
+
+    @IBAction func signupSegue(_ sender: Any) {
+        if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SignUpViewController") as? SignUpViewController
+        {
+            self.navigationController?.pushViewController(vc, animated: false)
+        }
     }
 
     func setUpProperties() {
@@ -56,15 +65,17 @@ class LogInViewController: UIViewController {
         // Should we load from API?
         let API = APIManager()
 
-        try API.getToken(email: email, password: pw, onSuccess: {
-            print("looks like you got a token.")
+        try API.getToken(email: email, password: pw,
+            onSuccess: {
+                print("looks like you got a token.")
 
-            DispatchQueue.main.async {
-                self.navigationController?.popViewController(animated: true)
+                DispatchQueue.main.async {
+                    self.navigationController?.popViewController(animated: true)
+                }
+            },
+            onFailure: { error in
+                print(error)
             }
-        },
-                         onFailure: { error in
-                                print(error)
-        })
+        )
     }
 }

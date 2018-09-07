@@ -59,6 +59,36 @@ func setupRecipeListView(_ tableView: UITableView) {
     tableView.contentInset = inset
 }
 
+func setupSettingsListView(_ tableView: UITableView) {
+    tableView.backgroundColor = UIColor.white
+    tableView.clipsToBounds = true
+}
+
+func scaleImage(image: UIImage, newWidth: CGFloat) -> UIImage {
+    let scale = newWidth / image.size.width
+    let newHeight = image.size.height * scale
+
+    UIGraphicsBeginImageContext(CGSize(width: newWidth, height: newHeight))
+
+
+    image.draw(in: CGRect(x: 0, y: 0,width: newWidth, height: newHeight))
+    let newImage = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+
+    return newImage!
+}
+
+func showLoader(uiView: UIView) {
+    let loader: UIActivityIndicatorView = UIActivityIndicatorView()
+    loader.frame = CGRect(x: 0, y: 0, width: 40.0, height: 40.0)
+    loader.center = uiView.center
+    loader.hidesWhenStopped = true
+    loader.activityIndicatorViewStyle =
+        UIActivityIndicatorViewStyle.whiteLarge
+    uiView.addSubview(loader)
+    loader.startAnimating()
+}
+
 extension UIView {
 
     func roundCorners(corners:UIRectCorner, radius: CGFloat) {

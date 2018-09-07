@@ -65,7 +65,6 @@ import RealmSwift
         let directionsList = List<Direction>()
         directionsList.append(objectsIn: secondaryDirectionsArray)
 
-
         self.init(_id: _id, title: title, updatedAt: updatedAt, ingredients: ingredientsList, directions: directionsList)
     }
 

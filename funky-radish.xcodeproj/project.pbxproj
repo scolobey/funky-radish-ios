@@ -13,6 +13,8 @@
 		CC184B52211E300400603333 /* RecipeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC184B51211E300400603333 /* RecipeController.swift */; };
 		CC184B5A2120A1A600603333 /* FunkyRadishTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC184B592120A1A600603333 /* FunkyRadishTests.swift */; };
 		CC2D5EE720FA937E0002FB73 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2D5EE620FA937E0002FB73 /* BaseViewController.swift */; };
+		CC3886292137519F00AFBB00 /* APIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC3886282137519F00AFBB00 /* APIResponse.swift */; };
+		CC4505F4213F3B0A0056ED3D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4505F3213F3B0A0056ED3D /* SettingsViewController.swift */; };
 		CC6D92F2210E55D60044C600 /* JSONSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6D92F1210E55D60044C600 /* JSONSerializer.swift */; };
 		CC6D92F42110E2000044C600 /* Ingredient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6D92F32110E2000044C600 /* Ingredient.swift */; };
 		CC6D92F62110E4130044C600 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6D92F52110E4130044C600 /* Direction.swift */; };
@@ -60,6 +62,8 @@
 		CC184B592120A1A600603333 /* FunkyRadishTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunkyRadishTests.swift; sourceTree = "<group>"; };
 		CC184B5B2120A1A600603333 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CC2D5EE620FA937E0002FB73 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
+		CC3886282137519F00AFBB00 /* APIResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIResponse.swift; sourceTree = "<group>"; };
+		CC4505F3213F3B0A0056ED3D /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		CC6D92F1210E55D60044C600 /* JSONSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONSerializer.swift; sourceTree = "<group>"; };
 		CC6D92F32110E2000044C600 /* Ingredient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ingredient.swift; sourceTree = "<group>"; };
 		CC6D92F52110E4130044C600 /* Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
@@ -188,6 +192,7 @@
 				CC2D5EE620FA937E0002FB73 /* BaseViewController.swift */,
 				CC739D0B20F6CFF00031AAB2 /* RecipeSearchViewController.swift */,
 				CC739D1120F84AF50031AAB2 /* RecipeViewController.swift */,
+				CC4505F3213F3B0A0056ED3D /* SettingsViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -208,6 +213,7 @@
 				CC6D92F72110E4430044C600 /* User.swift */,
 				CC6D92F92110E56B0044C600 /* Recipe.swift */,
 				CC184B4E2118DEED00603333 /* RealmService.swift */,
+				CC3886282137519F00AFBB00 /* APIResponse.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -452,6 +458,7 @@
 				CCE3E26D210A3CC5005EB7A9 /* APIManager.swift in Sources */,
 				CC8177C020EBDE8200D02783 /* AuthViewController.swift in Sources */,
 				CC6D92F42110E2000044C600 /* Ingredient.swift in Sources */,
+				CC4505F4213F3B0A0056ED3D /* SettingsViewController.swift in Sources */,
 				CC6D92F82110E4430044C600 /* User.swift in Sources */,
 				CC184B52211E300400603333 /* RecipeController.swift in Sources */,
 				CC739D1520F926560031AAB2 /* StyleHelpers.swift in Sources */,
@@ -467,6 +474,7 @@
 				CC739D0C20F6CFF00031AAB2 /* RecipeSearchViewController.swift in Sources */,
 				CC6D92FA2110E56B0044C600 /* Recipe.swift in Sources */,
 				CC184B4F2118DEED00603333 /* RealmService.swift in Sources */,
+				CC3886292137519F00AFBB00 /* APIResponse.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

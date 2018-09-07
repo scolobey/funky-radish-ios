@@ -10,10 +10,14 @@ import UIKit
 import RealmSwift
 import SwiftKeychainWrapper
 
+let defaults = UserDefaults.standard
+
 var selectedRecipe = 0
 var newRecipe = false
-var offline = false
+var offline = defaults.bool(forKey: "fr_isOffline")
+var fruser = defaults.object(forKey: "SavedDict") as? [String: String] ?? [String: String]()
 var localRecipes = realm.objects(Recipe.self)
+var recipeFilter = ""
 
 class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITableViewDataSource{
 
@@ -24,6 +28,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
 
         // Find your recipes
         do {
+            showLoader(uiView: self.view)
             try loadRecipes()
             print("success")
         }
@@ -40,8 +45,9 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
             }
             let continueAction = UIAlertAction(title: "Continue Offline", style: .destructive) { (alert: UIAlertAction!) -> Void in
 
+                // Set the app to offline mode.
+                UserDefaults.standard.set(false, forKey: "fr_isOffline")
                 self.navigationController!.showToast(message: "Offline mode")
-                // Probably means user would like to remain in offline mode for the time being.
             }
 
             alert.addAction(signupAction)
@@ -60,7 +66,14 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        recipeList.reloadData()
+
+        if (recipeFilter.count > 0){
+            self.setSearchText(recipeFilter)
+            self.filterTableView(text: recipeFilter)
+        }
+        else {
+            recipeList.reloadData()
+        }
     }
 
     func loadRecipes() throws {
@@ -88,45 +101,23 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         else {
             print("offline mode enabled")
         }
-
     }
 
-    //    override func viewWillAppear(_ animated: Bool) {
-    //        if (recipeFilter.count > 0){
-    //            self.filterTableView(text: recipeFilter)
-    //        }
-    //    }
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
 
-//    func downloadRecipes() {
-//        guard let downloadURL = url else {return}
-//
-//        URLSession.shared.dataTask(with: downloadURL, completionHandler: {(data, response, error) in
-//            guard let data = data, error == nil, response != nil else {print(error!); return}
-//
-//            let serializer = JSONSerializer()
-//            serializer.serialize(input: data)
-//
-//            DispatchQueue.main.async {
-//                self.recipeList.reloadData()
-//            }
-//        }).resume()
-//    }
+        self.filterTableView(text: searchText.lowercased())
+    }
 
-//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//        self.filterTableView(text: searchText)
-//    }
+    func filterTableView(text: String) {
+        if (text.count > 0) {
+            localRecipes = realm.objects(Recipe.self).filter("title contains [c] %@", text)
+        }
+        else {
+            localRecipes = realm.objects(Recipe.self)
+        }
 
-//    func filterTableView(text: String) {
-//        if (text.count > 0) {
-//            recipesRefined = recipes.filter({(recipe) -> Bool in
-//                return recipe.title.contains(text)
-//            })
-//        }
-//        else {
-//            recipesRefined = recipes
-//        }
-//        recipeList.reloadData()
-//    }
+        recipeList.reloadData()
+    }
 
     func numberOfSections(in tableView: UITableView) -> Int {
         return localRecipes.count

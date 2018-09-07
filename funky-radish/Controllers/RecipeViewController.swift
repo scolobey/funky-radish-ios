@@ -20,53 +20,42 @@ class RecipeViewController: BaseViewController {
     @IBOutlet weak var recipeTitle: UILabel!
     @IBOutlet weak var recipeInfo: UITextView!
     @IBOutlet weak var contentLabel: UILabel!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        let recipeBoldFontDescriptor = UIFontDescriptor(name: "Rockwell-Bold", size: 18.0)
+        let boldRecipeFont = UIFont(descriptor: recipeBoldFontDescriptor, size: 18.0)
+
+        recipeTitle.text = localRecipes[selectedRecipe].title
+        prepareTextForDisplay(recipe: localRecipes[selectedRecipe])
+
+        contentLabel.text = "Directions"
+
+        recipeInfo.text = directionText
+        recipeTitle.font = boldRecipeFont
+
+        recipeInfo.layer.masksToBounds = true
+        recipeInfo.layer.shadowColor = UIColor.black.cgColor
+        recipeInfo.layer.shadowOpacity = 0.5
+        recipeInfo.layer.shadowOffset = CGSize(width: 0.5, height: 1)
+        recipeInfo.layer.shadowRadius = 2
+        recipeInfo.layer.cornerRadius = 10.0
+
+        let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
+        let recipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
+        recipeInfo.font = recipeFont
+
+        applyBackgroundGradient(self.view)
+    }
     
     @IBAction func saveRecipeButton(_ sender: Any) {
-
         if (ingredientView) {
-            //convert to Realm list and save
-            let ingredientArray = recipeInfo.text.components(separatedBy: "\n").map({
-                (name: String) -> Ingredient in
-                let ingToAdd = Ingredient()
-                ingToAdd.name = name
-                return ingToAdd
-            })
-
-            let ingredientRealmList = List<Ingredient>()
-            ingredientRealmList.append(objectsIn: ingredientArray)
-
-            do {
-                try realm.write {
-                    localRecipes[selectedRecipe].setValue(ingredientRealmList, forKey: "ingredients")
-                }
-            }
-            catch {
-                print(error)
-            }
+            saveRecipe(title: localRecipes[selectedRecipe].title!, directions: directionText, ingredients: recipeInfo.text)
         }
-
-        else {      
-            //convert to Realm list and save
-            let directionArray = recipeInfo.text.components(separatedBy: "\n").map({
-                (text: String) -> Direction in
-                let dirToAdd = Direction()
-                dirToAdd.text = text
-                return dirToAdd
-            })
-
-            let directionRealmList = List<Direction>()
-            directionRealmList.append(objectsIn: directionArray)
-
-            do {
-                try realm.write {
-                    localRecipes[selectedRecipe].setValue(directionRealmList, forKey: "directions")
-                }
-            }
-            catch {
-                print(error)
-            }
+        else {
+            saveRecipe(title: localRecipes[selectedRecipe].title!, directions: recipeInfo.text, ingredients: ingredientText)
         }
-
     }
 
     @IBAction func deleteRecipeButton(_ sender: Any) {
@@ -84,14 +73,25 @@ class RecipeViewController: BaseViewController {
                 // Delete the recipe from the API if it has an id
                 if (deleteId != nil) {
                     print(deleteId!.description)
+
+                    // Call the API
+                    APIManager().deleteRecipe(id: deleteId!,
+                        onSuccess: {
+                            print("recipes loaded")
+                    },
+                        onFailure: { error in
+                            print(error)
+                    })
                 }
                 else {
-                    print("not in the ap1")
+                    print("not in the api")
                 }
             }
             catch {
-                print(error)
+                print("realm error")
             }
+
+            self.navigationController?.popViewController(animated: true)
         }
 
         let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) { UIAlertAction in
@@ -104,53 +104,78 @@ class RecipeViewController: BaseViewController {
         self.present(alertController, animated: true, completion: nil)
     }
 
+    @IBAction func editTitle(_ sender: Any) {
+        let alert = UIAlertController(title: "Change your recipe title.", message: nil, preferredStyle: .alert)
+
+        alert.addTextField(configurationHandler: { textField in
+            textField.text = localRecipes[selectedRecipe].title
+        })
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+
+        alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { action in
+            let title = alert.textFields?.first?.text
+            self.saveRecipe(title: title!, directions: self.directionText, ingredients: self.ingredientText)
+            self.recipeTitle.text = title!
+        }))
+
+        self.present(alert, animated: true)
+    }
+
     @IBAction func recipeToggle(_ sender: UISwitch) {
         if (sender.isOn == true) {
+            prepareTextForDisplay(recipe: localRecipes[selectedRecipe])
             ingredientView = false
             recipeInfo.text = directionText
             contentLabel.text = "Directions"
         }
         else {
+            prepareTextForDisplay(recipe: localRecipes[selectedRecipe])
             ingredientView = true
             recipeInfo.text = ingredientText
             contentLabel.text = "Ingredients"
         }
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        let recipeBoldFontDescriptor = UIFontDescriptor(name: "Rockwell-Bold", size: 18.0)
-        let boldRecipeFont = UIFont(descriptor: recipeBoldFontDescriptor, size: 18.0)
-
-        recipeTitle.text = localRecipes[selectedRecipe].title
-        prepareTextForDisplay(recipe: localRecipes[selectedRecipe])
-
-        contentLabel.text = "Directions"
-
-        recipeInfo.text = directionText
-        recipeTitle.font = boldRecipeFont
-
-        recipeInfo.layer.masksToBounds = false
-        recipeInfo.layer.shadowColor = UIColor.black.cgColor
-        recipeInfo.layer.shadowOpacity = 0.5
-        recipeInfo.layer.shadowOffset = CGSize(width: 0.5, height: 1)
-        recipeInfo.layer.shadowRadius = 2
-        recipeInfo.layer.cornerRadius = 10.0
-
-        let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
-        let recipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
-        recipeInfo.font = recipeFont
-
-        applyBackgroundGradient(self.view)
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+         recipeFilter = searchText
     }
 
-//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//        recipeFilter = searchText
-//    }
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        navigationController?.popViewController(animated: true)
+    }
 
-    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        self.navigationController!.popViewController(animated: true)
+    func saveRecipe(title: String, directions: String, ingredients: String) {
+        //convert ingredients to Realm list and save
+        let ingredientArray = ingredients.components(separatedBy: "\n").map({
+            (name: String) -> Ingredient in
+            let ingToAdd = Ingredient()
+            ingToAdd.name = name
+            return ingToAdd
+        })
+        let ingredientRealmList = List<Ingredient>()
+        ingredientRealmList.append(objectsIn: ingredientArray)
+
+        //convert directions to Realm list and save
+        let directionArray = directions.components(separatedBy: "\n").map({
+            (text: String) -> Direction in
+            let dirToAdd = Direction()
+            dirToAdd.text = text
+            return dirToAdd
+        })
+        let directionRealmList = List<Direction>()
+        directionRealmList.append(objectsIn: directionArray)
+
+        do {
+            try realm.write {
+                localRecipes[selectedRecipe].setValue(title, forKey: "title")
+                localRecipes[selectedRecipe].setValue(ingredientRealmList, forKey: "ingredients")
+                localRecipes[selectedRecipe].setValue(directionRealmList, forKey: "directions")
+            }
+        }
+        catch {
+            print(error)
+        }
     }
 
     func prepareTextForDisplay(recipe: Recipe) {
@@ -168,8 +193,7 @@ class RecipeViewController: BaseViewController {
             ingredientSet.append(ingredient.name)
         }
 
-       directionText = directionSet.joined(separator: "\n")
-       ingredientText = ingredientSet.joined(separator: "\n")
+        directionText = directionSet.joined(separator: "\n")
+        ingredientText = ingredientSet.joined(separator: "\n")
     }
-
 }
