@@ -8,26 +8,51 @@
 
 import UIKit
 
+enum loginError: Error {
+    case incompleteUsername
+    case noConnection
+}
+
 class LogInViewController: UIViewController {
 
     @IBOutlet weak var emailField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
 
     @IBAction func loginButton(_ sender: Any) {
-        // validate email
-        // validate password
         let email = emailField.text!
         let pw = passwordField.text!
 
         //  Get an authorization token and handle possible errors.
         do {
+            if !Reachability.isConnectedToNetwork() {
+                throw loginError.noConnection
+            }
+
+            // validation
+            else {
+                try Validation().isValidEmail(email)
+                try Validation().isValidPW(pw)
+            }
+
+            navigationController?.activateLoadingIndicator()
+
             try getToken(email: email, pw: pw)
+        }
+        catch loginError.noConnection {
+            self.navigationController!.showToast(message: "No internet connection.")
+        }
+        catch validationError.invalidEmail {
+            self.navigationController!.showToast(message: "Invalid email.")
+        }
+        catch validationError.invalidPassword {
+            // TODO: Should guide the user on password requirements.
+            self.navigationController!.showToast(message: "Invalid password.")
         }
         catch RecipeError.invalidLogin {
             print("those aren't the right credentials")
         }
         catch {
-            print("other errors")
+            print("Unknown login error")
         }
 
         // TODO if token is valid, pop the view.
@@ -67,10 +92,9 @@ class LogInViewController: UIViewController {
 
         try API.getToken(email: email, password: pw,
             onSuccess: {
-                print("looks like you got a token.")
-
                 DispatchQueue.main.async {
-                    self.navigationController?.popViewController(animated: true)
+                    JSONSerializer().synchRecipes(recipes: [])
+                    self.navigationController?.popToRootViewController(animated: false)
                 }
             },
             onFailure: { error in

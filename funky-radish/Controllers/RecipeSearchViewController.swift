@@ -28,7 +28,6 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
 
         // Find your recipes
         do {
-            showLoader(uiView: self.view)
             try loadRecipes()
             print("success")
         }
@@ -63,6 +62,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         // Styles
         setupRecipeListView(recipeList)
         applyBackgroundGradient(self.view)
+
     }
 
     override func viewWillAppear(_ animated: Bool) {

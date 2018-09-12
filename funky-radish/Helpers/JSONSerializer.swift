@@ -67,7 +67,7 @@ class JSONSerializer {
     }
 
     func synchRecipes(recipes: [Recipe]) {
-        // Accepts array of recipes from APi
+        // Accepts array of recipes from API
         //TODO: make this print a formatted array of recipes to upload
         //TODO: maintain a Realm on the server and synch with Mongo at the controller level.
         let realm = try! Realm()
@@ -79,7 +79,7 @@ class JSONSerializer {
         // Store unrecorded recipes to Realm
         let cloudRecipes = Array(recipes)
         var localRecipes = Array(localRecs)
-
+     
         // Collect recipes without id's for upload.
         var upload = Array<Recipe>()
 
@@ -131,9 +131,20 @@ class JSONSerializer {
         // Post recipes to the API.
         do {
             try APIManager().bulkInsertRecipes(recipes: upload,
-                onSuccess: { print("Bulk insert successful.") },
-                onFailure: { error in print(error)}
+                onSuccess: {
+                    print("Bulk insert successful.")
+                },
+                onFailure: { error in
+                    print(error);
+                    print("error inserting recipes")
+                }
             )
+        }
+        catch RecipeError.noInternetConnection {
+            print("No internet connection")
+        }
+        catch RecipeError.noToken {
+            print("No token")
         }
         catch {
             print("Error posting recipes")

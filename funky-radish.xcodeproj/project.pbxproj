@@ -15,6 +15,8 @@
 		CC2D5EE720FA937E0002FB73 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2D5EE620FA937E0002FB73 /* BaseViewController.swift */; };
 		CC3886292137519F00AFBB00 /* APIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC3886282137519F00AFBB00 /* APIResponse.swift */; };
 		CC4505F4213F3B0A0056ED3D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4505F3213F3B0A0056ED3D /* SettingsViewController.swift */; };
+		CC4505F6214826850056ED3D /* Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4505F5214826850056ED3D /* Validation.swift */; };
+		CC4505F82148A6B20056ED3D /* LoadAnimationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4505F72148A6B20056ED3D /* LoadAnimationViewController.swift */; };
 		CC6D92F2210E55D60044C600 /* JSONSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6D92F1210E55D60044C600 /* JSONSerializer.swift */; };
 		CC6D92F42110E2000044C600 /* Ingredient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6D92F32110E2000044C600 /* Ingredient.swift */; };
 		CC6D92F62110E4130044C600 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6D92F52110E4130044C600 /* Direction.swift */; };
@@ -29,7 +31,6 @@
 		CC8177B120EBBF9A00D02783 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC8177AF20EBBF9A00D02783 /* LaunchScreen.storyboard */; };
 		CC8177BC20EBD56F00D02783 /* LogInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC8177BB20EBD56F00D02783 /* LogInViewController.swift */; };
 		CC8177BE20EBD8B000D02783 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC8177BD20EBD8B000D02783 /* SignUpViewController.swift */; };
-		CC8177C020EBDE8200D02783 /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC8177BF20EBDE8200D02783 /* AuthViewController.swift */; };
 		CC8177C320EBE1FF00D02783 /* CustomNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC8177C220EBE1FF00D02783 /* CustomNavigationController.swift */; };
 		CCE3E26D210A3CC5005EB7A9 /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE3E26C210A3CC5005EB7A9 /* APIManager.swift */; };
 		CCF221D221220CB100FD5C9E /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF221D121220CB100FD5C9E /* SwiftyJSON.framework */; };
@@ -64,6 +65,8 @@
 		CC2D5EE620FA937E0002FB73 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		CC3886282137519F00AFBB00 /* APIResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIResponse.swift; sourceTree = "<group>"; };
 		CC4505F3213F3B0A0056ED3D /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		CC4505F5214826850056ED3D /* Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validation.swift; sourceTree = "<group>"; };
+		CC4505F72148A6B20056ED3D /* LoadAnimationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadAnimationViewController.swift; sourceTree = "<group>"; };
 		CC6D92F1210E55D60044C600 /* JSONSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONSerializer.swift; sourceTree = "<group>"; };
 		CC6D92F32110E2000044C600 /* Ingredient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ingredient.swift; sourceTree = "<group>"; };
 		CC6D92F52110E4130044C600 /* Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
@@ -84,7 +87,6 @@
 		CC8177B220EBBF9A00D02783 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CC8177BB20EBD56F00D02783 /* LogInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInViewController.swift; sourceTree = "<group>"; };
 		CC8177BD20EBD8B000D02783 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
-		CC8177BF20EBDE8200D02783 /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
 		CC8177C220EBE1FF00D02783 /* CustomNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationController.swift; sourceTree = "<group>"; };
 		CCE3E26C210A3CC5005EB7A9 /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
 		CCEB7A47210252530071A8B3 /* Realm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Realm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -176,7 +178,6 @@
 		CC6D92F0210A74CA0044C600 /* AuthControllers */ = {
 			isa = PBXGroup;
 			children = (
-				CC8177BF20EBDE8200D02783 /* AuthViewController.swift */,
 				CC8177BD20EBD8B000D02783 /* SignUpViewController.swift */,
 				CC8177BB20EBD56F00D02783 /* LogInViewController.swift */,
 			);
@@ -187,6 +188,7 @@
 			isa = PBXGroup;
 			children = (
 				CC8177C220EBE1FF00D02783 /* CustomNavigationController.swift */,
+				CC4505F72148A6B20056ED3D /* LoadAnimationViewController.swift */,
 				CC184B50211E2FF000603333 /* ModelControllers */,
 				CC6D92F0210A74CA0044C600 /* AuthControllers */,
 				CC2D5EE620FA937E0002FB73 /* BaseViewController.swift */,
@@ -224,6 +226,7 @@
 				CC739D1420F926560031AAB2 /* StyleHelpers.swift */,
 				CC6D92F1210E55D60044C600 /* JSONSerializer.swift */,
 				CCF221DB2128BD0F00FD5C9E /* Reachability.swift */,
+				CC4505F5214826850056ED3D /* Validation.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -456,7 +459,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CCE3E26D210A3CC5005EB7A9 /* APIManager.swift in Sources */,
-				CC8177C020EBDE8200D02783 /* AuthViewController.swift in Sources */,
 				CC6D92F42110E2000044C600 /* Ingredient.swift in Sources */,
 				CC4505F4213F3B0A0056ED3D /* SettingsViewController.swift in Sources */,
 				CC6D92F82110E4430044C600 /* User.swift in Sources */,
@@ -468,6 +470,7 @@
 				CC6D92F62110E4130044C600 /* Direction.swift in Sources */,
 				CC8177BE20EBD8B000D02783 /* SignUpViewController.swift in Sources */,
 				CC2D5EE720FA937E0002FB73 /* BaseViewController.swift in Sources */,
+				CC4505F6214826850056ED3D /* Validation.swift in Sources */,
 				CC739D1220F84AF50031AAB2 /* RecipeViewController.swift in Sources */,
 				CC8177BC20EBD56F00D02783 /* LogInViewController.swift in Sources */,
 				CCF221DC2128BD0F00FD5C9E /* Reachability.swift in Sources */,
@@ -475,6 +478,7 @@
 				CC6D92FA2110E56B0044C600 /* Recipe.swift in Sources */,
 				CC184B4F2118DEED00603333 /* RealmService.swift in Sources */,
 				CC3886292137519F00AFBB00 /* APIResponse.swift in Sources */,
+				CC4505F82148A6B20056ED3D /* LoadAnimationViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

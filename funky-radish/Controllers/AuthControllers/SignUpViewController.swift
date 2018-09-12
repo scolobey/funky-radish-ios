@@ -8,49 +8,84 @@
 
 import UIKit
 
-class SignUpViewController: UIViewController {
+enum signupError: Error {
+    case incompleteUsername
+    case noConnection
+}
 
+class SignUpViewController: UIViewController {
     @IBOutlet weak var usernameField: UITextField!
     @IBOutlet weak var emailField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
 
     @IBAction func signUpButton(_ sender: Any) {
-        // validate email
-        // validate password
         let email = emailField.text!
         let username = usernameField.text!
         let pw = passwordField.text!
 
         do {
+            // Check for internet connection
+            if !Reachability.isConnectedToNetwork() {
+                throw signupError.noConnection
+            }
+
+            // TODO: Looks like redundant else statements?
+
+            // validation
+            else if (username.count == 0){
+                throw signupError.incompleteUsername
+            }
+            else {
+                try Validation().isValidEmail(email)
+                try Validation().isValidPW(pw)
+            }
+
+            activateLoadingIndicator()
+
+            // Call API
             try APIManager().createUser(
                 email: email,
                 username: username,
                 password: pw,
                 onSuccess: {
-                    print("user creation succesful.")
                     do {
                         try self.getToken(email: email, pw: pw)
                     }
                     catch RecipeError.invalidLogin {
-                        print("those aren't the right credentials")
+                        print("Those aren't the right credentials")
                     }
                     catch {
-                        print("other errors")
+                        print("Encountered an unidentified token error.")
                     }
                 },
                 onFailure: { error in
-                    print(error)
+                    self.deactivateLoadingIndicator()
+                    print("User creation failed")
                 }
             )
         }
+        catch signupError.incompleteUsername {
+            self.navigationController!.showToast(message: "Username required.")
+        }
+        catch validationError.invalidEmail {
+            self.navigationController!.showToast(message: "Invalid email.")
+        }
+        catch validationError.invalidPassword {
+            // TODO: Should guide the user on password requirements.
+            // TODO: Can't show toast if navigation Controller is not available.
+            self.navigationController!.showToast(message: "Invalid password.")
+        }
+        catch signupError.noConnection {
+            self.navigationController!.showToast(message: "No internet connection.")
+        }
         catch {
-            print("Looks like an error occurred when you tried to create a user.")
+            self.navigationController!.showToast(message: "Unknown signup error.")
         }
     }
     
     @IBAction func dismissSignUp(_ sender: UIButton) {
         print("back to the bottom")
-        self.navigationController?.popToRootViewController(animated: true)
+        self.navigationController?.popToRootViewController(animated: false)
     }
 
     @IBAction func loginSegue(_ sender: Any) {
@@ -79,14 +114,16 @@ class SignUpViewController: UIViewController {
 
         try API.getToken(email: email, password: pw,
             onSuccess: {
-                print("looks like you got a token.")
-
+                // Synch recipes
                 DispatchQueue.main.async {
-                    self.navigationController?.popViewController(animated: true)
+                    //If you've already added recipes, post them to the API
+                    JSONSerializer().synchRecipes(recipes: [])
+                    self.navigationController?.popToRootViewController(animated: true)
                 }
             },
             onFailure: { error in
-                    print(error)
+                print(error)
+                self.deactivateLoadingIndicator()
             }
         )
     }

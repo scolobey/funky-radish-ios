@@ -99,7 +99,5 @@ class CustomNavigationController: UINavigationController {
             print(error)
         }
     }
-
 }
-
 

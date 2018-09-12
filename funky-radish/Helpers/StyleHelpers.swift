@@ -8,6 +8,8 @@
 
 import UIKit
 
+let loadingIndicator = LoadAnimationViewController()
+
 // Probably can structure some of theses as view extensions
 
 func hexStringToUIColor (hex:String) -> UIColor {
@@ -122,5 +124,19 @@ extension UIViewController {
         }, completion: {(isCompleted) in
             toastLabel.removeFromSuperview()
         })
+    }
+
+    func activateLoadingIndicator() {
+        // add the spinner view controller
+        self.navigationController?.addChildViewController(loadingIndicator)
+        loadingIndicator.view.frame = view.frame
+        self.navigationController?.view.addSubview(loadingIndicator.view)
+        loadingIndicator.didMove(toParentViewController: self)
+    }
+
+    func deactivateLoadingIndicator() {
+        loadingIndicator.willMove(toParentViewController: nil)
+        loadingIndicator.view.removeFromSuperview()
+        loadingIndicator.removeFromParentViewController()
     }
 }
