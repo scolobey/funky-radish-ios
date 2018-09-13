@@ -34,7 +34,7 @@ class LogInViewController: UIViewController {
                 try Validation().isValidPW(pw)
             }
 
-            navigationController?.activateLoadingIndicator()
+            activateLoadingIndicator()
 
             try getToken(email: email, pw: pw)
         }
@@ -54,10 +54,6 @@ class LogInViewController: UIViewController {
         catch {
             print("Unknown login error")
         }
-
-        // TODO if token is valid, pop the view.
-        // else display an error
-
     }
 
     @IBAction func dismissLoginButton(_ sender: UIButton) {
@@ -98,7 +94,8 @@ class LogInViewController: UIViewController {
                 }
             },
             onFailure: { error in
-                print(error)
+                self.deactivateLoadingIndicator()
+                self.navigationController!.showToast(message: "Error: " + error.localizedDescription)
             }
         )
     }

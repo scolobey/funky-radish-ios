@@ -13,7 +13,7 @@
 		CC184B52211E300400603333 /* RecipeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC184B51211E300400603333 /* RecipeController.swift */; };
 		CC184B5A2120A1A600603333 /* FunkyRadishTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC184B592120A1A600603333 /* FunkyRadishTests.swift */; };
 		CC2D5EE720FA937E0002FB73 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2D5EE620FA937E0002FB73 /* BaseViewController.swift */; };
-		CC3886292137519F00AFBB00 /* APIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC3886282137519F00AFBB00 /* APIResponse.swift */; };
+		CC3886292137519F00AFBB00 /* UserResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC3886282137519F00AFBB00 /* UserResponse.swift */; };
 		CC4505F4213F3B0A0056ED3D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4505F3213F3B0A0056ED3D /* SettingsViewController.swift */; };
 		CC4505F6214826850056ED3D /* Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4505F5214826850056ED3D /* Validation.swift */; };
 		CC4505F82148A6B20056ED3D /* LoadAnimationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4505F72148A6B20056ED3D /* LoadAnimationViewController.swift */; };
@@ -63,7 +63,7 @@
 		CC184B592120A1A600603333 /* FunkyRadishTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunkyRadishTests.swift; sourceTree = "<group>"; };
 		CC184B5B2120A1A600603333 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CC2D5EE620FA937E0002FB73 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
-		CC3886282137519F00AFBB00 /* APIResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIResponse.swift; sourceTree = "<group>"; };
+		CC3886282137519F00AFBB00 /* UserResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserResponse.swift; sourceTree = "<group>"; };
 		CC4505F3213F3B0A0056ED3D /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		CC4505F5214826850056ED3D /* Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validation.swift; sourceTree = "<group>"; };
 		CC4505F72148A6B20056ED3D /* LoadAnimationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadAnimationViewController.swift; sourceTree = "<group>"; };
@@ -215,7 +215,7 @@
 				CC6D92F72110E4430044C600 /* User.swift */,
 				CC6D92F92110E56B0044C600 /* Recipe.swift */,
 				CC184B4E2118DEED00603333 /* RealmService.swift */,
-				CC3886282137519F00AFBB00 /* APIResponse.swift */,
+				CC3886282137519F00AFBB00 /* UserResponse.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -477,7 +477,7 @@
 				CC739D0C20F6CFF00031AAB2 /* RecipeSearchViewController.swift in Sources */,
 				CC6D92FA2110E56B0044C600 /* Recipe.swift in Sources */,
 				CC184B4F2118DEED00603333 /* RealmService.swift in Sources */,
-				CC3886292137519F00AFBB00 /* APIResponse.swift in Sources */,
+				CC3886292137519F00AFBB00 /* UserResponse.swift in Sources */,
 				CC4505F82148A6B20056ED3D /* LoadAnimationViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

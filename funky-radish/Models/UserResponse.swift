@@ -1,5 +1,5 @@
 //
-//  APIResponse.swift
+//  UserResponse.swift
 //  funky-radish
 //
 //  Created by Ryn Goodwin on 8/29/18.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct APIResponse: Decodable {
+struct UserResponse: Decodable {
     var message : String? = ""
     var data : User
 

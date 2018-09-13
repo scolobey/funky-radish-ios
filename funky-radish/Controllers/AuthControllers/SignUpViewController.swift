@@ -24,21 +24,15 @@ class SignUpViewController: UIViewController {
         let pw = passwordField.text!
 
         do {
-            // Check for internet connection
             if !Reachability.isConnectedToNetwork() {
                 throw signupError.noConnection
             }
 
-            // TODO: Looks like redundant else statements?
-
-            // validation
-            else if (username.count == 0){
+            if (username.count == 0){
                 throw signupError.incompleteUsername
             }
-            else {
-                try Validation().isValidEmail(email)
-                try Validation().isValidPW(pw)
-            }
+            try Validation().isValidEmail(email)
+            try Validation().isValidPW(pw)
 
             activateLoadingIndicator()
 
@@ -47,7 +41,8 @@ class SignUpViewController: UIViewController {
                 email: email,
                 username: username,
                 password: pw,
-                onSuccess: {
+                onSuccess: { msg in
+                    print(msg)
                     do {
                         try self.getToken(email: email, pw: pw)
                     }
@@ -60,7 +55,7 @@ class SignUpViewController: UIViewController {
                 },
                 onFailure: { error in
                     self.deactivateLoadingIndicator()
-                    print("User creation failed")
+                    self.navigationController!.showToast(message: "Error creating user.")
                 }
             )
         }
@@ -84,7 +79,6 @@ class SignUpViewController: UIViewController {
     }
     
     @IBAction func dismissSignUp(_ sender: UIButton) {
-        print("back to the bottom")
         self.navigationController?.popToRootViewController(animated: false)
     }
 
@@ -109,7 +103,6 @@ class SignUpViewController: UIViewController {
     }
 
     func getToken(email: String, pw: String) throws {
-
         let API = APIManager()
 
         try API.getToken(email: email, password: pw,
@@ -122,8 +115,8 @@ class SignUpViewController: UIViewController {
                 }
             },
             onFailure: { error in
-                print(error)
                 self.deactivateLoadingIndicator()
+                self.navigationController!.showToast(message: "Error: " + error.localizedDescription)
             }
         )
     }

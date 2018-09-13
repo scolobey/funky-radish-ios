@@ -32,44 +32,40 @@ class APIManager: NSObject {
 
     static let sharedInstance = APIManager()
 
-    //TODO: Remove crud def from endpoints because they aren't limited.
+    // Endpoints
     static let authEndpoint = "authenticate"
     static let recipesEndpoint = "recipes"
     static let deleteRecipeEndpoint = "recipe"
     static let userEndpoint = "users"
 
     // User
-    func createUser(email: String, username: String, password: String, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
-
+    func createUser(email: String, username: String, password: String, onSuccess: @escaping(String) -> Void, onFailure: @escaping(Error) -> Void) throws {
         let url : String = baseURL + APIManager.userEndpoint
 
-        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
-
-        request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-
+        // Structure the data
         let json: [String: Any] = [
             "name": username,
             "email": email,
             "password": password,
             "admin": false
         ]
-
         let jsonData = try? JSONSerialization.data(withJSONObject: json)
+
+        // Execute the request
+        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = jsonData
 
         URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) in
-
             guard let data = data, error == nil, response != nil else {onFailure(error!); return}
 
             do {
-                try JSONSerializer().serializeUser(input: data)
-
-                onSuccess()
+                let message = try JSONSerializer().serializeUser(input: data)
+                onSuccess(message)
             }
             catch {
                 print("Encountered an error when decoding user response.")
-                // If no user object is returned, we need to let the user know with a notification.
                 onFailure(error)
             }
 
@@ -201,29 +197,19 @@ class APIManager: NSObject {
 
     func bulkInsertRecipes(recipes: [Recipe], onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
 
-        // Check the internet connection
+        // Check for internet connection
         if !Reachability.isConnectedToNetwork() {
             throw RecipeError.noInternetConnection
         }
 
-        // Check the keychain for an authorization token.
+        // Get the authorization token.
         guard let retrievedToken: String = KeychainWrapper.standard.string(forKey: "fr_token") else {
             throw RecipeError.noToken
         }
 
-        // Now let's prepare the API request.
-        let url : String = baseURL + APIManager.recipesEndpoint
-
-        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
-        request.httpMethod = "POST"
-        request.addValue(retrievedToken, forHTTPHeaderField: "x-access-token")
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
-
-        // Format recipes for the request body.
+        // Structure the data.
         var json = Array<Any>()
 
-        // Author is set on server via token data
         for recipe in recipes {
             var ing = Array<String>()
             for ingredient in recipe.ingredients {
@@ -239,22 +225,28 @@ class APIManager: NSObject {
                 "title": recipe.title!,
                 "ingredients": ing,
                 "directions": dir
-            ] as [String : Any]
+                ] as [String : Any]
 
             json.append(element)
         }
 
-        print(json)
-
         let jsonData = try? JSONSerialization.data(withJSONObject: json)
+
+        // Execute request.
+        let url : String = baseURL + APIManager.recipesEndpoint
+        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
+        request.httpMethod = "POST"
+        request.addValue(retrievedToken, forHTTPHeaderField: "x-access-token")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
         request.httpBody = jsonData
 
-        // Send the request.
         URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
             guard let data = data, error == nil, response != nil else {onFailure(error!); return}
-            //TODO: should try and serialize the response and look for the proper response code.
+            //TODO: Serialize the response. Check for the proper response code. Connect id's to recipes.
             print(data)
         }).resume()
+
     }
 
     func deleteRecipe(id: String, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {

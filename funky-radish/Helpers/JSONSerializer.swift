@@ -34,33 +34,23 @@ class JSONSerializer {
         }
     }
 
-    func serializeUser(input data: Data) throws {
+    func serializeUser(input data: Data) throws -> String {
         let jsonDecoder = JSONDecoder()
 
         do {
-            let response = try jsonDecoder.decode(APIResponse.self, from: data)
-
+            let response = try jsonDecoder.decode(UserResponse.self, from: data)
             let msg = response.message
             let user = response.data
 
-            print(msg!)
-
-            let recs = Array(user.recipes)
-
-            synchRecipes(recipes: recs)
-
             let userObject = ["username": user.name, "id": user._id, "email": user.email]
-
             defaults.set(userObject, forKey: "fr_user")
 
-            //TODO: Handle multiple users. Probably store id of current user in userDefaults.
-            //TODO: When you sign in or log in, reconcile the user's recipe list with the API. These todo's conflict.
-            //TODO: Should I just eliminate the user object and only store user data under UserDefaults?
-            let realm = try! Realm()
-
-            try! realm.write {
-                realm.add(user)
+            let recs = Array(user.recipes)
+            if (recs.count > 0) {
+                synchRecipes(recipes: recs)
             }
+
+            return msg!
         } catch {
             throw serializerError.failedSerialization
         }
@@ -92,11 +82,11 @@ class JSONSerializer {
 
         if(recipes.count > 0) {
             for recipe in cloudRecipes {
-                // Check for a local recipe with each id occurring in your downloaded recipes.
+                // Check for a local version of the recipe.
                 let localInstance = localRecipes.index(where: {$0._id == recipe._id})
 
                 if ( localInstance != nil) {
-                    // If the local recipe was edited more recently, add it to the post list.
+                    // Compare recipe.updatedAt to select the most recent version
                     let webDate = stringToDate(date: recipe.updatedAt!)
                     let locDate = stringToDate(date: localRecipes[localInstance!].updatedAt!)
 
@@ -104,7 +94,7 @@ class JSONSerializer {
                         print("identical recipe")
                     }
                     else if (webDate > locDate) {
-                        // update the local recipe
+                        // update local recipe
                         try! realm.write {
                             localRecipes[localInstance!].setValue(recipe._id, forKey: "_id")
                             localRecipes[localInstance!].setValue(recipe.updatedAt, forKey: "updatedAt")
@@ -128,26 +118,26 @@ class JSONSerializer {
             }
         }
 
-        // Post recipes to the API.
-        do {
-            try APIManager().bulkInsertRecipes(recipes: upload,
+        if (upload.count > 0) {
+            // Post update recipes.
+            do {
+                try APIManager().bulkInsertRecipes(recipes: upload,
                 onSuccess: {
                     print("Bulk insert successful.")
                 },
                 onFailure: { error in
-                    print(error);
-                    print("error inserting recipes")
-                }
-            )
-        }
-        catch RecipeError.noInternetConnection {
-            print("No internet connection")
-        }
-        catch RecipeError.noToken {
-            print("No token")
-        }
-        catch {
-            print("Error posting recipes")
+                    print("Error: " + error.localizedDescription)
+                })
+            }
+            catch RecipeError.noInternetConnection {
+                print("No internet connection")
+            }
+            catch RecipeError.noToken {
+                print("No token")
+            }
+            catch {
+                print("Error posting recipes")
+            }
         }
     }
 
