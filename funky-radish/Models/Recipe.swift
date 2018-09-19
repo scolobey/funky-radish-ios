@@ -11,6 +11,7 @@ import Realm
 import RealmSwift
 
 @objcMembers class Recipe: Object, Decodable {
+    dynamic var realmID = UUID().uuidString
     dynamic var _id : String? = ""
     dynamic var title : String? = ""
     dynamic var updatedAt : String? = ""
@@ -18,16 +19,22 @@ import RealmSwift
     var ingredients = List<Ingredient>()
     var directions = List<Direction>()
 
+    override static func primaryKey() -> String? {
+        return "realmID"
+    }
+
     private enum RecipeCodingKeys: String, CodingKey {
         case _id
+        case realmID
         case title
         case updatedAt
         case ingredients
         case directions
     }
 
-    convenience init(_id: String, title: String, updatedAt: String, ingredients: List<Ingredient>, directions: List<Direction>) {
+    convenience init(_id: String, realmID: String, title: String, updatedAt: String, ingredients: List<Ingredient>, directions: List<Direction>) {
         self.init()
+        self.realmID = realmID
         self._id = _id
         self.title = title
         self.updatedAt = updatedAt
@@ -38,6 +45,7 @@ import RealmSwift
     convenience required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: RecipeCodingKeys.self)
         let _id = try container.decode(String.self, forKey: ._id)
+        let realmID = try container.decode(String.self, forKey: .realmID)
         let title = try container.decode(String.self, forKey: .title)
         let updatedAt = try container.decode(String.self, forKey: .updatedAt)
 
@@ -65,7 +73,7 @@ import RealmSwift
         let directionsList = List<Direction>()
         directionsList.append(objectsIn: secondaryDirectionsArray)
 
-        self.init(_id: _id, title: title, updatedAt: updatedAt, ingredients: ingredientsList, directions: directionsList)
+        self.init(_id: _id, realmID: realmID, title: title, updatedAt: updatedAt, ingredients: ingredientsList, directions: directionsList)
     }
 
     required init() {

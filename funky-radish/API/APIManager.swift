@@ -8,6 +8,7 @@
 
 import UIKit
 import SwiftKeychainWrapper
+import RealmSwift
 
 struct Token: Decodable {
     let success: Bool
@@ -36,6 +37,7 @@ class APIManager: NSObject {
     static let authEndpoint = "authenticate"
     static let recipesEndpoint = "recipes"
     static let deleteRecipeEndpoint = "recipe"
+    static let updateRecipesEndpoint = "updateRecipes"
     static let userEndpoint = "users"
 
     // User
@@ -223,6 +225,7 @@ class APIManager: NSObject {
 
             let element = [
                 "title": recipe.title!,
+                "realmID": recipe.realmID,
                 "ingredients": ing,
                 "directions": dir
                 ] as [String : Any]
@@ -241,9 +244,95 @@ class APIManager: NSObject {
         request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
         request.httpBody = jsonData
 
+        print("bulk insert")
+        print(json)
+
         URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
             guard let data = data, error == nil, response != nil else {onFailure(error!); return}
-            //TODO: Serialize the response. Check for the proper response code. Connect id's to recipes.
+
+            // Update the recipe Id's
+            do {
+                let uploadedRecipes = try JSONSerializer().serializeUploadedRecipes(input: data)
+
+                for example in uploadedRecipes.enumerated() {
+                    print("writing to realm")
+                    print(example)
+
+                    let realm = try! Realm()
+
+                    if let updatingRecipe = realm.object(ofType: Recipe.self, forPrimaryKey: example.element.realmID) {
+                        try! realm.write {
+                            updatingRecipe._id = example.element._id
+                        }
+
+                        print(updatingRecipe)
+                    }
+                }
+
+                onSuccess()
+            }
+            catch {
+                // If no recipes return, we need to let the user know with a notification.
+                onFailure(error)
+            }
+            
+        }).resume()
+    }
+
+    func bulkUpdateRecipes(recipes: [Recipe], onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
+
+        // Check for internet connection
+        if !Reachability.isConnectedToNetwork() {
+            throw RecipeError.noInternetConnection
+        }
+
+        // Get the authorization token.
+        guard let retrievedToken: String = KeychainWrapper.standard.string(forKey: "fr_token") else {
+            throw RecipeError.noToken
+        }
+
+        // Structure the data.
+        var json = Array<Any>()
+
+        for recipe in recipes {
+            var ing = Array<String>()
+            for ingredient in recipe.ingredients {
+                ing.append(ingredient.name)
+            }
+
+            var dir = Array<String>()
+            for direction in recipe.directions {
+                dir.append(direction.text)
+            }
+
+            let element = [
+                "_id": recipe._id!,
+                "realmID": recipe.realmID,
+                "title": recipe.title!,
+                "ingredients": ing,
+                "directions": dir,
+                "updatedAt": recipe.updatedAt!
+                ] as [String : Any]
+
+            json.append(element)
+        }
+
+        let jsonData = try? JSONSerialization.data(withJSONObject: json)
+
+        // Execute request.
+        let url : String = baseURL + APIManager.updateRecipesEndpoint
+        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
+        request.httpMethod = "PUT"
+        request.addValue(retrievedToken, forHTTPHeaderField: "x-access-token")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
+        request.httpBody = jsonData
+
+        print("bulk update")
+
+        URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
+            guard let data = data, error == nil, response != nil else {onFailure(error!); return}
+
             print(data)
         }).resume()
 

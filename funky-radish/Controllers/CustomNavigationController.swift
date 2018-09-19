@@ -89,7 +89,6 @@ class CustomNavigationController: UINavigationController {
 
             recipe.title = title
             selectedRecipe = localRecipes.count
-            print(selectedRecipe, "*")
 
             try! realm.write {
                 realm.add(recipe)

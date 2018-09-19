@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 enum signupError: Error {
     case incompleteUsername
@@ -110,7 +111,21 @@ class SignUpViewController: UIViewController {
                 // Synch recipes
                 DispatchQueue.main.async {
                     //If you've already added recipes, post them to the API
-                    JSONSerializer().synchRecipes(recipes: [])
+                    if (localRecipes.count > 0) {
+                        do {
+                            try APIManager().bulkInsertRecipes(recipes: Array(localRecipes),
+                            onSuccess: {
+                                print("success")
+                            },
+                            onFailure: { error in
+                                print("Error: " + error.localizedDescription)
+                            })
+                        }
+                        catch {
+                            print("Error inserting recipes")
+                        }
+                    }
+
                     self.navigationController?.popToRootViewController(animated: true)
                 }
             },

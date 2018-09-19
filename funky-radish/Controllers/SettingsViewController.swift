@@ -80,6 +80,7 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
 
             // Remove recipes
             let realm = try! Realm()
+            
             try! realm.write {
                 realm.deleteAll()
             }

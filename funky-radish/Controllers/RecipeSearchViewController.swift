@@ -77,6 +77,10 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     func loadRecipes() throws {
+
+        for x in localRecipes {
+            print(x.title! + "--" + x._id!)
+        }
         // TODO: Probably should have a loading indicator here
         // TODO: Realm recipe needs an id and an archive boolean
 

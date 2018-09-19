@@ -147,20 +147,20 @@ class RecipeViewController: BaseViewController {
 
     func saveRecipe(title: String, directions: String, ingredients: String) {
         //convert ingredients to Realm list and save
-        let ingredientArray = ingredients.components(separatedBy: "\n").map({
+        let ingredientArray = ingredients.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\n").map({
             (name: String) -> Ingredient in
             let ingToAdd = Ingredient()
-            ingToAdd.name = name
+            ingToAdd.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
             return ingToAdd
         })
         let ingredientRealmList = List<Ingredient>()
         ingredientRealmList.append(objectsIn: ingredientArray)
 
         //convert directions to Realm list and save
-        let directionArray = directions.components(separatedBy: "\n").map({
+        let directionArray = directions.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\n").map({
             (text: String) -> Direction in
             let dirToAdd = Direction()
-            dirToAdd.text = text
+            dirToAdd.text = text.trimmingCharacters(in: .whitespaces)
             return dirToAdd
         })
         let directionRealmList = List<Direction>()
