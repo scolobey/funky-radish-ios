@@ -48,6 +48,11 @@ class RecipeViewController: BaseViewController {
 
         applyBackgroundGradient(self.view)
     }
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+        super.touchesBegan(touches, with: event)
+    }
     
     @IBAction func saveRecipeButton(_ sender: Any) {
         if (ingredientView) {

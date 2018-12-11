@@ -37,6 +37,8 @@ class SignUpViewController: UIViewController {
 
             activateLoadingIndicator()
 
+            self.view.endEditing(true)
+
             // Call API
             try APIManager().createUser(
                 email: email,
@@ -93,6 +95,11 @@ class SignUpViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpProperties()
+    }
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+        super.touchesBegan(touches, with: event)
     }
 
     func setUpProperties() {

@@ -145,7 +145,6 @@ class JSONSerializer {
                         update.append(recipe)
                         return
                     }
-                    return
                 }
                 // If there isn't already an offline version, add one.
                 else {

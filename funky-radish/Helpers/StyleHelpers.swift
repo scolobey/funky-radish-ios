@@ -129,7 +129,7 @@ extension UIViewController {
     func activateLoadingIndicator() {
         // add the spinner view controller
         self.navigationController?.addChildViewController(loadingIndicator)
-        loadingIndicator.view.frame = view.frame
+        loadingIndicator.view.frame = UIScreen.main.bounds
         self.navigationController?.view.addSubview(loadingIndicator.view)
         loadingIndicator.didMove(toParentViewController: self)
     }

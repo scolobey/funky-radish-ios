@@ -22,6 +22,8 @@ class LogInViewController: UIViewController {
         let email = emailField.text!
         let pw = passwordField.text!
 
+        self.view.endEditing(true)
+
         //  Get an authorization token and handle possible errors.
         do {
             if !Reachability.isConnectedToNetwork() {
@@ -73,6 +75,11 @@ class LogInViewController: UIViewController {
         }
     }
 
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+        super.touchesBegan(touches, with: event)
+    }
+
     func setUpProperties() {
         navigationController?.navigationBar.layer.frame.origin.y = 20
     }
@@ -82,7 +89,6 @@ class LogInViewController: UIViewController {
     }
 
     func getToken(email: String, pw: String) throws {
-
         // Should we load from API?
         let API = APIManager()
 
@@ -90,6 +96,7 @@ class LogInViewController: UIViewController {
             onSuccess: {
                 DispatchQueue.main.async {
                     JSONSerializer().synchRecipes(recipes: [])
+                    self.deactivateLoadingIndicator()
                     self.navigationController?.popToRootViewController(animated: false)
                 }
             },

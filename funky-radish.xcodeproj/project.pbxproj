@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		18537D625A0A3533F4D88AF8 /* Pods_FunkyRadishTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB64E4577B74D25797DEA44E /* Pods_FunkyRadishTests.framework */; };
 		1A93CC99345C53A4D450C6D7 /* Pods_funky_radish.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9189DDA363271AF31D2CA986 /* Pods_funky_radish.framework */; };
 		CC184B4F2118DEED00603333 /* RealmService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC184B4E2118DEED00603333 /* RealmService.swift */; };
 		CC184B52211E300400603333 /* RecipeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC184B51211E300400603333 /* RecipeController.swift */; };
@@ -52,11 +51,9 @@
 
 /* Begin PBXFileReference section */
 		9189DDA363271AF31D2CA986 /* Pods_funky_radish.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_funky_radish.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A15F402B02AAFD44C6FF1E94 /* Pods-FunkyRadishTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FunkyRadishTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FunkyRadishTests/Pods-FunkyRadishTests.debug.xcconfig"; sourceTree = "<group>"; };
 		AD27E87458801B677AF03C41 /* Pods-funky-radish.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-funky-radish.debug.xcconfig"; path = "Pods/Target Support Files/Pods-funky-radish/Pods-funky-radish.debug.xcconfig"; sourceTree = "<group>"; };
 		B9E868050C94BE6F792BEA9F /* Pods-funky-radish.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-funky-radish.release.xcconfig"; path = "Pods/Target Support Files/Pods-funky-radish/Pods-funky-radish.release.xcconfig"; sourceTree = "<group>"; };
 		BB64E4577B74D25797DEA44E /* Pods_FunkyRadishTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FunkyRadishTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BDB3441BDB06D19CA1718F5D /* Pods-FunkyRadishTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FunkyRadishTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-FunkyRadishTests/Pods-FunkyRadishTests.release.xcconfig"; sourceTree = "<group>"; };
 		CC184B4E2118DEED00603333 /* RealmService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmService.swift; sourceTree = "<group>"; };
 		CC184B51211E300400603333 /* RecipeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeController.swift; sourceTree = "<group>"; };
 		CC184B572120A1A600603333 /* FunkyRadishTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FunkyRadishTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -106,7 +103,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				18537D625A0A3533F4D88AF8 /* Pods_FunkyRadishTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,8 +146,6 @@
 		701283D96809F37654405C0B /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				A15F402B02AAFD44C6FF1E94 /* Pods-FunkyRadishTests.debug.xcconfig */,
-				BDB3441BDB06D19CA1718F5D /* Pods-FunkyRadishTests.release.xcconfig */,
 				AD27E87458801B677AF03C41 /* Pods-funky-radish.debug.xcconfig */,
 				B9E868050C94BE6F792BEA9F /* Pods-funky-radish.release.xcconfig */,
 			);
@@ -290,7 +284,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CC184B5E2120A1A600603333 /* Build configuration list for PBXNativeTarget "FunkyRadishTests" */;
 			buildPhases = (
-				74B2F898B5FAADA7529AA042 /* [CP] Check Pods Manifest.lock */,
 				CC184B532120A1A600603333 /* Sources */,
 				CC184B542120A1A600603333 /* Frameworks */,
 				CC184B552120A1A600603333 /* Resources */,
@@ -383,24 +376,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		74B2F898B5FAADA7529AA042 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-FunkyRadishTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		AA37E59EC4E1341A64C883C8 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -514,7 +489,6 @@
 /* Begin XCBuildConfiguration section */
 		CC184B5F2120A1A600603333 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A15F402B02AAFD44C6FF1E94 /* Pods-FunkyRadishTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -540,7 +514,6 @@
 		};
 		CC184B602120A1A600603333 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BDB3441BDB06D19CA1718F5D /* Pods-FunkyRadishTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
