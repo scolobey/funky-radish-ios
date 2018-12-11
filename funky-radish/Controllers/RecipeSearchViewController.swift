@@ -96,6 +96,10 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
             // Call the API
             try APIManager().loadRecipes(
             onSuccess: {
+                DispatchQueue.main.async {
+                    self.recipeList.reloadData()
+                }
+
                 print("recipes loaded")
             },
             onFailure: { error in

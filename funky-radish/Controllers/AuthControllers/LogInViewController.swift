@@ -95,7 +95,15 @@ class LogInViewController: UIViewController {
         try API.getToken(email: email, password: pw,
             onSuccess: {
                 DispatchQueue.main.async {
-                    JSONSerializer().synchRecipes(recipes: [])
+                    try! API.loadRecipes(
+                        onSuccess: {
+                            print("recipes loaded.")
+                        },
+                        onFailure: { error in
+                            print(error)
+                        }
+                    )
+
                     self.deactivateLoadingIndicator()
                     self.navigationController?.popToRootViewController(animated: false)
                 }
