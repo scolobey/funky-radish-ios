@@ -39,9 +39,11 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         catch RecipeError.noToken {
             let alert = UIAlertController(title: "Hello", message: "How would you like to get started?", preferredStyle: .alert)
             let signupAction = UIAlertAction(title: "Sign Up", style: .default) { (alert: UIAlertAction!) -> Void in
+                UserDefaults.standard.set(true, forKey: "fr_isOffline")
                 self.performSegue(withIdentifier: "signUpSegue", sender: nil)
             }
             let loginAction = UIAlertAction(title: "Login", style: .default) { (alert: UIAlertAction!) -> Void in
+                UserDefaults.standard.set(true, forKey: "fr_isOffline")
                 self.performSegue(withIdentifier: "loginSegue", sender: nil)
             }
             let continueAction = UIAlertAction(title: "Continue Offline", style: .destructive) { (alert: UIAlertAction!) -> Void in

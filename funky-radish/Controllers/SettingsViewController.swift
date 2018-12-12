@@ -34,7 +34,6 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
         // Dequeue a cell
         let cell: UITableViewCell = {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsViewCell") else {
@@ -73,8 +72,6 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if (indexPath.row == 0) {
-            print(indexPath.row)
-
             // Remove token key
             KeychainWrapper.standard.set("", forKey: "fr_token")
 
