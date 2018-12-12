@@ -87,20 +87,13 @@ class JSONSerializer {
         let cloudRecipes = recipes
         var localRecipes = Array(offlineRecipes)
 
-        print(" ----------------- ")
-        // realmID should be ignored here.
-        print(cloudRecipes)
-        print(" ***************** ")
-        print(localRecipes)
-        print(" ----------------- ")
-
         var upload = Array<Recipe>()
         var update = Array<Recipe>()
 
         // Any local recipes without ._id?
         for (index, recipe) in localRecipes.enumerated().reversed() {
             if(recipe._id == "") {
-                print("queueing for upload")
+                print("queueing \(recipe.title) for upload")
                 print(recipe.realmID)
 
                 upload.append(recipe)
@@ -148,8 +141,7 @@ class JSONSerializer {
                 }
                 // If there isn't already an offline version, add one.
                 else {
-                    print("Adding recipe to Realm")
-                    print(recipe)
+                    print("Adding \(recipe.title) to Realm")
 
                     let realm = try! Realm()
                     // If there is no local recipe with a matching id, save recipe to Realm

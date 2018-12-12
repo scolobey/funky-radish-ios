@@ -82,7 +82,7 @@ class RecipeViewController: BaseViewController {
                     // Call the API
                     APIManager().deleteRecipe(id: deleteId!,
                         onSuccess: {
-                            print("recipes loaded")
+                            print("recipe deleted")
                     },
                         onFailure: { error in
                             print(error)

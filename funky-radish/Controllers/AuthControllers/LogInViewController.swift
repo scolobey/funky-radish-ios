@@ -105,6 +105,7 @@ class LogInViewController: UIViewController {
                     )
 
                     self.deactivateLoadingIndicator()
+                    
                     self.navigationController?.popToRootViewController(animated: false)
                 }
             },

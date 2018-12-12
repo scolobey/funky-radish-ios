@@ -17,6 +17,8 @@ var newRecipe = false
 var offline = defaults.bool(forKey: "fr_isOffline")
 var fruser = defaults.object(forKey: "SavedDict") as? [String: String] ?? [String: String]()
 var localRecipes = realm.objects(Recipe.self)
+var notificationToken: NotificationToken?
+
 var recipeFilter = ""
 
 class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITableViewDataSource{
@@ -66,7 +68,6 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     override func viewWillAppear(_ animated: Bool) {
-
         if (recipeFilter.count > 0){
             self.setSearchText(recipeFilter)
             self.filterTableView(text: recipeFilter)
@@ -74,6 +75,14 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         else {
             recipeList.reloadData()
         }
+
+        notificationToken = realm.observe { notification, realm in
+            self.recipeList.reloadData()
+        }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        notificationToken?.invalidate()
     }
 
     func loadRecipes() throws {
@@ -95,20 +104,19 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         if (!offline) {
             // Call the API
             try APIManager().loadRecipes(
-            onSuccess: {
-                DispatchQueue.main.async {
-                    self.recipeList.reloadData()
+                onSuccess: {
+                    print("recipes loaded")
+                },
+                onFailure: { error in
+                    print(error)
                 }
-
-                print("recipes loaded")
-            },
-            onFailure: { error in
-                print(error)
-            })
+            )
         }
         else {
             print("offline mode enabled")
         }
+
+        print("load recipes called")
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
