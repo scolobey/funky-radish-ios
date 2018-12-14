@@ -30,7 +30,7 @@ class BaseViewController: UIViewController, UISearchBarDelegate{
         let button = UIButton()
         button.setBackgroundImage(image, for: UIControlState.normal)
         button.frame = CGRect(x: 0.0, y: 0.0, width: 10.0, height: 10.0)
-        button.addTarget(self, action: #selector(toggleSettings), for: .touchUpInside)
+        button.addTarget(self, action: #selector(toggleSettings), for: .touchDown)
 
         let userButton = UIBarButtonItem()
         userButton.customView = button

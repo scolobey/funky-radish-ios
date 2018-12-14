@@ -8,6 +8,7 @@
 
 import Foundation
 import RealmSwift
+import SwiftKeychainWrapper
 
 enum serializerError: Error {
     case formattingError
@@ -59,12 +60,12 @@ class JSONSerializer {
             let msg = response.message
             let user = response.data
 
-            let userObject = ["username": user.name, "id": user._id, "email": user.email]
-            defaults.set(userObject, forKey: "fr_user")
+            KeychainWrapper.standard.set(user.email!, forKey: "fr_user_email")
 
             let recs = Array(user.recipes)
 
             if (recs.count > 0) {
+                
                 synchRecipes(recipes: recs)
             }
 
@@ -93,7 +94,7 @@ class JSONSerializer {
         // Any local recipes without ._id?
         for (index, recipe) in localRecipes.enumerated().reversed() {
             if(recipe._id == "") {
-                print("queueing \(recipe.title) for upload")
+                print("queueing \(recipe.title ?? "*no-title*") for upload")
                 print(recipe.realmID)
 
                 upload.append(recipe)

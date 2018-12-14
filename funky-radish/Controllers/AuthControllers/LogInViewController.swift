@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftKeychainWrapper
 
 enum loginError: Error {
     case incompleteUsername
@@ -24,13 +25,11 @@ class LogInViewController: UIViewController {
 
         self.view.endEditing(true)
 
-        //  Get an authorization token and handle possible errors.
         do {
             if !Reachability.isConnectedToNetwork() {
                 throw loginError.noConnection
             }
 
-            // validation
             else {
                 try Validation().isValidEmail(email)
                 try Validation().isValidPW(pw)
@@ -59,7 +58,6 @@ class LogInViewController: UIViewController {
     }
 
     @IBAction func dismissLoginButton(_ sender: UIButton) {
-        print("back to the bottom")
         self.navigationController?.popToRootViewController(animated: true)
     }
 
@@ -89,7 +87,6 @@ class LogInViewController: UIViewController {
     }
 
     func getToken(email: String, pw: String) throws {
-        // Should we load from API?
         let API = APIManager()
 
         try API.getToken(email: email, password: pw,
@@ -97,6 +94,9 @@ class LogInViewController: UIViewController {
                 DispatchQueue.main.async {
                     try! API.loadRecipes(
                         onSuccess: {
+                            KeychainWrapper.standard.set(email, forKey: "fr_user_email")
+                            UserDefaults.standard.set(false, forKey: "fr_isOffline")
+
                             print("recipes loaded.")
                         },
                         onFailure: { error in

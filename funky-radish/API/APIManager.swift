@@ -76,7 +76,7 @@ class APIManager: NSObject {
 
     func getToken(email: String, password: String, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
 
-        print("lets try and get you a token.")
+        print("lets get you a token.")
 
         // Check the internet connection
         if !Reachability.isConnectedToNetwork() {
@@ -124,6 +124,10 @@ class APIManager: NSObject {
 
         // Check the keychain for an authorization token.
         guard let retrievedToken: String = KeychainWrapper.standard.string(forKey: "fr_token") else {
+            throw RecipeError.noToken
+        }
+
+        if(retrievedToken.count < 1) {
             throw RecipeError.noToken
         }
 

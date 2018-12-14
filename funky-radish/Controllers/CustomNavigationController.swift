@@ -27,7 +27,6 @@ class CustomNavigationController: UINavigationController {
     func setupCreateButton() {
         let button = UIButton(frame: CGRect(origin: CGPoint(x: self.view.frame.width-75, y: self.view.frame.size.height-80), size: CGSize(width: 60, height: 60)))
 
-        button.tag = 1
         button.backgroundColor = UIColor.white
 
         button.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.25).cgColor

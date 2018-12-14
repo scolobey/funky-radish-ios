@@ -10,12 +10,12 @@ import UIKit
 import RealmSwift
 import SwiftKeychainWrapper
 
-let defaults = UserDefaults.standard
-
 var selectedRecipe = 0
 var newRecipe = false
-var offline = defaults.bool(forKey: "fr_isOffline")
-var fruser = defaults.object(forKey: "SavedDict") as? [String: String] ?? [String: String]()
+
+var fruser = KeychainWrapper.standard.string(forKey: "fr_user_email")
+var offline = UserDefaults.standard.bool(forKey: "fr_isOffline")
+
 var localRecipes = realm.objects(Recipe.self)
 var notificationToken: NotificationToken?
 
@@ -27,7 +27,6 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         // Find your recipes
         do {
             try loadRecipes()
@@ -47,9 +46,8 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
                 self.performSegue(withIdentifier: "loginSegue", sender: nil)
             }
             let continueAction = UIAlertAction(title: "Continue Offline", style: .destructive) { (alert: UIAlertAction!) -> Void in
-
                 // Set the app to offline mode.
-                UserDefaults.standard.set(false, forKey: "fr_isOffline")
+                UserDefaults.standard.set(true, forKey: "fr_isOffline")
                 self.navigationController!.showToast(message: "Offline mode")
             }
 
@@ -122,7 +120,6 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-
         self.filterTableView(text: searchText.lowercased())
     }
 

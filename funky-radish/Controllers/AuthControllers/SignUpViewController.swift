@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import SwiftKeychainWrapper
 
 enum signupError: Error {
     case incompleteUsername
@@ -23,6 +24,8 @@ class SignUpViewController: UIViewController {
         let email = emailField.text!
         let username = usernameField.text!
         let pw = passwordField.text!
+
+        self.view.endEditing(true)
 
         do {
             if !Reachability.isConnectedToNetwork() {
@@ -85,16 +88,16 @@ class SignUpViewController: UIViewController {
         self.navigationController?.popToRootViewController(animated: false)
     }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setUpProperties()
+    }
+
     @IBAction func loginSegue(_ sender: Any) {
         if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "LogInViewController") as? LogInViewController
         {
             self.navigationController?.pushViewController(vc, animated: false)
         }
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setUpProperties()
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -115,6 +118,9 @@ class SignUpViewController: UIViewController {
 
         try API.getToken(email: email, password: pw,
             onSuccess: {
+                KeychainWrapper.standard.set(email, forKey: "fr_user_email")
+                UserDefaults.standard.set(false, forKey: "fr_isOffline")
+
                 // Synch recipes
                 DispatchQueue.main.async {
                     //If you've already added recipes, post them to the API
@@ -131,9 +137,11 @@ class SignUpViewController: UIViewController {
                         catch {
                             print("Error inserting recipes")
                         }
+                    } else {
+                       self.deactivateLoadingIndicator()
                     }
 
-                    self.navigationController?.popToRootViewController(animated: true)
+                    self.navigationController?.popToRootViewController(animated: false)
                 }
             },
             onFailure: { error in
