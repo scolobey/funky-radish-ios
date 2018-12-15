@@ -129,6 +129,9 @@ class SignUpViewController: UIViewController {
                             try APIManager().bulkInsertRecipes(recipes: Array(localRecipes),
                             onSuccess: {
                                 print("success")
+                                DispatchQueue.main.async {
+                                    self.deactivateLoadingIndicator()
+                                }
                             },
                             onFailure: { error in
                                 print("Error: " + error.localizedDescription)

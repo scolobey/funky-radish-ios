@@ -260,16 +260,15 @@ class APIManager: NSObject {
 
                 for example in uploadedRecipes.enumerated() {
                     print("writing to realm")
-                    print(example)
 
                     let realm = try! Realm()
 
                     if let updatingRecipe = realm.object(ofType: Recipe.self, forPrimaryKey: example.element.realmID) {
+                        print("updating recipe id's in Realm")
+
                         try! realm.write {
                             updatingRecipe._id = example.element._id
                         }
-
-                        print(updatingRecipe)
                     }
                 }
 
