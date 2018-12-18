@@ -151,6 +151,14 @@ class RecipeViewController: BaseViewController {
     }
 
     func saveRecipe(title: String, directions: String, ingredients: String) {
+
+        let date = Date()
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone(identifier: "UTC")
+
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+        let result = formatter.string(from: date)
+
         //convert ingredients to Realm list and save
         let ingredientArray = ingredients.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\n").map({
             (name: String) -> Ingredient in
@@ -176,6 +184,7 @@ class RecipeViewController: BaseViewController {
                 localRecipes[selectedRecipe].setValue(title, forKey: "title")
                 localRecipes[selectedRecipe].setValue(ingredientRealmList, forKey: "ingredients")
                 localRecipes[selectedRecipe].setValue(directionRealmList, forKey: "directions")
+                localRecipes[selectedRecipe].setValue(result, forKey: "updatedAt")
             }
         }
         catch {

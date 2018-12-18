@@ -230,6 +230,7 @@ class APIManager: NSObject {
             let element = [
                 "title": recipe.title!,
                 "realmID": recipe.realmID,
+                "updatedAt": recipe.updatedAt!,
                 "ingredients": ing,
                 "directions": dir
                 ] as [String : Any]
@@ -331,12 +332,12 @@ class APIManager: NSObject {
         request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
         request.httpBody = jsonData
 
-        print("bulk update")
+        print(String(decoding: jsonData!, as: UTF8.self))
 
         URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
             guard let data = data, error == nil, response != nil else {onFailure(error!); return}
 
-            print(data)
+            print(String(decoding: data, as: UTF8.self))
         }).resume()
 
     }

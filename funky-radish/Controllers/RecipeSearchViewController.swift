@@ -27,7 +27,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Find your recipes
+        // Data
         do {
             try loadRecipes()
             print("success")
@@ -68,6 +68,21 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     override func viewWillAppear(_ animated: Bool) {
+
+        do {
+            try loadRecipes()
+            print("Success")
+        }
+        catch RecipeError.noInternetConnection {
+            print("No internet connection.")
+        }
+        catch RecipeError.noToken {
+            print("No token")
+        }
+        catch {
+            print("There was an unidentified error loading recipes.")
+        }
+
         if (recipeFilter.count > 0){
             self.setSearchText(recipeFilter)
             self.filterTableView(text: recipeFilter)

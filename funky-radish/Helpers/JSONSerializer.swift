@@ -114,15 +114,13 @@ class JSONSerializer {
                     let webDate = stringToDate(date: recipe.updatedAt!)
                     let locDate = stringToDate(date: localRecipes[localInstance!].updatedAt!)
 
+                    print("Web Date: \(webDate)")
+                    print("Local date: \(locDate)")
+
                     if (NSCalendar.current.isDate(webDate, equalTo: locDate, toGranularity: .second)) {
                         print("identical recipe")
-
-                        return
-                    }
-                    else if (webDate > locDate) {
+                    } else if (webDate > locDate) {
                         print("online recipe is more recent, update realm recipe.")
-                        // this probab
-                        // update local recipe
                         try! realm.write {
                             localRecipes[localInstance!].setValue(recipe._id, forKey: "_id")
                             localRecipes[localInstance!].setValue(recipe.updatedAt, forKey: "updatedAt")
@@ -130,19 +128,14 @@ class JSONSerializer {
                             localRecipes[localInstance!].setValue(recipe.directions, forKey: "directions")
                             localRecipes[localInstance!].setValue(recipe.ingredients, forKey: "ingredients")
                         }
-                        return
-                    }
-
-                    else {
-                        // The local recipe was updated and we need to update the one online.
-                        // Queue the local recipe to update via API
-                        update.append(recipe)
-                        return
+                    } else {
+                        // Add the local recipe to update queue
+                        update.append(localRecipes[localInstance!])
                     }
                 }
                 // If there isn't already an offline version, add one.
                 else {
-                    print("Adding \(recipe.title) to Realm")
+                    print("Adding \(recipe.title!) to Realm")
 
                     let realm = try! Realm()
                     // If there is no local recipe with a matching id, save recipe to Realm
@@ -177,6 +170,10 @@ class JSONSerializer {
         }
 
         if (update.count > 0) {
+
+
+// The update list is receiving the online version as opposed to the offline version.
+
             // Post update recipes.
             do {
                 print("updating recipes")
