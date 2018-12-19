@@ -41,7 +41,7 @@
                                 </constraints>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="next"/>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="u4x-hv-ebc">
                                 <rect key="frame" x="62.5" y="235" width="250" height="30"/>
@@ -50,7 +50,7 @@
                                 </constraints>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" textContentType="password"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="next" secureTextEntry="YES" textContentType="password"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LO4-Ax-zNP">
                                 <rect key="frame" x="62.5" y="275" width="250" height="30"/>
@@ -433,6 +433,6 @@
         <segue reference="xth-nj-9W2"/>
         <segue reference="o9C-o4-2Gp"/>
         <segue reference="ENc-nc-dkD"/>
-        <segue reference="QqC-ib-Dsf"/>
+        <segue reference="dA5-lt-9bX"/>
     </inferredMetricsTieBreakers>
 </document>

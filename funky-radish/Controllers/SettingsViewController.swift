@@ -65,7 +65,7 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
             }
         }
 
-        else if (offline && fruser?.count == 0) {
+        else if (offline && (fruser?.count == 0 || fruser == nil)) {
             if (indexPath.row == 0) {
                 let fontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
                 let font = UIFont(descriptor: fontDescriptor, size: 18.0)
@@ -166,7 +166,7 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
                 // no wifi
                 userState = 0
             }
-        } else if (offline && fruser?.count == 0) {
+        } else if (offline && (fruser?.count == 0 || fruser == nil)) {
             if (indexPath.row == 0) {
                 // log in
                 userState = 1
