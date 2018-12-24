@@ -14,8 +14,9 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
 
     @IBOutlet weak var settingsList: UITableView!
 
-    var offline = UserDefaults.standard.bool(forKey: "fr_isOffline")
     var fruser = KeychainWrapper.standard.string(forKey: "fr_user_email")
+    var frpw = KeychainWrapper.standard.string(forKey: "fr_password")
+    var offline = UserDefaults.standard.bool(forKey: "fr_isOffline")
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -119,7 +120,7 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
             }
         }
 
-        else if (!offline && fruser?.count == 0){
+        else if (!offline && (fruser == nil || fruser?.count == 0)){
             if (indexPath.row == 0) {
                 let fontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
                 let font = UIFont(descriptor: fontDescriptor, size: 18.0)
@@ -219,6 +220,7 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
                 // Remove user data
                 KeychainWrapper.standard.set("", forKey: "fr_token")
                 KeychainWrapper.standard.set("", forKey: "fr_user_email")
+                KeychainWrapper.standard.set("", forKey: "fr_password")
 
                 UserDefaults.standard.set(true, forKey: "fr_isOffline")
 

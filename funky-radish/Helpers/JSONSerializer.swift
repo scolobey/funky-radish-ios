@@ -22,6 +22,9 @@ class JSONSerializer {
         do {
             // Make sure the response is properly formatted json
             let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
+
+            print(json)
+
             guard json is [AnyObject] else {
                 throw serializerError.formattingError
             }
@@ -29,7 +32,6 @@ class JSONSerializer {
             let recipes = try jsonDecoder.decode([Recipe].self, from: data)
 
             synchRecipes(recipes: recipes)
-
         } catch {
             throw serializerError.failedSerialization
         }
@@ -87,6 +89,7 @@ class JSONSerializer {
 
         let cloudRecipes = recipes
         var localRecipes = Array(offlineRecipes)
+        let deleteRecipes = UserDefaults.standard.stringArray(forKey: "DeletedQueue") ?? [String]()
 
         var upload = Array<Recipe>()
         var update = Array<Recipe>()
@@ -105,8 +108,8 @@ class JSONSerializer {
         // Any online recipes?
         if(cloudRecipes.count > 0) {
             for recipe in cloudRecipes {
-
                 let localInstance = localRecipes.index(where: {$0._id == recipe._id})
+                let shouldDelete = deleteRecipes.index(where: {$0 == recipe._id})
 
                 // Is there an existing local version of this online recipe?
                 if ( localInstance != nil) {
@@ -132,6 +135,11 @@ class JSONSerializer {
                         // Add the local recipe to update queue
                         update.append(localRecipes[localInstance!])
                     }
+                }
+                // if the recipe is in the deletion queue
+                else if (shouldDelete != nil) {
+                    // Don't save this recipe. It's supposed to be deleted.
+                    print("not saving \(recipe.title!)")
                 }
                 // If there isn't already an offline version, add one.
                 else {
@@ -170,16 +178,41 @@ class JSONSerializer {
         }
 
         if (update.count > 0) {
-
-
-// The update list is receiving the online version as opposed to the offline version.
-
             // Post update recipes.
             do {
                 print("updating recipes")
                 try APIManager().bulkUpdateRecipes(recipes: update,
                 onSuccess: {
                     print("success")
+                },
+                onFailure: { error in
+                    print("Error: " + error.localizedDescription)
+                })
+            }
+            catch RecipeError.noInternetConnection {
+                print("No internet connection")
+            }
+            catch RecipeError.noToken {
+                print("No token")
+            }
+            catch {
+                print("Error updating recipes")
+            }
+        }
+
+        if (deleteRecipes.count > 0) {
+            print("gotta delete these: \(deleteRecipes)")
+
+            // Post update recipes.
+            do {
+                print("deleting recipes")
+                try APIManager().bulkDeleteRecipes(recipes: deleteRecipes,
+                onSuccess: {
+                    print("success")
+                    //Set the recipes to delete list to nada
+                    let delete_queue = [String]()
+                    UserDefaults.standard.set(delete_queue, forKey: "DeletedQueue")
+                    print(delete_queue)
                 },
                 onFailure: { error in
                     print("Error: " + error.localizedDescription)

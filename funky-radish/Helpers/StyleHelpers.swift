@@ -34,17 +34,6 @@ func hexStringToUIColor (hex:String) -> UIColor {
     )
 }
 
-func applyBackgroundGradient (_ view: UIView) {
-    let startGreen = hexStringToUIColor(hex: "A2FFB1")
-
-    let gradient = CAGradientLayer()
-    gradient.frame = view.bounds
-    gradient.colors = [UIColor.white.cgColor, startGreen.withAlphaComponent(0.6).cgColor]
-    gradient.locations = [0.05, 0.99]
-
-    view.layer.insertSublayer(gradient, at: 0)
-}
-
 func setupRecipeListView(_ tableView: UITableView) {
     tableView.sectionHeaderHeight = 0.0
     tableView.backgroundColor = UIColor.clear
@@ -55,7 +44,7 @@ func setupRecipeListView(_ tableView: UITableView) {
     tableView.layer.shadowOffset = CGSize(width: 0.5, height: 1)
     tableView.layer.shadowRadius = 2
 
-    tableView.separatorStyle = UITableViewCellSeparatorStyle.none
+    tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
 
     let inset = UIEdgeInsets(top: 0, left: 0, bottom: 45, right: 0)
     tableView.contentInset = inset
@@ -85,14 +74,13 @@ func showLoader(uiView: UIView) {
     loader.frame = CGRect(x: 0, y: 0, width: 40.0, height: 40.0)
     loader.center = uiView.center
     loader.hidesWhenStopped = true
-    loader.activityIndicatorViewStyle =
-        UIActivityIndicatorViewStyle.whiteLarge
+    loader.style =
+        UIActivityIndicatorView.Style.whiteLarge
     uiView.addSubview(loader)
     loader.startAnimating()
 }
 
 extension UIView {
-
     func roundCorners(corners:UIRectCorner, radius: CGFloat) {
         DispatchQueue.main.async {
             let path = UIBezierPath(roundedRect: self.bounds,
@@ -103,6 +91,17 @@ extension UIView {
             maskLayer.path = path.cgPath
             self.layer.mask = maskLayer
         }
+    }
+
+    func applyBackgroundGradient () {
+        let startGreen = hexStringToUIColor(hex: "A2FFB1")
+
+        let gradient = CAGradientLayer()
+        gradient.frame = self.bounds
+        gradient.colors = [UIColor.white.cgColor, startGreen.withAlphaComponent(0.6).cgColor]
+        gradient.locations = [0.05, 0.99]
+
+        self.layer.insertSublayer(gradient, at: 0)
     }
 }
 
@@ -128,15 +127,15 @@ extension UIViewController {
 
     func activateLoadingIndicator() {
         // add the spinner view controller
-        self.navigationController?.addChildViewController(loadingIndicator)
+        self.navigationController?.addChild(loadingIndicator)
         loadingIndicator.view.frame = UIScreen.main.bounds
         self.navigationController?.view.addSubview(loadingIndicator.view)
-        loadingIndicator.didMove(toParentViewController: self)
+        loadingIndicator.didMove(toParent: self)
     }
 
     func deactivateLoadingIndicator() {
-        loadingIndicator.willMove(toParentViewController: nil)
+        loadingIndicator.willMove(toParent: nil)
         loadingIndicator.view.removeFromSuperview()
-        loadingIndicator.removeFromParentViewController()
+        loadingIndicator.removeFromParent()
     }
 }

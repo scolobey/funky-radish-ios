@@ -46,7 +46,7 @@ class RecipeViewController: BaseViewController {
         let recipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
         recipeInfo.font = recipeFont
 
-        applyBackgroundGradient(self.view)
+        self.view.applyBackgroundGradient()
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -69,7 +69,7 @@ class RecipeViewController: BaseViewController {
         // Warn the user these changes are permanent.
         let alertController = UIAlertController(title: "Fair warning!", message: "Once you delete this recipe, it will be lost forever.", preferredStyle: .alert)
 
-        let approveAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.default) { UIAlertAction in
+        let approveAction = UIAlertAction(title: "Delete", style: UIAlertAction.Style.default) { UIAlertAction in
             do {
                 try realm.write {
                     realm.delete(localRecipes[selectedRecipe])
@@ -79,13 +79,17 @@ class RecipeViewController: BaseViewController {
                 if (deleteId != nil) {
                     print(deleteId!.description)
 
-                    // Call the API
                     APIManager().deleteRecipe(id: deleteId!,
                         onSuccess: {
                             print("recipe deleted")
                     },
                         onFailure: { error in
-                            print(error)
+                            print("Delete failed. Adding to queue until API communication is restored.")
+
+                            var delete_queue = UserDefaults.standard.stringArray(forKey: "DeletedQueue") ?? [String]()
+                            delete_queue.append(deleteId!)
+                            UserDefaults.standard.set(delete_queue, forKey: "DeletedQueue")
+                            print(delete_queue)
                     })
                 }
                 else {
@@ -99,7 +103,7 @@ class RecipeViewController: BaseViewController {
             self.navigationController?.popViewController(animated: true)
         }
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) { UIAlertAction in
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { UIAlertAction in
             print("Delete Canceled")
         }
 
@@ -151,7 +155,6 @@ class RecipeViewController: BaseViewController {
     }
 
     func saveRecipe(title: String, directions: String, ingredients: String) {
-
         let date = Date()
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(identifier: "UTC")

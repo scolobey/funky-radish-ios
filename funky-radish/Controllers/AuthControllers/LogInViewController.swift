@@ -94,7 +94,6 @@ class LogInViewController: UIViewController {
                 DispatchQueue.main.async {
                     try! API.loadRecipes(
                         onSuccess: {
-                            KeychainWrapper.standard.set(email, forKey: "fr_user_email")
                             UserDefaults.standard.set(false, forKey: "fr_isOffline")
 
                             print("recipes loaded.")

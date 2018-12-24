@@ -16,6 +16,11 @@ struct Token: Decodable {
     let token: String
 }
 
+struct ResponseMessage: Decodable {
+    let success: Bool
+    let message: String
+}
+
 enum RecipeError: Error {
     case noToken
     case invalidToken
@@ -25,24 +30,22 @@ enum RecipeError: Error {
 }
 
 class APIManager: NSObject {
-    // TODO: do we really need a sharedInstance?
-
-    let baseURL = "https://funky-radish-api.herokuapp.com/"
-
     let keychainWrapper = KeychainWrapper(serviceName: KeychainWrapper.standard.serviceName, accessGroup: "group.myAccessGroup")
 
     static let sharedInstance = APIManager()
 
     // Endpoints
-    static let authEndpoint = "authenticate"
-    static let recipesEndpoint = "recipes"
-    static let deleteRecipeEndpoint = "recipe"
-    static let updateRecipesEndpoint = "updateRecipes"
-    static let userEndpoint = "users"
+    final let baseURL = "https://funky-radish-api.herokuapp.com/"
+    final let authEndpoint = "authenticate"
+    final let recipesEndpoint = "recipes"
+    final let deleteRecipeEndpoint = "recipe"
+    final let updateRecipesEndpoint = "updateRecipes"
+    final let userEndpoint = "users"
+    final let deleteRecipesEndpoint = "deleteRecipes"
 
     // User
     func createUser(email: String, username: String, password: String, onSuccess: @escaping(String) -> Void, onFailure: @escaping(Error) -> Void) throws {
-        let url : String = baseURL + APIManager.userEndpoint
+        let url : String = baseURL + userEndpoint
 
         // Structure the data
         let json: [String: Any] = [
@@ -70,7 +73,6 @@ class APIManager: NSObject {
                 print("Encountered an error when decoding user response.")
                 onFailure(error)
             }
-
         }).resume()
     }
 
@@ -84,7 +86,7 @@ class APIManager: NSObject {
         }
 
         // Setup the request
-        let url : String = baseURL + APIManager.authEndpoint
+        let url : String = baseURL + authEndpoint
         let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
 
         request.httpMethod = "POST"
@@ -95,7 +97,9 @@ class APIManager: NSObject {
         // I think the error structuring on this can be improved.
         URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) in
 
-            guard let data = data, error == nil, response != nil else {print(error!); return}
+            guard let data = data, error == nil, response != nil else {
+                return
+            }
 
             do {
                 // I think that the line below should be refactored into a call to our JSON serializer
@@ -108,6 +112,7 @@ class APIManager: NSObject {
             }
             catch {
                 print("Encountered an error when decoding authorization token.")
+                onFailure(error)
             }
 
         }).resume()
@@ -132,14 +137,17 @@ class APIManager: NSObject {
         }
 
         // Token in hand, we can request our recipes from the API.
-        let url : String = baseURL + APIManager.recipesEndpoint
+        let url : String = baseURL + recipesEndpoint
 
         let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
         request.httpMethod = "GET"
         request.addValue(retrievedToken, forHTTPHeaderField: "x-access-token")
 
         URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) in
-            guard let data = data, error == nil, response != nil else {onFailure(error!); return}
+            guard let data = data, error == nil, response != nil else {
+                onFailure(error!)
+                return
+            }
 
             do {
                 try JSONSerializer().serialize(input: data)
@@ -153,7 +161,7 @@ class APIManager: NSObject {
     }
 
     func addRecipe(recipe: Recipe, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
-        let url : String = baseURL + APIManager.recipesEndpoint
+        let url : String = baseURL + recipesEndpoint
 
         let session = URLSession.shared
         let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
@@ -241,7 +249,7 @@ class APIManager: NSObject {
         let jsonData = try? JSONSerialization.data(withJSONObject: json)
 
         // Execute request.
-        let url : String = baseURL + APIManager.recipesEndpoint
+        let url : String = baseURL + recipesEndpoint
         let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
         request.httpMethod = "POST"
         request.addValue(retrievedToken, forHTTPHeaderField: "x-access-token")
@@ -324,7 +332,7 @@ class APIManager: NSObject {
         let jsonData = try? JSONSerialization.data(withJSONObject: json)
 
         // Execute request.
-        let url : String = baseURL + APIManager.updateRecipesEndpoint
+        let url : String = baseURL + updateRecipesEndpoint
         let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
         request.httpMethod = "PUT"
         request.addValue(retrievedToken, forHTTPHeaderField: "x-access-token")
@@ -343,7 +351,7 @@ class APIManager: NSObject {
     }
 
     func deleteRecipe(id: String, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
-        let url : String = baseURL + APIManager.deleteRecipeEndpoint + "/" + id
+        let url : String = baseURL + deleteRecipeEndpoint + "/" + id
 
         let session = URLSession.shared
         let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
@@ -376,6 +384,39 @@ class APIManager: NSObject {
             })
             task.resume()
         }
+    }
+
+    func bulkDeleteRecipes(recipes: [String], onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
+
+        // Check for internet connection
+        if !Reachability.isConnectedToNetwork() {
+            throw RecipeError.noInternetConnection
+        }
+
+        // Get the authorization token.
+        guard let retrievedToken: String = KeychainWrapper.standard.string(forKey: "fr_token") else {
+            throw RecipeError.noToken
+        }
+
+        let jsonData = try? JSONSerialization.data(withJSONObject: recipes)
+
+        // Execute request.
+        let url : String = baseURL + deleteRecipesEndpoint
+        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
+        request.httpMethod = "DELETE"
+        request.addValue(retrievedToken, forHTTPHeaderField: "x-access-token")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
+        request.httpBody = jsonData
+
+        print(String(decoding: jsonData!, as: UTF8.self))
+
+        URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
+            guard let data = data, error == nil, response != nil else {onFailure(error!); return}
+
+            print(String(decoding: data, as: UTF8.self))
+        }).resume()
+
     }
 
 }

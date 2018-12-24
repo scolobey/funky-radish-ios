@@ -118,7 +118,6 @@ class SignUpViewController: UIViewController {
 
         try API.getToken(email: email, password: pw,
             onSuccess: {
-                KeychainWrapper.standard.set(email, forKey: "fr_user_email")
                 UserDefaults.standard.set(false, forKey: "fr_isOffline")
 
                 // Synch recipes

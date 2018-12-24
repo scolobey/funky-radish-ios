@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1A93CC99345C53A4D450C6D7 /* Pods_funky_radish.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9189DDA363271AF31D2CA986 /* Pods_funky_radish.framework */; };
-		CC184B4F2118DEED00603333 /* RealmService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC184B4E2118DEED00603333 /* RealmService.swift */; };
 		CC184B52211E300400603333 /* RecipeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC184B51211E300400603333 /* RecipeController.swift */; };
 		CC184B5A2120A1A600603333 /* FunkyRadishTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC184B592120A1A600603333 /* FunkyRadishTests.swift */; };
 		CC2D5EE720FA937E0002FB73 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2D5EE620FA937E0002FB73 /* BaseViewController.swift */; };
@@ -54,7 +53,6 @@
 		AD27E87458801B677AF03C41 /* Pods-funky-radish.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-funky-radish.debug.xcconfig"; path = "Pods/Target Support Files/Pods-funky-radish/Pods-funky-radish.debug.xcconfig"; sourceTree = "<group>"; };
 		B9E868050C94BE6F792BEA9F /* Pods-funky-radish.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-funky-radish.release.xcconfig"; path = "Pods/Target Support Files/Pods-funky-radish/Pods-funky-radish.release.xcconfig"; sourceTree = "<group>"; };
 		BB64E4577B74D25797DEA44E /* Pods_FunkyRadishTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FunkyRadishTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CC184B4E2118DEED00603333 /* RealmService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmService.swift; sourceTree = "<group>"; };
 		CC184B51211E300400603333 /* RecipeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeController.swift; sourceTree = "<group>"; };
 		CC184B572120A1A600603333 /* FunkyRadishTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FunkyRadishTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC184B592120A1A600603333 /* FunkyRadishTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunkyRadishTests.swift; sourceTree = "<group>"; };
@@ -208,7 +206,6 @@
 				CC6D92F52110E4130044C600 /* Direction.swift */,
 				CC6D92F72110E4430044C600 /* User.swift */,
 				CC6D92F92110E56B0044C600 /* Recipe.swift */,
-				CC184B4E2118DEED00603333 /* RealmService.swift */,
 				CC3886282137519F00AFBB00 /* UserResponse.swift */,
 			);
 			path = Models;
@@ -333,6 +330,7 @@
 					};
 					CC8177A220EBBF9900D02783 = {
 						CreatedOnToolsVersion = 9.3.1;
+						LastSwiftMigration = 1010;
 					};
 				};
 			};
@@ -451,7 +449,6 @@
 				CCF221DC2128BD0F00FD5C9E /* Reachability.swift in Sources */,
 				CC739D0C20F6CFF00031AAB2 /* RecipeSearchViewController.swift in Sources */,
 				CC6D92FA2110E56B0044C600 /* Recipe.swift in Sources */,
-				CC184B4F2118DEED00603333 /* RealmService.swift in Sources */,
 				CC3886292137519F00AFBB00 /* UserResponse.swift in Sources */,
 				CC4505F82148A6B20056ED3D /* LoadAnimationViewController.swift in Sources */,
 			);
@@ -661,14 +658,14 @@
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				ENABLE_ON_DEMAND_RESOURCES = NO;
 				INFOPLIST_FILE = "funky-radish/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "kayso.funky-radish";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.scolobey.funky-radish";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -683,14 +680,14 @@
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				ENABLE_ON_DEMAND_RESOURCES = NO;
 				INFOPLIST_FILE = "funky-radish/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "kayso.funky-radish";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.scolobey.funky-radish";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

@@ -10,10 +10,16 @@ import UIKit
 import RealmSwift
 import SwiftKeychainWrapper
 
+enum AuthError: Error {
+    case noEmail
+    case noPassword
+}
+
 var selectedRecipe = 0
 var newRecipe = false
 
 var fruser = KeychainWrapper.standard.string(forKey: "fr_user_email")
+var frpw = KeychainWrapper.standard.string(forKey: "fr_password")
 var offline = UserDefaults.standard.bool(forKey: "fr_isOffline")
 
 var localRecipes = realm.objects(Recipe.self)
@@ -29,17 +35,20 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         super.viewDidLoad()
         // Data
         do {
+//          activateLoadingIndicator()
             try loadRecipes()
             print("success")
         }
         catch RecipeError.noInternetConnection {
+            deactivateLoadingIndicator()
             self.navigationController!.showToast(message: "Unable to synch recipes. No internet connection.")
         }
         catch RecipeError.noToken {
+            deactivateLoadingIndicator()
+
             let alert = UIAlertController(title: "Hello", message: "How would you like to get started?", preferredStyle: .alert)
 
             let signupAction = UIAlertAction(title: "Sign Up", style: .default) { (alert: UIAlertAction!) -> Void in
-
                 if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SignUpViewController") as? SignUpViewController {
                     self.navigationController?.pushViewController(vc, animated: false)
                 }
@@ -64,14 +73,81 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
 
             present(alert, animated: true, completion: nil)
         }
+        catch serializerError.failedSerialization {
+            deactivateLoadingIndicator()
+            do {
+                // check if there's an email and password saved in UserDefaults
+                guard let retrievedEmail: String = KeychainWrapper.standard.string(forKey: "fr_user_email") else {
+                    throw AuthError.noEmail
+                }
+
+                guard let retrievedPassword: String = KeychainWrapper.standard.string(forKey: "fr_password") else {
+                    throw AuthError.noPassword
+                }
+
+                if(retrievedEmail.count > 0 && retrievedPassword.count > 0) {
+                    let API = APIManager()
+
+                    try API.getToken(
+                        email: retrievedEmail,
+                        password: retrievedPassword,
+                        onSuccess: {
+
+                            UserDefaults.standard.set(false, forKey: "fr_isOffline")
+
+                            // Synch recipes
+                            DispatchQueue.main.async {
+                                //If you've already added recipes, post them to the API
+                                if (localRecipes.count > 0) {
+                                    do {
+                                        try APIManager().bulkInsertRecipes(
+                                            recipes: Array(localRecipes),
+                                            onSuccess: {
+                                                DispatchQueue.main.async {
+                                                    self.deactivateLoadingIndicator()
+                                                }
+                                            },
+                                            onFailure: { error in
+                                                print("Error: " + error.localizedDescription)
+                                            })
+                                        }
+                                    catch {
+                                        print("Error inserting recipes")
+                                        self.deactivateLoadingIndicator()
+                                    }
+                                } else {
+                                    self.deactivateLoadingIndicator()
+                                }
+                            }
+                        },
+                        onFailure: { error in
+                            self.deactivateLoadingIndicator()
+                            self.recipeList.reloadData()
+                        }
+                    )
+
+
+                } else {
+                    // if there are no user credentials, toast and transition to log in instead.
+                    self.navigationController!.showToast(message: "Token not valid.")
+
+                    if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "LogInViewController") as? LogInViewController {
+                        self.navigationController?.pushViewController(vc, animated: false)
+                    }
+                }
+            }
+            catch {
+
+            }
+        }
         catch {
-             self.navigationController!.showToast(message: "Sorry. There was an unidentified error loading your recipes.")
+            deactivateLoadingIndicator()
+            self.navigationController!.showToast(message: "Sorry. There was an unidentified error loading your recipes.")
         }
 
         // Styles
         setupRecipeListView(recipeList)
-        applyBackgroundGradient(self.view)
-
+        self.view.applyBackgroundGradient()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -142,6 +218,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        recipeFilter = ""
         self.filterTableView(text: searchText.lowercased())
     }
 

@@ -28,7 +28,7 @@ class BaseViewController: UIViewController, UISearchBarDelegate{
         image = scaleImage(image: image!, newWidth: 30.0)
 
         let button = UIButton()
-        button.setBackgroundImage(image, for: UIControlState.normal)
+        button.setBackgroundImage(image, for: UIControl.State.normal)
         button.frame = CGRect(x: 0.0, y: 0.0, width: 10.0, height: 10.0)
         button.addTarget(self, action: #selector(toggleSettings), for: .touchUpInside)
 

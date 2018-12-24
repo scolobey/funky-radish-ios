@@ -12,7 +12,6 @@ import SystemConfiguration
 public class Reachability {
 
     class func isConnectedToNetwork() -> Bool {
-
         var zeroAddress = sockaddr_in()
         zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
         zeroAddress.sin_family = sa_family_t(AF_INET)

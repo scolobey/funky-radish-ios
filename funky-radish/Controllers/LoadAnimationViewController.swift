@@ -9,8 +9,7 @@
 import UIKit
 
 class LoadAnimationViewController: UIViewController {
-
-    var spinner = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+    var spinner = UIActivityIndicatorView(style: .whiteLarge)
 
     override func loadView() {
         view = UIView()
@@ -23,5 +22,4 @@ class LoadAnimationViewController: UIViewController {
         spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
     }
-
 }
