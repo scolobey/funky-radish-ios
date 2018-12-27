@@ -30,7 +30,8 @@ public class Reachability {
         let isReachable = flags == .reachable
         let needsConnection = flags == .connectionRequired
 
-        return isReachable && !needsConnection
-
+        // Would prefer to know explicitly if cellular is enabled for this app, but this works.
+        return (isReachable || flags.contains(.isWWAN)) && !needsConnection
     }
+
 }
