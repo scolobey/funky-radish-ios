@@ -56,7 +56,6 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
         }
 
         if (!Reachability.isConnectedToNetwork()){
-
             if (indexPath.row == 0) {
                 let fontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
                 let font = UIFont(descriptor: fontDescriptor, size: 18.0)
@@ -217,21 +216,35 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
                 }
             case 3:
                 print("action: Log out.")
-                // Remove user data
-                KeychainWrapper.standard.set("", forKey: "fr_token")
-                KeychainWrapper.standard.set("", forKey: "fr_user_email")
-                KeychainWrapper.standard.set("", forKey: "fr_password")
 
-                UserDefaults.standard.set(true, forKey: "fr_isOffline")
+                let alertController = UIAlertController(title: "Fair warning!", message: "Once you log out, any unsaved recipes will be lost forever.", preferredStyle: .alert)
 
-                // Remove recipes
-                let realm = try! Realm()
+                let approveAction = UIAlertAction(title: "Continue", style: UIAlertAction.Style.default) { UIAlertAction in
+                    // Remove user data
+                    KeychainWrapper.standard.set("", forKey: "fr_token")
+                    KeychainWrapper.standard.set("", forKey: "fr_user_email")
+                    KeychainWrapper.standard.set("", forKey: "fr_password")
 
-                try! realm.write {
-                    realm.deleteAll()
+                    UserDefaults.standard.set(true, forKey: "fr_isOffline")
+
+                    // Remove recipes
+                    let realm = try! Realm()
+
+                    try! realm.write {
+                        realm.deleteAll()
+                    }
+
+                    self.navigationController?.popViewController(animated: true)
                 }
 
-                self.navigationController?.popViewController(animated: true)
+                let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { UIAlertAction in
+                    print("Delete Canceled")
+                }
+
+                alertController.addAction(approveAction)
+                alertController.addAction(cancelAction)
+
+                self.present(alertController, animated: true, completion: nil)
             case 4:
                 print("action: Toggle online.")
                 UserDefaults.standard.set(false, forKey: "fr_isOffline")

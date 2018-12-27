@@ -102,16 +102,16 @@ class APIManager: NSObject {
             }
 
             do {
-                // I think that the line below should be refactored into a call to our JSON serializer
                 let token = try JSONDecoder().decode(Token.self, from: data)
                 let saveSuccessful = KeychainWrapper.standard.set(token.token, forKey: "fr_token")
                 if (saveSuccessful) {
                     print("Authorization token recorded.")
+                    KeychainWrapper.standard.set(email, forKey: "fr_user_email")
+                    KeychainWrapper.standard.set(password, forKey: "fr_password")
                     onSuccess()
                 }
             }
             catch {
-                print("Encountered an error when decoding authorization token.")
                 onFailure(error)
             }
 
@@ -350,7 +350,14 @@ class APIManager: NSObject {
 
     }
 
-    func deleteRecipe(id: String, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
+    func deleteRecipe(id: String, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
+        print("let's try to delete this recipe")
+        
+        // Check the internet connection
+        if !Reachability.isConnectedToNetwork() {
+            throw RecipeError.noInternetConnection
+        }
+
         let url : String = baseURL + deleteRecipeEndpoint + "/" + id
 
         let session = URLSession.shared

@@ -37,7 +37,6 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         do {
 //          activateLoadingIndicator()
             try loadRecipes()
-            print("success")
         }
         catch RecipeError.noInternetConnection {
             deactivateLoadingIndicator()
@@ -151,10 +150,8 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     override func viewWillAppear(_ animated: Bool) {
-
         do {
             try loadRecipes()
-            print("Success")
         }
         catch RecipeError.noInternetConnection {
             print("No internet connection.")
@@ -188,8 +185,6 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         for x in localRecipes {
             print(x.title! + "--" + x._id!)
         }
-        // TODO: Probably should have a loading indicator here
-        // TODO: Realm recipe needs an id and an archive boolean
 
         // If recipes load from Realm, reload the table before synch
         if (localRecipes.count > 0) {
@@ -200,6 +195,8 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         }
 
         if (!offline) {
+            print(!offline)
+            print("what's goin on here?")
             // Call the API
             try APIManager().loadRecipes(
                 onSuccess: {
@@ -228,6 +225,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         }
         else {
             localRecipes = realm.objects(Recipe.self)
+            self.searchBar.endEditing(true)
         }
 
         recipeList.reloadData()

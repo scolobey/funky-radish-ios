@@ -160,7 +160,7 @@ class JSONSerializer {
                 print("uploading recipes")
                 try APIManager().bulkInsertRecipes(recipes: upload,
                 onSuccess: {
-                    print("success")
+                    print("successful recipe upload")
                 },
                 onFailure: { error in
                     print("Error: " + error.localizedDescription)
@@ -183,7 +183,7 @@ class JSONSerializer {
                 print("updating recipes")
                 try APIManager().bulkUpdateRecipes(recipes: update,
                 onSuccess: {
-                    print("success")
+                    print("successful recipe bulk update.")
                 },
                 onFailure: { error in
                     print("Error: " + error.localizedDescription)
@@ -208,7 +208,7 @@ class JSONSerializer {
                 print("deleting recipes")
                 try APIManager().bulkDeleteRecipes(recipes: deleteRecipes,
                 onSuccess: {
-                    print("success")
+                    print("successful bulk delete.")
                     //Set the recipes to delete list to nada
                     let delete_queue = [String]()
                     UserDefaults.standard.set(delete_queue, forKey: "DeletedQueue")

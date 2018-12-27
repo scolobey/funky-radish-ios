@@ -74,7 +74,7 @@ class SignUpViewController: UIViewController {
         catch validationError.invalidPassword {
             // TODO: Should guide the user on password requirements.
             // TODO: Can't show toast if navigation Controller is not available.
-            self.navigationController!.showToast(message: "Invalid password.")
+            self.navigationController!.showToast(message: "Password too short.")
         }
         catch signupError.noConnection {
             self.navigationController!.showToast(message: "No internet connection.")
@@ -147,8 +147,10 @@ class SignUpViewController: UIViewController {
                 }
             },
             onFailure: { error in
-                self.deactivateLoadingIndicator()
-                self.navigationController!.showToast(message: "Error: " + error.localizedDescription)
+                /* This should never happen. Unless maybe somehow the server went down between creating a user and logging in */
+                DispatchQueue.main.async {
+                    self.navigationController!.showToast(message: "Error: " + error.localizedDescription)
+                }
             }
         )
     }

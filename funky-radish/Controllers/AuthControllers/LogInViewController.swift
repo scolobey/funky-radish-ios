@@ -91,26 +91,27 @@ class LogInViewController: UIViewController {
 
         try API.getToken(email: email, password: pw,
             onSuccess: {
+                UserDefaults.standard.set(false, forKey: "fr_isOffline")
+
                 DispatchQueue.main.async {
                     try! API.loadRecipes(
                         onSuccess: {
-                            UserDefaults.standard.set(false, forKey: "fr_isOffline")
-
                             print("recipes loaded.")
                         },
                         onFailure: { error in
-                            print(error)
+                            print("recipe load failed")
                         }
                     )
 
                     self.deactivateLoadingIndicator()
-                    
                     self.navigationController?.popToRootViewController(animated: false)
                 }
             },
             onFailure: { error in
-                self.deactivateLoadingIndicator()
-                self.navigationController!.showToast(message: "Error: " + error.localizedDescription)
+                DispatchQueue.main.async {
+                    self.deactivateLoadingIndicator()
+                    self.navigationController!.showToast(message: "Incorrect email or password.")
+                }
             }
         )
     }

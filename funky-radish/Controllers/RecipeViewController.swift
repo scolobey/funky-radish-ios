@@ -79,7 +79,7 @@ class RecipeViewController: BaseViewController {
                 if (deleteId != nil) {
                     print(deleteId!.description)
 
-                    APIManager().deleteRecipe(id: deleteId!,
+                    try APIManager().deleteRecipe(id: deleteId!,
                         onSuccess: {
                             print("recipe deleted")
                     },
@@ -95,6 +95,13 @@ class RecipeViewController: BaseViewController {
                 else {
                     print("not in the api")
                 }
+            }
+            catch RecipeError.noInternetConnection {
+                print("no internet connection. adding to queue until internet is restored.")
+                var delete_queue = UserDefaults.standard.stringArray(forKey: "DeletedQueue") ?? [String]()
+                delete_queue.append(deleteId!)
+                UserDefaults.standard.set(delete_queue, forKey: "DeletedQueue")
+                print(delete_queue)
             }
             catch {
                 print("realm error")
