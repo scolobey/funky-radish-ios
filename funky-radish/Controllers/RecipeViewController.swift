@@ -8,14 +8,18 @@
 
 import UIKit
 import RealmSwift
+
 import os
 
-let realm = try! Realm()
-
 class RecipeViewController: BaseViewController {
+
     var ingredientView: Bool = false
     var ingredientText: String = ""
     var directionText: String = ""
+
+
+    let realmManager = RealmManager()
+    //    let realm = try! Realm()
 
     @IBOutlet weak var recipeTitle: UILabel!
     @IBOutlet weak var recipeInfo: UITextView!
@@ -71,26 +75,23 @@ class RecipeViewController: BaseViewController {
 
         let approveAction = UIAlertAction(title: "Delete", style: UIAlertAction.Style.default) { UIAlertAction in
             do {
-                try realm.write {
-                    realm.delete(localRecipes[selectedRecipe])
-                }
+                self.realmManager.delete(localRecipes[selectedRecipe])
 
                 // Delete the recipe from the API if it has an id
                 if (deleteId != nil) {
                     try APIManager().deleteRecipe(id: deleteId!,
-                        onSuccess: {
-                            os_log("Delete succesful")
+                                                  onSuccess: {
+                                                    os_log("Recipe deleted.")
                     },
-                        onFailure: { error in
-                            os_log("Delete failed. Adding to queue until API connection is restored.")
-
-                            var delete_queue = UserDefaults.standard.stringArray(forKey: "DeletedQueue") ?? [String]()
-                            delete_queue.append(deleteId!)
-                            UserDefaults.standard.set(delete_queue, forKey: "DeletedQueue")
+                                                  onFailure: { error in
+                                                    os_log("Delete failed.")
+                                                    var delete_queue = UserDefaults.standard.stringArray(forKey: "DeletedQueue") ?? [String]()
+                                                    delete_queue.append(deleteId!)
+                                                    UserDefaults.standard.set(delete_queue, forKey: "DeletedQueue")
                     })
                 }
                 else {
-                    os_log("Recipe removed from Realm.")
+                    os_log("This recipe is not in the API.")
                 }
             }
             catch RecipeError.noInternetConnection {
@@ -100,14 +101,14 @@ class RecipeViewController: BaseViewController {
                 UserDefaults.standard.set(delete_queue, forKey: "DeletedQueue")
             }
             catch {
-                os_log("Realm error")
+                os_log("Probably a Realm error.")
             }
 
             self.navigationController?.popViewController(animated: true)
         }
 
         let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { UIAlertAction in
-            os_log("Delete Canceled")
+            return
         }
 
         alertController.addAction(approveAction)
@@ -136,16 +137,12 @@ class RecipeViewController: BaseViewController {
 
     @IBAction func recipeToggle(_ sender: UISwitch) {
         if (sender.isOn == true) {
-            saveRecipe(title: localRecipes[selectedRecipe].title!, directions: directionText, ingredients: recipeInfo.text)
-
             prepareTextForDisplay(recipe: localRecipes[selectedRecipe])
             ingredientView = false
             recipeInfo.text = directionText
             contentLabel.text = "Directions"
         }
         else {
-            saveRecipe(title: localRecipes[selectedRecipe].title!, directions: recipeInfo.text, ingredients: ingredientText)
-
             prepareTextForDisplay(recipe: localRecipes[selectedRecipe])
             ingredientView = true
             recipeInfo.text = ingredientText
@@ -154,7 +151,7 @@ class RecipeViewController: BaseViewController {
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-         recipeFilter = searchText
+        recipeFilter = searchText
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -189,17 +186,12 @@ class RecipeViewController: BaseViewController {
         let directionRealmList = List<Direction>()
         directionRealmList.append(objectsIn: directionArray)
 
-        do {
-            try realm.write {
-                localRecipes[selectedRecipe].setValue(title, forKey: "title")
-                localRecipes[selectedRecipe].setValue(ingredientRealmList, forKey: "ingredients")
-                localRecipes[selectedRecipe].setValue(directionRealmList, forKey: "directions")
-                localRecipes[selectedRecipe].setValue(result, forKey: "updatedAt")
-            }
-        }
-        catch {
-            os_log("Recipe write error")
-        }
+        realmManager.update(localRecipes[selectedRecipe], with: [
+            "title": title,
+            "ingredients": ingredientRealmList,
+            "directions": directionRealmList,
+            "updatedAt": result
+            ])
     }
 
     func prepareTextForDisplay(recipe: Recipe) {

@@ -77,14 +77,14 @@ class JSONSerializer {
     }
 
     func synchRecipes(recipes: [Recipe]) {
-        os_log("synchronizing recipes")
+        print("synchronizing recipes")
         // Accepts an array of online recipes in the format returned from bulk recipe creation.
         // Compares to locally stored recipes.
         // local recipes, uploading any offline recipes that are not present online,
 
-        let realm = try! Realm()
-
-        let offlineRecipes = realm.objects(Recipe.self)
+        //        let realm = try! Realm()
+        let realmManager = RealmManager()
+        let offlineRecipes = realmManager.read(Recipe.self)
 
         let cloudRecipes = recipes
         var localRecipes = Array(offlineRecipes)
@@ -96,7 +96,8 @@ class JSONSerializer {
         // Any local recipes without ._id?
         for (index, recipe) in localRecipes.enumerated().reversed() {
             if(recipe._id == "") {
-                os_log("queueing %@ for upload", recipe.title ?? "*no-title*")
+                print("queueing \(recipe.title ?? "*no-title*") for upload")
+                print(recipe.realmID)
 
                 upload.append(recipe)
                 localRecipes.remove(at: index)
@@ -115,36 +116,55 @@ class JSONSerializer {
                     let webDate = stringToDate(date: recipe.updatedAt!)
                     let locDate = stringToDate(date: localRecipes[localInstance!].updatedAt!)
 
+                    print("Web Date: \(webDate)")
+                    print("Local date: \(locDate)")
+
                     if (NSCalendar.current.isDate(webDate, equalTo: locDate, toGranularity: .second)) {
-                        os_log("identical recipe")
+                        print("identical recipe")
                     } else if (webDate > locDate) {
-                        os_log("online recipe is more recent, update realm recipe.")
-                        try! realm.write {
-                            localRecipes[localInstance!].setValue(recipe._id, forKey: "_id")
-                            localRecipes[localInstance!].setValue(recipe.updatedAt, forKey: "updatedAt")
-                            localRecipes[localInstance!].setValue(recipe.title, forKey: "title")
-                            localRecipes[localInstance!].setValue(recipe.directions, forKey: "directions")
-                            localRecipes[localInstance!].setValue(recipe.ingredients, forKey: "ingredients")
-                        }
+                        print("online recipe is more recent, update realm recipe.")
+                        //                        do {
+                        // If there is no local recipe with a matching id, save recipe to Realm or edit that recipe in Realm to fix it's id.
+
+                        realmManager.create(recipe)
+
+                        //                            try realm.write {
+                        //                                localRecipes[localInstance!].setValue(recipe._id, forKey: "_id")
+                        //                                localRecipes[localInstance!].setValue(recipe.updatedAt, forKey: "updatedAt")
+                        //                                localRecipes[localInstance!].setValue(recipe.title, forKey: "title")
+                        //                                localRecipes[localInstance!].setValue(recipe.directions, forKey: "directions")
+                        //                                localRecipes[localInstance!].setValue(recipe.ingredients, forKey: "ingredients")
+                        //                            }
+                        //                        }
+                        //                        catch {
+                        //                            print("Error editing \(recipe.title!) in Realm.")
+                        //                        }
                     } else {
                         // Add the local recipe to update queue
                         update.append(localRecipes[localInstance!])
                     }
                 }
-                // if the recipe is in the deletion queue
+                    // if the recipe is in the deletion queue
                 else if (shouldDelete != nil) {
                     // Don't save this recipe. It's supposed to be deleted.
                     os_log("Not saving %@", recipe.title!)
                 }
-                // If there isn't already an offline version, add one.
+                    // If there isn't already an offline version, add one.
                 else {
-                    os_log("Adding %@ to Realm.", recipe.title!)
+                    os_log("Adding %@ to Realm", recipe.title!)
 
-                    let realm = try! Realm()
-                    // If there is no local recipe with a matching id, save recipe to Realm
-                    try! realm.write {
-                        realm.add(recipe)
-                    }
+                    realmManager.create(recipe)
+
+                    //                    do {
+                    //                        // If there is no local recipe with a matching id, save recipe to Realm
+                    //                        try realm.write {
+                    //                            realm.add(recipe)
+                    //                        }
+                    //                    }
+                    //                    catch {
+                    //                        print("Error adding \(recipe.title!) to Realm.")
+                    //                    }
+
                 }
             }
         }
@@ -152,13 +172,13 @@ class JSONSerializer {
         if (upload.count > 0) {
             // Post update recipes.
             do {
-                os_log("uploading recipes")
+                os_log("Uploading recipes.")
                 try APIManager().bulkInsertRecipes(recipes: upload,
-                onSuccess: {
-                    os_log("successful recipe upload")
+                                                   onSuccess: {
+                                                    os_log("Successful recipe upload")
                 },
-                onFailure: { error in
-                    os_log("Error: %@", error.localizedDescription)
+                                                   onFailure: { error in
+                                                    os_log("Error uploading recipes: %@", error.localizedDescription)
                 })
             }
             catch RecipeError.noInternetConnection {
@@ -175,13 +195,13 @@ class JSONSerializer {
         if (update.count > 0) {
             // Post update recipes.
             do {
-                os_log("updating recipes")
+                os_log("Recipe bulk update.")
                 try APIManager().bulkUpdateRecipes(recipes: update,
-                onSuccess: {
-                    os_log("successful recipe bulk update.")
+                                                   onSuccess: {
+                                                    os_log("Successful recipe bulk update.")
                 },
-                onFailure: { error in
-                    os_log("Error: %@", error.localizedDescription)
+                                                   onFailure: { error in
+                                                    os_log("Error updating recipes: ", error.localizedDescription)
                 })
             }
             catch RecipeError.noInternetConnection {
@@ -196,18 +216,20 @@ class JSONSerializer {
         }
 
         if (deleteRecipes.count > 0) {
+            os_log("Deleting recipes.")
+
             // Post update recipes.
             do {
-                os_log("deleting recipes")
                 try APIManager().bulkDeleteRecipes(recipes: deleteRecipes,
-                onSuccess: {
-                    os_log("successful bulk delete.")
-                    //Set the recipes to delete list to nada
-                    let delete_queue = [String]()
-                    UserDefaults.standard.set(delete_queue, forKey: "DeletedQueue")
+                                                   onSuccess: {
+                                                    os_log("Successful bulk recipe delete.")
+                                                    //Set the recipes to delete list to nada
+                                                    let delete_queue = [String]()
+                                                    UserDefaults.standard.set(delete_queue, forKey: "DeletedQueue")
+                                                    print(delete_queue)
                 },
-                onFailure: { error in
-                    os_log("Error: %@", error.localizedDescription)
+                                                   onFailure: { error in
+                                                    os_log("Error bulk deleting recipes: ", error.localizedDescription)
                 })
             }
             catch RecipeError.noInternetConnection {

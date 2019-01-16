@@ -35,6 +35,7 @@
 		CCF2A1FC210A4E130027080F /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF2A1FB210A4E130027080F /* Realm.framework */; };
 		CCF2A1FE210A4E130027080F /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF2A1FD210A4E130027080F /* RealmSwift.framework */; };
 		CCF2A200210A4E130027080F /* SwiftKeychainWrapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF2A1FF210A4E130027080F /* SwiftKeychainWrapper.framework */; };
+		CCF9895221EFBE5400B33597 /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF9895121EFBE5400B33597 /* RealmManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,6 +93,7 @@
 		CCF2A1FD210A4E130027080F /* RealmSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCF2A1FF210A4E130027080F /* SwiftKeychainWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftKeychainWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCF2A201210A4E130027080F /* SwiftyJSON.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftyJSON.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCF9895121EFBE5400B33597 /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -204,6 +206,7 @@
 				CC6D92F72110E4430044C600 /* User.swift */,
 				CC6D92F92110E56B0044C600 /* Recipe.swift */,
 				CC3886282137519F00AFBB00 /* UserResponse.swift */,
+				CCF9895121EFBE5400B33597 /* RealmManager.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -445,6 +448,7 @@
 				CCF221DC2128BD0F00FD5C9E /* Reachability.swift in Sources */,
 				CC739D0C20F6CFF00031AAB2 /* RecipeSearchViewController.swift in Sources */,
 				CC6D92FA2110E56B0044C600 /* Recipe.swift in Sources */,
+				CCF9895221EFBE5400B33597 /* RealmManager.swift in Sources */,
 				CC3886292137519F00AFBB00 /* UserResponse.swift in Sources */,
 				CC4505F82148A6B20056ED3D /* LoadAnimationViewController.swift in Sources */,
 			);

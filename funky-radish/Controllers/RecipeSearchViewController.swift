@@ -6,7 +6,6 @@
 //  Copyright © 2018 kayso. All rights reserved.
 //
 
-import UIKit
 import RealmSwift
 import SwiftKeychainWrapper
 import os
@@ -23,7 +22,10 @@ var fruser = KeychainWrapper.standard.string(forKey: "fr_user_email")
 var frpw = KeychainWrapper.standard.string(forKey: "fr_password")
 var offline = UserDefaults.standard.bool(forKey: "fr_isOffline")
 
-var localRecipes = realm.objects(Recipe.self)
+let realmManager = RealmManager()
+var localRecipes = realmManager.read(Recipe.self)
+
+//todo: Refactor to RealmManager to remove RealmSwift import here.
 var notificationToken: NotificationToken?
 
 var recipeFilter = ""
@@ -36,7 +38,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         super.viewDidLoad()
         // Data
         do {
-//          activateLoadingIndicator()
+            //          activateLoadingIndicator()
             try loadRecipes()
         }
         catch RecipeError.noInternetConnection {
@@ -92,7 +94,6 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
                         email: retrievedEmail,
                         password: retrievedPassword,
                         onSuccess: {
-
                             UserDefaults.standard.set(false, forKey: "fr_isOffline")
 
                             // Synch recipes
@@ -106,11 +107,11 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
                                                 DispatchQueue.main.async {
                                                     self.deactivateLoadingIndicator()
                                                 }
-                                            },
+                                        },
                                             onFailure: { error in
-                                                os_log("Error: %@", error.localizedDescription)
-                                            })
-                                        }
+                                                os_log("Error: ", error.localizedDescription)
+                                        })
+                                    }
                                     catch {
                                         os_log("Error inserting recipes")
                                         self.deactivateLoadingIndicator()
@@ -119,11 +120,11 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
                                     self.deactivateLoadingIndicator()
                                 }
                             }
-                        },
+                    },
                         onFailure: { error in
                             self.deactivateLoadingIndicator()
                             self.recipeList.reloadData()
-                        }
+                    }
                     )
 
 
@@ -158,7 +159,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
             os_log("No internet connection.")
         }
         catch RecipeError.noToken {
-            os_log("No token")
+            os_log("No token.")
         }
         catch {
             os_log("There was an unidentified error loading recipes.")
@@ -172,13 +173,18 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
             recipeList.reloadData()
         }
 
-        notificationToken = realm.observe { notification, realm in
+        notificationToken = realmManager.subscribe(handler: { notification, realm in
             self.recipeList.reloadData()
-        }
+        })
+
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         notificationToken?.invalidate()
+    }
+
+    func updateRecipeList() {
+        self.recipeList.reloadData()
     }
 
     func loadRecipes() throws {
@@ -186,19 +192,16 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         if (localRecipes.count > 0) {
             recipeList.reloadData()
         }
-        else {
-            os_log("no recipes in Realm")
-        }
 
         if (!offline) {
             // Call the API
             try APIManager().loadRecipes(
                 onSuccess: {
-                    os_log("recipes loaded")
-                },
+                    os_log("Recipes loaded.")
+            },
                 onFailure: { error in
-                    os_log("Error: %@", error.localizedDescription)
-                }
+                    os_log("Error: @%", error.localizedDescription)
+            }
             )
         }
         else {
@@ -215,10 +218,10 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
 
     func filterTableView(text: String) {
         if (text.count > 0) {
-            localRecipes = realm.objects(Recipe.self).filter("title contains [c] %@", text)
+            localRecipes = realmManager.read(Recipe.self).filter("title contains [c] %@", text)
         }
         else {
-            localRecipes = realm.objects(Recipe.self)
+            localRecipes = realmManager.read(Recipe.self)
             self.searchBar.endEditing(true)
         }
 
@@ -282,7 +285,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
             cell.roundCorners(corners: [.topLeft, .topRight], radius: 10.0)
         }
 
-        // Middle cell
+            // Middle cell
         else if (indexPath.row < (localRecipes[indexPath.section].ingredients.count)) {
             let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
             let recipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
@@ -293,7 +296,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
             cell.roundCorners(corners: [.topLeft, .topRight, .bottomLeft, .bottomRight], radius: 0.0)
         }
 
-        // Bottom cell
+            // Bottom cell
         else {
             let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell-Bold", size: 18.0)
             let boldRecipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
@@ -311,5 +314,4 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         selectedRecipe = indexPath.section
         self.performSegue(withIdentifier: "recipeSegue", sender: self)
     }
-
 }

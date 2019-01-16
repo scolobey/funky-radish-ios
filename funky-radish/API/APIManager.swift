@@ -5,9 +5,7 @@
 //  Created by Ryn Goodwin on 7/26/18.
 //  Copyright © 2018 kayso. All rights reserved.
 
-import UIKit
 import SwiftKeychainWrapper
-import RealmSwift
 import os
 
 struct Token: Decodable {
@@ -70,15 +68,14 @@ class APIManager: NSObject {
                 onSuccess(message)
             }
             catch {
-                os_log("Encountered an error when decoding user response.")
+                os_log("Error decoding user response.")
                 onFailure(error)
             }
         }).resume()
     }
 
     func getToken(email: String, password: String, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
-
-        os_log("lets get you a token.")
+        os_log("Downloading token.")
 
         // Check the internet connection
         if !Reachability.isConnectedToNetwork() {
@@ -105,13 +102,13 @@ class APIManager: NSObject {
                 let token = try JSONDecoder().decode(Token.self, from: data)
                 let saveSuccessful = KeychainWrapper.standard.set(token.token, forKey: "fr_token")
                 if (saveSuccessful) {
-                    os_log("Authorization token recorded.")
                     KeychainWrapper.standard.set(email, forKey: "fr_user_email")
                     KeychainWrapper.standard.set(password, forKey: "fr_password")
                     onSuccess()
                 }
             }
             catch {
+                os_log("Error downloading token.")
                 onFailure(error)
             }
 
@@ -120,8 +117,6 @@ class APIManager: NSObject {
 
     // Recipes
     func loadRecipes(onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
-        os_log("lets try loading some recipes.")
-
         // Check the internet connection
         if !Reachability.isConnectedToNetwork() {
             throw RecipeError.noInternetConnection
@@ -187,20 +182,16 @@ class APIManager: NSObject {
         let jsonData = try? JSONSerialization.data(withJSONObject: json)
         request.httpBody = jsonData
 
-        if (accessToken == nil) {
-            os_log("no token")
-        }
-
-        else {
+        if (accessToken != nil) {
             let task = session.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
                 if(error != nil){
                     onFailure(error!)
                 }
 
-                //todo: erhaps check that response is 200
+                    //TODO: check that response is 200
                 else{
                     do {
-                        guard let data = data else { return }
+                        guard data != nil else { return }
                     }
                 }
             })
@@ -209,6 +200,7 @@ class APIManager: NSObject {
     }
 
     func bulkInsertRecipes(recipes: [Recipe], onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
+
         // Check for internet connection
         if !Reachability.isConnectedToNetwork() {
             throw RecipeError.noInternetConnection
@@ -265,17 +257,12 @@ class APIManager: NSObject {
                 let uploadedRecipes = try JSONSerializer().serializeUploadedRecipes(input: data)
 
                 for example in uploadedRecipes.enumerated() {
-                    os_log("writing to realm")
+                    print("writing to realm -*-")
 
-                    let realm = try! Realm()
+                    let realmManager = RealmManager()
 
-                    if let updatingRecipe = realm.object(ofType: Recipe.self, forPrimaryKey: example.element.realmID) {
-                        os_log("updating recipe id's in Realm")
-
-                        try! realm.write {
-                            updatingRecipe._id = example.element._id
-                        }
-                    }
+                    let updatingRecipe = realmManager.fetch(example.element.realmID)
+                    realmManager.update(updatingRecipe, with: ["_id": example.element.realmID])
                 }
 
                 onSuccess()
@@ -338,7 +325,7 @@ class APIManager: NSObject {
         request.httpBody = jsonData
 
         URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
-            guard let data = data, error == nil, response != nil else {onFailure(error!); return}
+            guard let _ = data, error == nil, response != nil else {onFailure(error!); return}
         }).resume()
 
     }
@@ -361,10 +348,7 @@ class APIManager: NSObject {
 
         let accessToken: String? = KeychainWrapper.standard.string(forKey: "fr_token")
 
-        if (accessToken == nil) {
-            os_log("no token")
-        }
-        else {
+        if (accessToken != nil) {
             request.addValue(accessToken!, forHTTPHeaderField: "x-access-token")
 
             let task = session.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
@@ -372,10 +356,10 @@ class APIManager: NSObject {
                     onFailure(error!)
                 }
 
-                //Perhaps check that response is 200
+                    //Perhaps check that response is 200
                 else{
                     do {
-                        guard let data = data else { return }
+                        guard data != nil else { return }
                     }
                 }
             })
@@ -384,6 +368,7 @@ class APIManager: NSObject {
     }
 
     func bulkDeleteRecipes(recipes: [String], onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
+        os_log("Recipe deletion.")
 
         // Check for internet connection
         if !Reachability.isConnectedToNetwork() {
@@ -407,9 +392,7 @@ class APIManager: NSObject {
         request.httpBody = jsonData
 
         URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
-            guard let data = data, error == nil, response != nil else {onFailure(error!); return}
+            guard let _ = data, error == nil, response != nil else {onFailure(error!); return}
         }).resume()
-
     }
-
 }

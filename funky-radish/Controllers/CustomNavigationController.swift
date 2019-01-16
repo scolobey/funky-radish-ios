@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import RealmSwift
 import SwiftKeychainWrapper
 import os
 
@@ -80,21 +79,13 @@ class CustomNavigationController: UINavigationController {
 
     // Add recipe to Realm
     func createRecipe(_ title: String) throws {
-        do {
-            let realm = try Realm()
+        let realmManager = RealmManager()
 
-            let recipe = Recipe()
-            newRecipe = true
+        newRecipe = true
+        selectedRecipe = localRecipes.count
 
-            recipe.title = title
-            selectedRecipe = localRecipes.count
-
-            try! realm.write {
-                realm.add(recipe)
-            }
-        }
-        catch {
-            os_log("Recipe add failed.")
-        }
+        let recipe = Recipe()
+        recipe.title = title
+        realmManager.create(recipe)
     }
 }

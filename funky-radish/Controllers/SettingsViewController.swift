@@ -6,8 +6,6 @@
 //  Copyright © 2018 kayso. All rights reserved.
 //
 
-import UIKit
-import RealmSwift
 import SwiftKeychainWrapper
 import os
 
@@ -29,7 +27,6 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-
         if (!Reachability.isConnectedToNetwork() || (offline && fruser?.count ?? 0 > 0)){
             return 1
         }
@@ -139,7 +136,7 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
             }
         }
 
-        //TODO: remove this else
+            //TODO: remove this else
         else {
             let fontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
             let font = UIFont(descriptor: fontDescriptor, size: 18.0)
@@ -198,58 +195,53 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
         }
 
         switch userState {
-            case 1:
-                os_log("action: Log in.")
-                if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "LogInViewController") as? LogInViewController {
-                    self.navigationController?.pushViewController(vc, animated: false)
-                }
-            case 2:
-                os_log("action: Sign up.")
-                if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SignUpViewController") as? SignUpViewController {
-                    self.navigationController?.pushViewController(vc, animated: false)
-                }
-            case 3:
-                os_log("action: Log out.")
+        // Log in.
+        case 1:
+            if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "LogInViewController") as? LogInViewController {
+                self.navigationController?.pushViewController(vc, animated: false)
+            }
+        // Sign up.
+        case 2:
+            if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SignUpViewController") as? SignUpViewController {
+                self.navigationController?.pushViewController(vc, animated: false)
+            }
+        // Log out.
+        case 3:
+            let alertController = UIAlertController(title: "Fair warning!", message: "Once you log out, any unsaved recipes will be lost forever.", preferredStyle: .alert)
 
-                let alertController = UIAlertController(title: "Fair warning!", message: "Once you log out, any unsaved recipes will be lost forever.", preferredStyle: .alert)
+            let approveAction = UIAlertAction(title: "Continue", style: UIAlertAction.Style.default) { UIAlertAction in
+                // Remove user data
+                KeychainWrapper.standard.set("", forKey: "fr_token")
+                KeychainWrapper.standard.set("", forKey: "fr_user_email")
+                KeychainWrapper.standard.set("", forKey: "fr_password")
 
-                let approveAction = UIAlertAction(title: "Continue", style: UIAlertAction.Style.default) { UIAlertAction in
-                    // Remove user data
-                    KeychainWrapper.standard.set("", forKey: "fr_token")
-                    KeychainWrapper.standard.set("", forKey: "fr_user_email")
-                    KeychainWrapper.standard.set("", forKey: "fr_password")
-
-                    UserDefaults.standard.set(true, forKey: "fr_isOffline")
-
-                    // Remove recipes
-                    let realm = try! Realm()
-
-                    try! realm.write {
-                        realm.deleteAll()
-                    }
-
-                    self.navigationController?.popViewController(animated: true)
-                }
-
-                let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { UIAlertAction in
-                    os_log("Delete Canceled")
-                }
-
-                alertController.addAction(approveAction)
-                alertController.addAction(cancelAction)
-
-                self.present(alertController, animated: true, completion: nil)
-            case 4:
-                os_log("action: Toggle online.")
-                UserDefaults.standard.set(false, forKey: "fr_isOffline")
-                self.navigationController?.popViewController(animated: true)
-            case 5:
-                os_log("action: Toggle offline.")
                 UserDefaults.standard.set(true, forKey: "fr_isOffline")
+
+                // Remove recipes
+                let realmManager = RealmManager()
+                realmManager.clearAll()
+
                 self.navigationController?.popViewController(animated: true)
-            default:
-                os_log("default: case 0 is set for items which do not have an action currently.")
+            }
+
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { UIAlertAction in
+                return
+            }
+
+            alertController.addAction(approveAction)
+            alertController.addAction(cancelAction)
+
+            self.present(alertController, animated: true, completion: nil)
+        // Toggle online.
+        case 4:
+            UserDefaults.standard.set(false, forKey: "fr_isOffline")
+            self.navigationController?.popViewController(animated: true)
+        // Toggle offline.
+        case 5:
+            UserDefaults.standard.set(true, forKey: "fr_isOffline")
+            self.navigationController?.popViewController(animated: true)
+        default:
+            os_log("Selected item does not have an associated action.")
         }
     }
-
 }
