@@ -9,6 +9,7 @@
 import UIKit
 import RealmSwift
 import SwiftKeychainWrapper
+import os
 
 class CustomNavigationController: UINavigationController {
 
@@ -50,7 +51,6 @@ class CustomNavigationController: UINavigationController {
     }
 
     @objc func pressButton(_ sender: UIButton){
-
         let alert = UIAlertController(title: "Enter a title for your recipe.", message: nil, preferredStyle: .alert)
 
         alert.addTextField(configurationHandler: { textField in
@@ -71,7 +71,7 @@ class CustomNavigationController: UINavigationController {
                 self.performSegue(withIdentifier: "createRecipeSegue", sender: self)
             }
             catch {
-                print(error)
+                os_log("Recipe create failed.")
             }
         }))
 
@@ -94,8 +94,7 @@ class CustomNavigationController: UINavigationController {
             }
         }
         catch {
-            print(error)
+            os_log("Recipe add failed.")
         }
     }
 }
-

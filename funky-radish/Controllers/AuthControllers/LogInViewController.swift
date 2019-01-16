@@ -8,6 +8,7 @@
 
 import UIKit
 import SwiftKeychainWrapper
+import os
 
 enum loginError: Error {
     case incompleteUsername
@@ -15,7 +16,6 @@ enum loginError: Error {
 }
 
 class LogInViewController: UIViewController {
-
     @IBOutlet weak var emailField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
 
@@ -50,10 +50,10 @@ class LogInViewController: UIViewController {
             self.navigationController!.showToast(message: "Invalid password.")
         }
         catch RecipeError.invalidLogin {
-            print("those aren't the right credentials")
+            os_log("those aren't the right credentials")
         }
         catch {
-            print("Unknown login error")
+            os_log("Unknown login error")
         }
     }
 
@@ -96,10 +96,10 @@ class LogInViewController: UIViewController {
                 DispatchQueue.main.async {
                     try! API.loadRecipes(
                         onSuccess: {
-                            print("recipes loaded.")
+                            os_log("recipes loaded.")
                         },
                         onFailure: { error in
-                            print("recipe load failed")
+                            os_log("recipe load failed")
                         }
                     )
 

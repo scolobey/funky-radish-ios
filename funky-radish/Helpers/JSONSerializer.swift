@@ -9,6 +9,7 @@
 import Foundation
 import RealmSwift
 import SwiftKeychainWrapper
+import os
 
 enum serializerError: Error {
     case formattingError
@@ -22,8 +23,6 @@ class JSONSerializer {
         do {
             // Make sure the response is properly formatted json
             let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
-
-            print(json)
 
             guard json is [AnyObject] else {
                 throw serializerError.formattingError
@@ -67,7 +66,7 @@ class JSONSerializer {
             let recs = Array(user.recipes)
 
             if (recs.count > 0) {
-                
+
                 synchRecipes(recipes: recs)
             }
 
@@ -78,7 +77,7 @@ class JSONSerializer {
     }
 
     func synchRecipes(recipes: [Recipe]) {
-        print("synchronizing recipes")
+        os_log("synchronizing recipes")
         // Accepts an array of online recipes in the format returned from bulk recipe creation.
         // Compares to locally stored recipes.
         // local recipes, uploading any offline recipes that are not present online,
@@ -97,8 +96,7 @@ class JSONSerializer {
         // Any local recipes without ._id?
         for (index, recipe) in localRecipes.enumerated().reversed() {
             if(recipe._id == "") {
-                print("queueing \(recipe.title ?? "*no-title*") for upload")
-                print(recipe.realmID)
+                os_log("queueing %@ for upload", recipe.title ?? "*no-title*")
 
                 upload.append(recipe)
                 localRecipes.remove(at: index)
@@ -117,13 +115,10 @@ class JSONSerializer {
                     let webDate = stringToDate(date: recipe.updatedAt!)
                     let locDate = stringToDate(date: localRecipes[localInstance!].updatedAt!)
 
-                    print("Web Date: \(webDate)")
-                    print("Local date: \(locDate)")
-
                     if (NSCalendar.current.isDate(webDate, equalTo: locDate, toGranularity: .second)) {
-                        print("identical recipe")
+                        os_log("identical recipe")
                     } else if (webDate > locDate) {
-                        print("online recipe is more recent, update realm recipe.")
+                        os_log("online recipe is more recent, update realm recipe.")
                         try! realm.write {
                             localRecipes[localInstance!].setValue(recipe._id, forKey: "_id")
                             localRecipes[localInstance!].setValue(recipe.updatedAt, forKey: "updatedAt")
@@ -139,11 +134,11 @@ class JSONSerializer {
                 // if the recipe is in the deletion queue
                 else if (shouldDelete != nil) {
                     // Don't save this recipe. It's supposed to be deleted.
-                    print("not saving \(recipe.title!)")
+                    os_log("Not saving %@", recipe.title!)
                 }
                 // If there isn't already an offline version, add one.
                 else {
-                    print("Adding \(recipe.title!) to Realm")
+                    os_log("Adding %@ to Realm.", recipe.title!)
 
                     let realm = try! Realm()
                     // If there is no local recipe with a matching id, save recipe to Realm
@@ -157,82 +152,74 @@ class JSONSerializer {
         if (upload.count > 0) {
             // Post update recipes.
             do {
-                print("uploading recipes")
+                os_log("uploading recipes")
                 try APIManager().bulkInsertRecipes(recipes: upload,
                 onSuccess: {
-                    print("successful recipe upload")
+                    os_log("successful recipe upload")
                 },
                 onFailure: { error in
-                    print("Error: " + error.localizedDescription)
+                    os_log("Error: %@", error.localizedDescription)
                 })
             }
             catch RecipeError.noInternetConnection {
-                print("No internet connection")
+                os_log("No internet connection")
             }
             catch RecipeError.noToken {
-                print("No token")
+                os_log("No token")
             }
             catch {
-                print("Error posting recipes")
+                os_log("Error posting recipes")
             }
         }
 
         if (update.count > 0) {
             // Post update recipes.
             do {
-                print("updating recipes")
+                os_log("updating recipes")
                 try APIManager().bulkUpdateRecipes(recipes: update,
                 onSuccess: {
-                    print("successful recipe bulk update.")
+                    os_log("successful recipe bulk update.")
                 },
                 onFailure: { error in
-                    print("Error: " + error.localizedDescription)
+                    os_log("Error: %@", error.localizedDescription)
                 })
             }
             catch RecipeError.noInternetConnection {
-                print("No internet connection")
+                os_log("No internet connection")
             }
             catch RecipeError.noToken {
-                print("No token")
+                os_log("No token")
             }
             catch {
-                print("Error updating recipes")
+                os_log("Error updating recipes")
             }
         }
 
         if (deleteRecipes.count > 0) {
-            print("gotta delete these: \(deleteRecipes)")
-
             // Post update recipes.
             do {
-                print("deleting recipes")
+                os_log("deleting recipes")
                 try APIManager().bulkDeleteRecipes(recipes: deleteRecipes,
                 onSuccess: {
-                    print("successful bulk delete.")
+                    os_log("successful bulk delete.")
                     //Set the recipes to delete list to nada
                     let delete_queue = [String]()
                     UserDefaults.standard.set(delete_queue, forKey: "DeletedQueue")
-                    print(delete_queue)
                 },
                 onFailure: { error in
-                    print("Error: " + error.localizedDescription)
+                    os_log("Error: %@", error.localizedDescription)
                 })
             }
             catch RecipeError.noInternetConnection {
-                print("No internet connection")
+                os_log("No internet connection")
             }
             catch RecipeError.noToken {
-                print("No token")
+                os_log("No token")
             }
             catch {
-                print("Error updating recipes")
+                os_log("Error updating recipes")
             }
         }
-    }
-
-    func reconcileUpload(onlineRecipes: [Recipe], offlineRecipes: [Recipe]) {
-        print(offlineRecipes)
-        print(onlineRecipes)
     }
 
     func stringToDate(date: String) -> Date {

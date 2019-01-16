@@ -9,6 +9,7 @@
 import UIKit
 import RealmSwift
 import SwiftKeychainWrapper
+import os
 
 enum signupError: Error {
     case incompleteUsername
@@ -48,15 +49,14 @@ class SignUpViewController: UIViewController {
                 username: username,
                 password: pw,
                 onSuccess: { msg in
-                    print(msg)
                     do {
                         try self.getToken(email: email, pw: pw)
                     }
                     catch RecipeError.invalidLogin {
-                        print("Those aren't the right credentials")
+                        os_log("Those aren't the right credentials")
                     }
                     catch {
-                        print("Encountered an unidentified token error.")
+                        os_log("Encountered an unidentified token error.")
                     }
                 },
                 onFailure: { error in
@@ -83,7 +83,7 @@ class SignUpViewController: UIViewController {
             self.navigationController!.showToast(message: "Unknown signup error.")
         }
     }
-    
+
     @IBAction func dismissSignUp(_ sender: UIButton) {
         self.navigationController?.popToRootViewController(animated: false)
     }
@@ -127,17 +127,17 @@ class SignUpViewController: UIViewController {
                         do {
                             try APIManager().bulkInsertRecipes(recipes: Array(localRecipes),
                             onSuccess: {
-                                print("success")
+                                os_log("success")
                                 DispatchQueue.main.async {
                                     self.deactivateLoadingIndicator()
                                 }
                             },
                             onFailure: { error in
-                                print("Error: " + error.localizedDescription)
+                                os_log("Error: %@", error.localizedDescription)
                             })
                         }
                         catch {
-                            print("Error inserting recipes")
+                            os_log("Error inserting recipes")
                         }
                     } else {
                        self.deactivateLoadingIndicator()

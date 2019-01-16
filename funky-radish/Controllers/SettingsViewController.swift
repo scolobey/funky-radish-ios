@@ -9,6 +9,7 @@
 import UIKit
 import RealmSwift
 import SwiftKeychainWrapper
+import os
 
 class SettingsViewController: BaseViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -47,13 +48,6 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
             cell.selectionStyle = .none
             return cell
         }()
-
-        print("reachability: \(Reachability.isConnectedToNetwork())")
-        print("offline: \(offline)")
-
-        if (fruser != nil) {
-            print("user: \(fruser!) : \(fruser!.count)")
-        }
 
         if (!Reachability.isConnectedToNetwork()){
             if (indexPath.row == 0) {
@@ -205,17 +199,17 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
 
         switch userState {
             case 1:
-                print("action: Log in.")
+                os_log("action: Log in.")
                 if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "LogInViewController") as? LogInViewController {
                     self.navigationController?.pushViewController(vc, animated: false)
                 }
             case 2:
-                print("action: Sign up.")
+                os_log("action: Sign up.")
                 if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SignUpViewController") as? SignUpViewController {
                     self.navigationController?.pushViewController(vc, animated: false)
                 }
             case 3:
-                print("action: Log out.")
+                os_log("action: Log out.")
 
                 let alertController = UIAlertController(title: "Fair warning!", message: "Once you log out, any unsaved recipes will be lost forever.", preferredStyle: .alert)
 
@@ -238,7 +232,7 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
                 }
 
                 let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { UIAlertAction in
-                    print("Delete Canceled")
+                    os_log("Delete Canceled")
                 }
 
                 alertController.addAction(approveAction)
@@ -246,15 +240,15 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
 
                 self.present(alertController, animated: true, completion: nil)
             case 4:
-                print("action: Toggle online.")
+                os_log("action: Toggle online.")
                 UserDefaults.standard.set(false, forKey: "fr_isOffline")
                 self.navigationController?.popViewController(animated: true)
             case 5:
-                print("action: Toggle offline.")
+                os_log("action: Toggle offline.")
                 UserDefaults.standard.set(true, forKey: "fr_isOffline")
                 self.navigationController?.popViewController(animated: true)
             default:
-                print("default: case 0 is set for items which do not have an action currently.")
+                os_log("default: case 0 is set for items which do not have an action currently.")
         }
     }
 

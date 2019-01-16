@@ -5,10 +5,10 @@
 //  Created by Ryn Goodwin on 7/26/18.
 //  Copyright © 2018 kayso. All rights reserved.
 
-
 import UIKit
 import SwiftKeychainWrapper
 import RealmSwift
+import os
 
 struct Token: Decodable {
     let success: Bool
@@ -70,7 +70,7 @@ class APIManager: NSObject {
                 onSuccess(message)
             }
             catch {
-                print("Encountered an error when decoding user response.")
+                os_log("Encountered an error when decoding user response.")
                 onFailure(error)
             }
         }).resume()
@@ -78,7 +78,7 @@ class APIManager: NSObject {
 
     func getToken(email: String, password: String, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
 
-        print("lets get you a token.")
+        os_log("lets get you a token.")
 
         // Check the internet connection
         if !Reachability.isConnectedToNetwork() {
@@ -105,7 +105,7 @@ class APIManager: NSObject {
                 let token = try JSONDecoder().decode(Token.self, from: data)
                 let saveSuccessful = KeychainWrapper.standard.set(token.token, forKey: "fr_token")
                 if (saveSuccessful) {
-                    print("Authorization token recorded.")
+                    os_log("Authorization token recorded.")
                     KeychainWrapper.standard.set(email, forKey: "fr_user_email")
                     KeychainWrapper.standard.set(password, forKey: "fr_password")
                     onSuccess()
@@ -120,7 +120,7 @@ class APIManager: NSObject {
 
     // Recipes
     func loadRecipes(onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
-        print("lets try loading some recipes.")
+        os_log("lets try loading some recipes.")
 
         // Check the internet connection
         if !Reachability.isConnectedToNetwork() {
@@ -188,7 +188,7 @@ class APIManager: NSObject {
         request.httpBody = jsonData
 
         if (accessToken == nil) {
-            print("no token")
+            os_log("no token")
         }
 
         else {
@@ -197,11 +197,10 @@ class APIManager: NSObject {
                     onFailure(error!)
                 }
 
-                //Perhaps check that response is 200
+                //todo: erhaps check that response is 200
                 else{
                     do {
                         guard let data = data else { return }
-                        print(data)
                     }
                 }
             })
@@ -210,7 +209,6 @@ class APIManager: NSObject {
     }
 
     func bulkInsertRecipes(recipes: [Recipe], onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
-
         // Check for internet connection
         if !Reachability.isConnectedToNetwork() {
             throw RecipeError.noInternetConnection
@@ -257,8 +255,7 @@ class APIManager: NSObject {
         request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
         request.httpBody = jsonData
 
-        print("bulk insert")
-        print(json)
+        os_log("Bulk insertion.")
 
         URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
             guard let data = data, error == nil, response != nil else {onFailure(error!); return}
@@ -268,12 +265,12 @@ class APIManager: NSObject {
                 let uploadedRecipes = try JSONSerializer().serializeUploadedRecipes(input: data)
 
                 for example in uploadedRecipes.enumerated() {
-                    print("writing to realm")
+                    os_log("writing to realm")
 
                     let realm = try! Realm()
 
                     if let updatingRecipe = realm.object(ofType: Recipe.self, forPrimaryKey: example.element.realmID) {
-                        print("updating recipe id's in Realm")
+                        os_log("updating recipe id's in Realm")
 
                         try! realm.write {
                             updatingRecipe._id = example.element._id
@@ -287,7 +284,7 @@ class APIManager: NSObject {
                 // If no recipes return, we need to let the user know with a notification.
                 onFailure(error)
             }
-            
+
         }).resume()
     }
 
@@ -340,19 +337,15 @@ class APIManager: NSObject {
         request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
         request.httpBody = jsonData
 
-        print(String(decoding: jsonData!, as: UTF8.self))
-
         URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
             guard let data = data, error == nil, response != nil else {onFailure(error!); return}
-
-            print(String(decoding: data, as: UTF8.self))
         }).resume()
 
     }
 
     func deleteRecipe(id: String, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
-        print("let's try to delete this recipe")
-        
+        os_log("Recipe deletion.")
+
         // Check the internet connection
         if !Reachability.isConnectedToNetwork() {
             throw RecipeError.noInternetConnection
@@ -369,12 +362,10 @@ class APIManager: NSObject {
         let accessToken: String? = KeychainWrapper.standard.string(forKey: "fr_token")
 
         if (accessToken == nil) {
-            print("no token")
+            os_log("no token")
         }
         else {
             request.addValue(accessToken!, forHTTPHeaderField: "x-access-token")
-
-            print("calling: " + url)
 
             let task = session.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
                 if(error != nil){
@@ -385,7 +376,6 @@ class APIManager: NSObject {
                 else{
                     do {
                         guard let data = data else { return }
-                        print(data)
                     }
                 }
             })
@@ -416,12 +406,8 @@ class APIManager: NSObject {
         request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
         request.httpBody = jsonData
 
-        print(String(decoding: jsonData!, as: UTF8.self))
-
         URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
             guard let data = data, error == nil, response != nil else {onFailure(error!); return}
-
-            print(String(decoding: data, as: UTF8.self))
         }).resume()
 
     }

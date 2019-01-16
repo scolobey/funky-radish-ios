@@ -9,6 +9,7 @@
 import UIKit
 import RealmSwift
 import SwiftKeychainWrapper
+import os
 
 enum AuthError: Error {
     case noEmail
@@ -107,11 +108,11 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
                                                 }
                                             },
                                             onFailure: { error in
-                                                print("Error: " + error.localizedDescription)
+                                                os_log("Error: %@", error.localizedDescription)
                                             })
                                         }
                                     catch {
-                                        print("Error inserting recipes")
+                                        os_log("Error inserting recipes")
                                         self.deactivateLoadingIndicator()
                                     }
                                 } else {
@@ -154,13 +155,13 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
             try loadRecipes()
         }
         catch RecipeError.noInternetConnection {
-            print("No internet connection.")
+            os_log("No internet connection.")
         }
         catch RecipeError.noToken {
-            print("No token")
+            os_log("No token")
         }
         catch {
-            print("There was an unidentified error loading recipes.")
+            os_log("There was an unidentified error loading recipes.")
         }
 
         if (recipeFilter.count > 0){
@@ -181,37 +182,30 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     func loadRecipes() throws {
-
-        for x in localRecipes {
-            print(x.title! + "--" + x._id!)
-        }
-
         // If recipes load from Realm, reload the table before synch
         if (localRecipes.count > 0) {
             recipeList.reloadData()
         }
         else {
-            print("no recipes in Realm")
+            os_log("no recipes in Realm")
         }
 
         if (!offline) {
-            print(!offline)
-            print("what's goin on here?")
             // Call the API
             try APIManager().loadRecipes(
                 onSuccess: {
-                    print("recipes loaded")
+                    os_log("recipes loaded")
                 },
                 onFailure: { error in
-                    print(error)
+                    os_log("Error: %@", error.localizedDescription)
                 }
             )
         }
         else {
-            print("offline mode enabled")
+            os_log("offline mode enabled")
         }
 
-        print("load recipes called")
+        os_log("load recipes called")
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -314,7 +308,6 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(indexPath.section)
         selectedRecipe = indexPath.section
         self.performSegue(withIdentifier: "recipeSegue", sender: self)
     }

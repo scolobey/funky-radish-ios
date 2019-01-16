@@ -8,11 +8,11 @@
 
 import UIKit
 import RealmSwift
+import os
 
 let realm = try! Realm()
 
 class RecipeViewController: BaseViewController {
-
     var ingredientView: Bool = false
     var ingredientText: String = ""
     var directionText: String = ""
@@ -53,7 +53,7 @@ class RecipeViewController: BaseViewController {
         view.endEditing(true)
         super.touchesBegan(touches, with: event)
     }
-    
+
     @IBAction func saveRecipeButton(_ sender: Any) {
         if (ingredientView) {
             saveRecipe(title: localRecipes[selectedRecipe].title!, directions: directionText, ingredients: recipeInfo.text)
@@ -77,41 +77,37 @@ class RecipeViewController: BaseViewController {
 
                 // Delete the recipe from the API if it has an id
                 if (deleteId != nil) {
-                    print(deleteId!.description)
-
                     try APIManager().deleteRecipe(id: deleteId!,
                         onSuccess: {
-                            print("recipe deleted")
+                            os_log("Delete succesful")
                     },
                         onFailure: { error in
-                            print("Delete failed. Adding to queue until API communication is restored.")
+                            os_log("Delete failed. Adding to queue until API connection is restored.")
 
                             var delete_queue = UserDefaults.standard.stringArray(forKey: "DeletedQueue") ?? [String]()
                             delete_queue.append(deleteId!)
                             UserDefaults.standard.set(delete_queue, forKey: "DeletedQueue")
-                            print(delete_queue)
                     })
                 }
                 else {
-                    print("not in the api")
+                    os_log("Recipe removed from Realm.")
                 }
             }
             catch RecipeError.noInternetConnection {
-                print("no internet connection. adding to queue until internet is restored.")
+                os_log("no internet connection. adding to queue until internet is restored.")
                 var delete_queue = UserDefaults.standard.stringArray(forKey: "DeletedQueue") ?? [String]()
                 delete_queue.append(deleteId!)
                 UserDefaults.standard.set(delete_queue, forKey: "DeletedQueue")
-                print(delete_queue)
             }
             catch {
-                print("realm error")
+                os_log("Realm error")
             }
 
             self.navigationController?.popViewController(animated: true)
         }
 
         let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { UIAlertAction in
-            print("Delete Canceled")
+            os_log("Delete Canceled")
         }
 
         alertController.addAction(approveAction)
@@ -140,12 +136,16 @@ class RecipeViewController: BaseViewController {
 
     @IBAction func recipeToggle(_ sender: UISwitch) {
         if (sender.isOn == true) {
+            saveRecipe(title: localRecipes[selectedRecipe].title!, directions: directionText, ingredients: recipeInfo.text)
+
             prepareTextForDisplay(recipe: localRecipes[selectedRecipe])
             ingredientView = false
             recipeInfo.text = directionText
             contentLabel.text = "Directions"
         }
         else {
+            saveRecipe(title: localRecipes[selectedRecipe].title!, directions: recipeInfo.text, ingredients: ingredientText)
+
             prepareTextForDisplay(recipe: localRecipes[selectedRecipe])
             ingredientView = true
             recipeInfo.text = ingredientText
@@ -198,7 +198,7 @@ class RecipeViewController: BaseViewController {
             }
         }
         catch {
-            print(error)
+            os_log("Recipe write error")
         }
     }
 
