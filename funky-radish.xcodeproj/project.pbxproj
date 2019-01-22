@@ -158,13 +158,6 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		CC184B50211E2FF000603333 /* ModelControllers */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ModelControllers;
-			sourceTree = "<group>";
-		};
 		CC184B582120A1A600603333 /* FunkyRadishTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -188,7 +181,6 @@
 			children = (
 				CC8177C220EBE1FF00D02783 /* CustomNavigationController.swift */,
 				CC4505F72148A6B20056ED3D /* LoadAnimationViewController.swift */,
-				CC184B50211E2FF000603333 /* ModelControllers */,
 				CC6D92F0210A74CA0044C600 /* AuthControllers */,
 				CC2D5EE620FA937E0002FB73 /* BaseViewController.swift */,
 				CC739D0B20F6CFF00031AAB2 /* RecipeSearchViewController.swift */,

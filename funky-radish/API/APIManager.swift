@@ -276,7 +276,6 @@ class APIManager: NSObject {
     }
 
     func bulkUpdateRecipes(recipes: [Recipe], onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
-
         // Check for internet connection
         if !Reachability.isConnectedToNetwork() {
             throw RecipeError.noInternetConnection
