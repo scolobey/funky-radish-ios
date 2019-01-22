@@ -11,4 +11,8 @@ target 'funky-radish' do
   pod 'RealmSwift'
   pod 'SwiftyJSON', '~> 4.0'
 
+  target 'FunkyRadishTests' do
+      inherit! :search_paths
+  end
+
 end

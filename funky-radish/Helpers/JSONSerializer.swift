@@ -28,6 +28,10 @@ class JSONSerializer {
                 throw serializerError.formattingError
             }
 
+            print(json)
+
+            print(data)
+
             let recipes = try jsonDecoder.decode([Recipe].self, from: data)
 
             synchRecipes(recipes: recipes)

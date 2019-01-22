@@ -8,7 +8,6 @@
 
 import UIKit
 import RealmSwift
-
 import os
 
 class RecipeViewController: BaseViewController {
@@ -17,9 +16,7 @@ class RecipeViewController: BaseViewController {
     var ingredientText: String = ""
     var directionText: String = ""
 
-
     let realmManager = RealmManager()
-    //    let realm = try! Realm()
 
     @IBOutlet weak var recipeTitle: UILabel!
     @IBOutlet weak var recipeInfo: UITextView!

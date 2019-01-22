@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1A93CC99345C53A4D450C6D7 /* Pods_funky_radish.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9189DDA363271AF31D2CA986 /* Pods_funky_radish.framework */; };
+		4D063E124416B96AFAF87CE5 /* Pods_FunkyRadishTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB64E4577B74D25797DEA44E /* Pods_FunkyRadishTests.framework */; };
 		CC184B5A2120A1A600603333 /* FunkyRadishTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC184B592120A1A600603333 /* FunkyRadishTests.swift */; };
 		CC2D5EE720FA937E0002FB73 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2D5EE620FA937E0002FB73 /* BaseViewController.swift */; };
 		CC3886292137519F00AFBB00 /* UserResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC3886282137519F00AFBB00 /* UserResponse.swift */; };
@@ -49,6 +50,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		047286B5500F32E00E6B2A78 /* Pods-FunkyRadishTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FunkyRadishTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FunkyRadishTests/Pods-FunkyRadishTests.debug.xcconfig"; sourceTree = "<group>"; };
+		2B0931440A4906A51D8BBCFF /* Pods-FunkyRadishTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FunkyRadishTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-FunkyRadishTests/Pods-FunkyRadishTests.release.xcconfig"; sourceTree = "<group>"; };
 		9189DDA363271AF31D2CA986 /* Pods_funky_radish.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_funky_radish.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD27E87458801B677AF03C41 /* Pods-funky-radish.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-funky-radish.debug.xcconfig"; path = "Pods/Target Support Files/Pods-funky-radish/Pods-funky-radish.debug.xcconfig"; sourceTree = "<group>"; };
 		B9E868050C94BE6F792BEA9F /* Pods-funky-radish.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-funky-radish.release.xcconfig"; path = "Pods/Target Support Files/Pods-funky-radish/Pods-funky-radish.release.xcconfig"; sourceTree = "<group>"; };
@@ -94,6 +97,7 @@
 		CCF2A1FF210A4E130027080F /* SwiftKeychainWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftKeychainWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCF2A201210A4E130027080F /* SwiftyJSON.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftyJSON.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCF9895121EFBE5400B33597 /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
+		CCF9895321F273DA00B33597 /* RealmSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +105,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D063E124416B96AFAF87CE5 /* Pods_FunkyRadishTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -122,6 +127,7 @@
 		6702C2AB1BF77CC901FF4828 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CCF9895321F273DA00B33597 /* RealmSwift.framework */,
 				CCF221DD212D056600FD5C9E /* DeepDiff.framework */,
 				CCF221D521220CE900FD5C9E /* SwiftyJSON.framework */,
 				CCF221D121220CB100FD5C9E /* SwiftyJSON.framework */,
@@ -146,6 +152,8 @@
 			children = (
 				AD27E87458801B677AF03C41 /* Pods-funky-radish.debug.xcconfig */,
 				B9E868050C94BE6F792BEA9F /* Pods-funky-radish.release.xcconfig */,
+				047286B5500F32E00E6B2A78 /* Pods-FunkyRadishTests.debug.xcconfig */,
+				2B0931440A4906A51D8BBCFF /* Pods-FunkyRadishTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -281,6 +289,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CC184B5E2120A1A600603333 /* Build configuration list for PBXNativeTarget "FunkyRadishTests" */;
 			buildPhases = (
+				13710A6D9F128A0E0689638C /* [CP] Check Pods Manifest.lock */,
 				CC184B532120A1A600603333 /* Sources */,
 				CC184B542120A1A600603333 /* Frameworks */,
 				CC184B552120A1A600603333 /* Resources */,
@@ -374,6 +383,28 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		13710A6D9F128A0E0689638C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-FunkyRadishTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		AA37E59EC4E1341A64C883C8 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -486,6 +517,7 @@
 /* Begin XCBuildConfiguration section */
 		CC184B5F2120A1A600603333 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 047286B5500F32E00E6B2A78 /* Pods-FunkyRadishTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -494,15 +526,17 @@
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				ENABLE_ON_DEMAND_RESOURCES = NO;
 				INFOPLIST_FILE = FunkyRadishTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = kayso.FunkyRadishTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = FunkyRadishTests;
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
 				SKIP_INSTALL = NO;
+				SWIFT_REFLECTION_METADATA_LEVEL = none;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/funky-radish.app/funky-radish";
@@ -511,6 +545,7 @@
 		};
 		CC184B602120A1A600603333 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2B0931440A4906A51D8BBCFF /* Pods-FunkyRadishTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -518,16 +553,19 @@
 				DEVELOPMENT_TEAM = P4KPPF3X57;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				ENABLE_ON_DEMAND_RESOURCES = NO;
+				ENABLE_TESTABILITY = YES;
 				INFOPLIST_FILE = FunkyRadishTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = kayso.FunkyRadishTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = FunkyRadishTests;
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
 				SKIP_INSTALL = NO;
+				SWIFT_REFLECTION_METADATA_LEVEL = none;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/funky-radish.app/funky-radish";
@@ -679,6 +717,7 @@
 				DEVELOPMENT_TEAM = P4KPPF3X57;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				ENABLE_ON_DEMAND_RESOURCES = NO;
+				ENABLE_TESTABILITY = YES;
 				INFOPLIST_FILE = "funky-radish/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				LD_RUNPATH_SEARCH_PATHS = (
