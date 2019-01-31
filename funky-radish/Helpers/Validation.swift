@@ -10,6 +10,7 @@ import Foundation
 
 enum validationError: Error {
     case invalidEmail
+    case shortPassword
     case invalidPassword
 }
 
@@ -32,7 +33,12 @@ class Validation {
             return
         }
         else {
-            throw validationError.invalidPassword
+            if(pw.count < 8) {
+                throw validationError.shortPassword
+            }
+            else {
+                throw validationError.invalidPassword
+            }
         }
     }
 }

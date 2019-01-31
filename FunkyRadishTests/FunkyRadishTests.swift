@@ -20,6 +20,12 @@ class FunkyRadishTests: XCTestCase {
         super.setUp()
     }
 
+//    func testPasswordValidation() {
+//        Validation().isValidEmail(email)
+//
+//        Validation().isValidPW(pw)
+//    }
+
     func testClearRealm() {
         realmManager.clearAll()
 
@@ -60,7 +66,6 @@ class FunkyRadishTests: XCTestCase {
     }
 
     func testRecipeSerializer() {
-
         let resultsString: String = """
         [
         {
@@ -153,5 +158,4 @@ class FunkyRadishTests: XCTestCase {
         XCTAssertEqual(recipes[0].directions[0].text, "Combine and use on ground beef. Fry the beef.")
         XCTAssertEqual(recipes[0].ingredients[0].name, "3 oz Chipotle powder")
     }
-
 }

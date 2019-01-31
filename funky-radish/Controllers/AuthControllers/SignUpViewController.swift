@@ -71,10 +71,12 @@ class SignUpViewController: UIViewController {
         catch validationError.invalidEmail {
             self.navigationController!.showToast(message: "Invalid email.")
         }
+        catch validationError.shortPassword {
+            self.navigationController!.showToast(message: "Password must contain at least 8 characters.")
+        }
         catch validationError.invalidPassword {
-            // TODO: Should guide the user on password requirements.
-            // TODO: Can't show toast if navigation Controller is not available.
-            self.navigationController!.showToast(message: "Password too short.")
+            // TODO: Can't show toast if navigation Controller is not available?.
+            self.navigationController!.showToast(message: "Password must contain a number.")
         }
         catch signupError.noConnection {
             self.navigationController!.showToast(message: "No internet connection.")

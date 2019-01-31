@@ -47,6 +47,7 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
         }()
 
         if (!Reachability.isConnectedToNetwork()){
+            os_log("no network connection.")
             if (indexPath.row == 0) {
                 let fontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
                 let font = UIFont(descriptor: fontDescriptor, size: 18.0)
@@ -57,6 +58,7 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
         }
 
         else if (offline && (fruser?.count == 0 || fruser == nil)) {
+            os_log("Offline. No user.")
             if (indexPath.row == 0) {
                 let fontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
                 let font = UIFont(descriptor: fontDescriptor, size: 18.0)
@@ -72,9 +74,18 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
                 cell.textLabel?.text = "Sign Up!"
                 cell.textLabel?.font = font
             }
+
+            else if (indexPath.row == 2) {
+                let fontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
+                let font = UIFont(descriptor: fontDescriptor, size: 18.0)
+
+                cell.textLabel?.text = "Currently Offline"
+                cell.textLabel?.font = font
+            }
         }
 
         else if (offline && fruser?.count ?? 0 > 0) {
+            os_log("Offline. Yes user.")
             if (indexPath.row == 0) {
                 let fontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
                 let font = UIFont(descriptor: fontDescriptor, size: 18.0)
@@ -85,6 +96,7 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
         }
 
         else if (!offline && fruser?.count ?? 0 > 0){
+            os_log("Online. Yes user.")
             if (indexPath.row == 0) {
                 let fontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
                 let font = UIFont(descriptor: fontDescriptor, size: 18.0)
@@ -111,6 +123,7 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
         }
 
         else if (!offline && (fruser == nil || fruser?.count == 0)){
+            os_log("Online. No user.")
             if (indexPath.row == 0) {
                 let fontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
                 let font = UIFont(descriptor: fontDescriptor, size: 18.0)
@@ -136,14 +149,14 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
             }
         }
 
-            //TODO: remove this else
-        else {
-            let fontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
-            let font = UIFont(descriptor: fontDescriptor, size: 18.0)
-
-            cell.textLabel?.text = "settings malfunction!"
-            cell.textLabel?.font = font
-        }
+//        //TODO: remove this else
+//        else {
+//            let fontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
+//            let font = UIFont(descriptor: fontDescriptor, size: 18.0)
+//
+//            cell.textLabel?.text = "settings malfunction!"
+//            cell.textLabel?.font = font
+//        }
 
         return cell
     }
@@ -164,6 +177,9 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
             } else if (indexPath.row == 1) {
                 // sign up
                 userState = 2
+            } else if (indexPath.row == 2) {
+                // no action
+                userState = 0
             }
         } else if (offline && fruser?.count ?? 0 > 0) {
             if (indexPath.row == 0) {
@@ -181,14 +197,14 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
                 // toggle offline
                 userState = 5
             }
-        } else if (!offline && fruser?.count == 0) {
+        } else if (!offline && (fruser?.count == 0 || fruser == nil)) {
             if (indexPath.row == 0) {
                 // log out
                 userState = 1
             } else if (indexPath.row == 1) {
                 // sign up
                 userState = 2
-            } else if (indexPath.row == 1) {
+            } else if (indexPath.row == 2) {
                 // toffle offline
                 userState = 5
             }

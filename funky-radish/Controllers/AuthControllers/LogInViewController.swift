@@ -45,8 +45,10 @@ class LogInViewController: UIViewController {
         catch validationError.invalidEmail {
             self.navigationController!.showToast(message: "Invalid email.")
         }
+        catch validationError.shortPassword {
+            self.navigationController!.showToast(message: "Password must contain at least 8 characters.")
+        }
         catch validationError.invalidPassword {
-            // TODO: Should guide the user on password requirements.
             self.navigationController!.showToast(message: "Invalid password.")
         }
         catch RecipeError.invalidLogin {
