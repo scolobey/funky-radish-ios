@@ -12,6 +12,7 @@ enum validationError: Error {
     case invalidEmail
     case shortPassword
     case invalidPassword
+    case invalidUsername
 }
 
 class Validation {
@@ -41,6 +42,17 @@ class Validation {
             }
         }
     }
+
+    func isValidUsername(_ username:String) throws {
+        if (username.count == 0){
+            throw validationError.invalidUsername
+        }
+        else {
+            return
+        }
+    }
+
+
 }
 
 

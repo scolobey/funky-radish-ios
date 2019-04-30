@@ -6,12 +6,13 @@
 //  Copyright © 2018 kayso. All rights reserved.
 
 import SwiftKeychainWrapper
+import Promises
 import os
 
 struct Token: Decodable {
     let success: Bool
-    let message: String
-    let token: String
+    let message : String
+    let token : String
 }
 
 struct ResponseMessage: Decodable {
@@ -41,41 +42,7 @@ class APIManager: NSObject {
     final let userEndpoint = "users"
     final let deleteRecipesEndpoint = "deleteRecipes"
 
-    // User
-    func createUser(email: String, username: String, password: String, onSuccess: @escaping(String) -> Void, onFailure: @escaping(Error) -> Void) throws {
-        let url : String = baseURL + userEndpoint
-
-        // Structure the data
-        let json: [String: Any] = [
-            "name": username,
-            "email": email,
-            "password": password,
-            "admin": false
-        ]
-        let jsonData = try? JSONSerialization.data(withJSONObject: json)
-
-        // Execute the request
-        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
-        request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = jsonData
-
-        URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) in
-            guard let data = data, error == nil, response != nil else {onFailure(error!); return}
-
-            do {
-                let message = try JSONSerializer().serializeUser(input: data)
-                onSuccess(message)
-            }
-            catch {
-                os_log("Error decoding user response.")
-                onFailure(error)
-            }
-        }).resume()
-    }
-
     func getToken(email: String, password: String, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
-        os_log("Downloading token.")
 
         // Check the internet connection
         if !Reachability.isConnectedToNetwork() {
@@ -95,6 +62,7 @@ class APIManager: NSObject {
         URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) in
 
             guard let data = data, error == nil, response != nil else {
+                onFailure(error!)
                 return
             }
 
@@ -109,50 +77,50 @@ class APIManager: NSObject {
             }
             catch {
                 os_log("Error downloading token.")
-                onFailure(error)
             }
 
         }).resume()
     }
 
-    // Recipes
-    func loadRecipes(onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
-        // Check the internet connection
-        if !Reachability.isConnectedToNetwork() {
-            throw RecipeError.noInternetConnection
-        }
+    func callRecipeEndpoint() -> Promise<Data> {
 
-        // Check the keychain for an authorization token.
-        guard let retrievedToken: String = KeychainWrapper.standard.string(forKey: "fr_token") else {
-            throw RecipeError.noToken
-        }
-
-        if(retrievedToken.count < 1) {
-            throw RecipeError.noToken
-        }
-
-        // Token in hand, we can request our recipes from the API.
-        let url : String = baseURL + recipesEndpoint
-
-        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
-        request.httpMethod = "GET"
-        request.addValue(retrievedToken, forHTTPHeaderField: "x-access-token")
-
-        URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) in
-            guard let data = data, error == nil, response != nil else {
-                onFailure(error!)
-                return
+        return Promise<Data> { (fullfill, reject) in
+            // Check the internet connection
+            if !Reachability.isConnectedToNetwork() {
+                throw RecipeError.noInternetConnection
             }
 
-            do {
-                try JSONSerializer().serialize(input: data)
-                onSuccess()
+            // Check the keychain for an authorization token.
+            guard let retrievedToken: String = KeychainWrapper.standard.string(forKey: "fr_token") else {
+                throw RecipeError.noToken
             }
-            catch {
-                // If no recipes return, we need to let the user know with a notification.
-                onFailure(error)
+
+            if(retrievedToken.count < 1) {
+                throw RecipeError.noToken
             }
-        }).resume()
+
+            // Token in hand, we can request our recipes from the API.
+                let url : String = self.baseURL + self.recipesEndpoint
+
+            let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
+            request.httpMethod = "GET"
+            request.addValue(retrievedToken, forHTTPHeaderField: "x-access-token")
+
+
+            URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) in
+                if let error = error {
+                    reject(error)
+                    return
+                }
+                guard let data = data else {
+                    let error = NSError(domain: "", code: 100, userInfo: nil)
+                    reject(error)
+                    return
+                }
+
+                fullfill(data)
+            }).resume()
+        }
     }
 
     func addRecipe(recipe: Recipe, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
@@ -245,9 +213,10 @@ class APIManager: NSObject {
         request.addValue(retrievedToken, forHTTPHeaderField: "x-access-token")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
+        
         request.httpBody = jsonData
 
-        os_log("Bulk insertion.")
+        os_log("Bulk insertion: %@", String(data: jsonData!, encoding: .utf8)!)
 
         URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
             guard let data = data, error == nil, response != nil else {onFailure(error!); return}
@@ -256,14 +225,25 @@ class APIManager: NSObject {
             do {
                 let uploadedRecipes = try JSONSerializer().serializeUploadedRecipes(input: data)
 
-                for example in uploadedRecipes.enumerated() {
-                    print("writing to realm -*-")
+                // Update ._id of local recipes.
+                let realmManager = RealmManager()
 
-                    let realmManager = RealmManager()
+                let offlineRecipes = realmManager.read(Recipe.self)
 
-                    let updatingRecipe = realmManager.fetch(example.element.realmID)
-                    realmManager.update(updatingRecipe, with: ["_id": example.element.realmID])
+                for recipe in offlineRecipes {
+                    let onlineRecipes = uploadedRecipes.filter { $0.realmID == recipe.realmID }
+                    if onlineRecipes.count > 0 {
+                        let onlineRecipe = onlineRecipes[0]
+                        realmManager.update(recipe, with: ["_id": onlineRecipe._id!])
+                    }
                 }
+
+//                for example in uploadedRecipes.enumerated() {
+//                    let realmManager = RealmManager()
+//
+//                    let updatingRecipe = realmManager.fetch(example.element.realmID)
+//                    realmManager.update(updatingRecipe, with: ["_id": example.element.realmID])
+//                }
 
                 onSuccess()
             }

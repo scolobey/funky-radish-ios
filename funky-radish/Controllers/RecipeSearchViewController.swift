@@ -8,6 +8,7 @@
 
 import RealmSwift
 import SwiftKeychainWrapper
+import Promises
 import os
 
 enum AuthError: Error {
@@ -36,134 +37,131 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        // If recipes load from Realm, reload the table before synch
+        if (localRecipes.count > 0) {
+            recipeList.reloadData()
+        }
+
+        setupRecipeListView(recipeList)
+        view.applyBackgroundGradient()
+
         // Data
-        do {
-            //          activateLoadingIndicator()
-            try loadRecipes()
-        }
-        catch RecipeError.noInternetConnection {
-            deactivateLoadingIndicator()
-            self.navigationController!.showToast(message: "Unable to synch recipes. No internet connection.")
-        }
-        catch RecipeError.noToken {
-            deactivateLoadingIndicator()
+        loadRecipes()
+            .catch { error in
+                switch error {
+                    case RecipeError.noInternetConnection:
+                        self.navigationController!.showToast(message: "Unable to synch recipes. No internet connection.")
 
-            let alert = UIAlertController(title: "Hello", message: "How would you like to get started?", preferredStyle: .alert)
+                    case RecipeError.noToken:
+                        let alert = UIAlertController(title: "Hello", message: "How would you like to get started?", preferredStyle: .alert)
 
-            let signupAction = UIAlertAction(title: "Sign Up", style: .default) { (alert: UIAlertAction!) -> Void in
-                if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SignUpViewController") as? SignUpViewController {
-                    self.navigationController?.pushViewController(vc, animated: false)
-                }
+                        let signupAction = UIAlertAction(title: "Sign Up", style: .default) { (alert: UIAlertAction!) -> Void in
+                            if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SignUpViewController") as? SignUpViewController {
+                                self.navigationController?.pushViewController(vc, animated: false)
+                            }
+                        }
+                        let loginAction = UIAlertAction(title: "Login", style: .default) { (alert: UIAlertAction!) -> Void in
+                            if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "LogInViewController") as? LogInViewController {
+                                self.navigationController?.pushViewController(vc, animated: false)
+                            }
+                        }
+                        let continueAction = UIAlertAction(title: "Continue Offline", style: .destructive) { (alert: UIAlertAction!) -> Void in
+                            // Set the app to offline mode.
+                            UserDefaults.standard.set(true, forKey: "fr_isOffline")
+                            self.navigationController!.showToast(message: "Offline mode")
+                        }
 
-            }
-            let loginAction = UIAlertAction(title: "Login", style: .default) { (alert: UIAlertAction!) -> Void in
+                        alert.addAction(signupAction)
+                        alert.addAction(loginAction)
+                        alert.addAction(continueAction)
 
-                if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "LogInViewController") as? LogInViewController {
-                    self.navigationController?.pushViewController(vc, animated: false)
-                }
+                        self.present(alert, animated: true, completion: nil)
 
-            }
-            let continueAction = UIAlertAction(title: "Continue Offline", style: .destructive) { (alert: UIAlertAction!) -> Void in
-                // Set the app to offline mode.
-                UserDefaults.standard.set(true, forKey: "fr_isOffline")
-                self.navigationController!.showToast(message: "Offline mode")
-            }
+                    case serializerError.failedSerialization:
+                        do {
+                            // check if there's an email and password saved in UserDefaults
+                            guard let retrievedEmail: String = KeychainWrapper.standard.string(forKey: "fr_user_email") else {
+                                throw AuthError.noEmail
+                            }
 
-            alert.addAction(signupAction)
-            alert.addAction(loginAction)
-            alert.addAction(continueAction)
+                            guard let retrievedPassword: String = KeychainWrapper.standard.string(forKey: "fr_password") else {
+                                throw AuthError.noPassword
+                            }
 
-            present(alert, animated: true, completion: nil)
-        }
-        catch serializerError.failedSerialization {
-            deactivateLoadingIndicator()
-            do {
-                // check if there's an email and password saved in UserDefaults
-                guard let retrievedEmail: String = KeychainWrapper.standard.string(forKey: "fr_user_email") else {
-                    throw AuthError.noEmail
-                }
+                            if(retrievedEmail.count > 0 && retrievedPassword.count > 0) {
+                                let API = APIManager()
 
-                guard let retrievedPassword: String = KeychainWrapper.standard.string(forKey: "fr_password") else {
-                    throw AuthError.noPassword
-                }
+                                try API.getToken(
+                                    email: retrievedEmail,
+                                    password: retrievedPassword,
+                                    onSuccess: {
+                                        UserDefaults.standard.set(false, forKey: "fr_isOffline")
 
-                if(retrievedEmail.count > 0 && retrievedPassword.count > 0) {
-                    let API = APIManager()
-
-                    try API.getToken(
-                        email: retrievedEmail,
-                        password: retrievedPassword,
-                        onSuccess: {
-                            UserDefaults.standard.set(false, forKey: "fr_isOffline")
-
-                            // Synch recipes
-                            DispatchQueue.main.async {
-                                //If you've already added recipes, post them to the API
-                                if (localRecipes.count > 0) {
-                                    do {
-                                        try APIManager().bulkInsertRecipes(
-                                            recipes: Array(localRecipes),
-                                            onSuccess: {
-                                                DispatchQueue.main.async {
+                                        // Synch recipes
+                                        DispatchQueue.main.async {
+                                            //If you've already added recipes, post them to the API
+                                            if (localRecipes.count > 0) {
+                                                do {
+                                                    try APIManager().bulkInsertRecipes(
+                                                        recipes: Array(localRecipes),
+                                                        onSuccess: {
+                                                            DispatchQueue.main.async {
+                                                                self.deactivateLoadingIndicator()
+                                                            }
+                                                    },
+                                                        onFailure: { error in
+                                                            os_log("Error inserting recipes: ", error.localizedDescription)
+                                                    })
+                                                }
+                                                catch {
+                                                    os_log("Error inserting recipes")
                                                     self.deactivateLoadingIndicator()
                                                 }
-                                        },
-                                            onFailure: { error in
-                                                os_log("Error: ", error.localizedDescription)
-                                        })
-                                    }
-                                    catch {
-                                        os_log("Error inserting recipes")
-                                        self.deactivateLoadingIndicator()
-                                    }
-                                } else {
-                                    self.deactivateLoadingIndicator()
+                                            } else {
+                                                self.deactivateLoadingIndicator()
+                                            }
+                                        }
+                                },
+                                    onFailure: { error in
+                                        self.recipeList.reloadData()
+                                }
+                                )
+
+
+                            } else {
+                                // if there are no user credentials, toast and transition to log in instead.
+                                self.navigationController!.showToast(message: "Token not valid.")
+
+                                if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "LogInViewController") as? LogInViewController {
+                                    self.navigationController?.pushViewController(vc, animated: false)
                                 }
                             }
-                    },
-                        onFailure: { error in
-                            self.deactivateLoadingIndicator()
-                            self.recipeList.reloadData()
-                    }
-                    )
+                        }
+                        catch {
+                            self.navigationController!.showToast(message: "Sorry. There was an unidentified error loading your recipes.")
+                        }
 
+                    default:
+                        self.navigationController!.showToast(message: "Sorry. There was an unidentified error loading your recipes.")
 
-                } else {
-                    // if there are no user credentials, toast and transition to log in instead.
-                    self.navigationController!.showToast(message: "Token not valid.")
-
-                    if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "LogInViewController") as? LogInViewController {
-                        self.navigationController?.pushViewController(vc, animated: false)
-                    }
                 }
             }
-            catch {
-
-            }
-        }
-        catch {
-            deactivateLoadingIndicator()
-            self.navigationController!.showToast(message: "Sorry. There was an unidentified error loading your recipes.")
-        }
-
-        // Styles
-        setupRecipeListView(recipeList)
-        self.view.applyBackgroundGradient()
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        do {
-            try loadRecipes()
-        }
-        catch RecipeError.noInternetConnection {
-            os_log("No internet connection.")
-        }
-        catch RecipeError.noToken {
-            os_log("No token.")
-        }
-        catch {
-            os_log("There was an unidentified error loading recipes.")
-        }
+
+        loadRecipes()
+            .catch { error in
+                switch error {
+                    case RecipeError.noInternetConnection:
+                        os_log("No internet connection.")
+                    case RecipeError.noToken:
+                        os_log("No token.")
+                    default:
+                        os_log("Unidentified recipe loading error")
+                }
+            }
 
         if (recipeFilter.count > 0){
             self.setSearchText(recipeFilter)
@@ -176,7 +174,6 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         notificationToken = realmManager.subscribe(handler: { notification, realm in
             self.recipeList.reloadData()
         })
-
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -187,28 +184,27 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         self.recipeList.reloadData()
     }
 
-    func loadRecipes() throws {
-        // If recipes load from Realm, reload the table before synch
-        if (localRecipes.count > 0) {
-            recipeList.reloadData()
-        }
+    func loadRecipes() -> Promise<Data> {
+        return Promise<Data> { (fullfill, reject) in
 
-        if (!offline) {
-            // Call the API
-            try APIManager().loadRecipes(
-                onSuccess: {
-                    os_log("Recipes loaded.")
-            },
-                onFailure: { error in
-                    os_log("Error: @%", error.localizedDescription)
+            if (!offline && fruser?.count ?? 0 > 0 ) {
+                // Call the API
+                APIManager().callRecipeEndpoint()
+                    .then {
+                        self.decodeRecipeResponse(data: $0)
+                    }
             }
-            )
+            else {
+                throw RecipeError.noToken
+            }
         }
-        else {
-            os_log("offline mode enabled")
-        }
+    }
 
-        os_log("load recipes called")
+    func decodeRecipeResponse(data: Data) -> Promise<Void>  {
+        return Promise<Void> { (fullfill, reject) in
+            try JSONSerializer().serialize(input: data)
+            fullfill(())
+        }
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {

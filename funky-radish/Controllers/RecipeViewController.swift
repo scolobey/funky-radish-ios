@@ -133,6 +133,13 @@ class RecipeViewController: BaseViewController {
     }
 
     @IBAction func recipeToggle(_ sender: UISwitch) {
+        if (ingredientView) {
+            saveRecipe(title: localRecipes[selectedRecipe].title!, directions: directionText, ingredients: recipeInfo.text)
+        }
+        else {
+            saveRecipe(title: localRecipes[selectedRecipe].title!, directions: recipeInfo.text, ingredients: ingredientText)
+        }
+        
         if (sender.isOn == true) {
             prepareTextForDisplay(recipe: localRecipes[selectedRecipe])
             ingredientView = false
@@ -156,6 +163,17 @@ class RecipeViewController: BaseViewController {
     }
 
     func saveRecipe(title: String, directions: String, ingredients: String) {
+
+        /* To resolve a bug where, when editing the recipe info field,
+         then saving, then changing the recipe title, the recipe info field
+         is returned to the previous state. */
+        if (ingredientView) {
+            ingredientText = recipeInfo.text
+        }
+        else {
+            directionText = recipeInfo.text
+        }
+
         let date = Date()
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(identifier: "UTC")
@@ -209,4 +227,5 @@ class RecipeViewController: BaseViewController {
         directionText = directionSet.joined(separator: "\n")
         ingredientText = ingredientSet.joined(separator: "\n")
     }
+
 }

@@ -14,30 +14,35 @@ import os
 enum serializerError: Error {
     case formattingError
     case failedSerialization
+    case tokenExpired
+}
+
+struct recipeResponse: Decodable {
+    let success: Bool
+    let message : String
 }
 
 class JSONSerializer {
+
     func serialize(input data: Data) throws {
         let jsonDecoder = JSONDecoder()
 
-        do {
-            // Make sure the response is properly formatted json
-            let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
+        // Make sure the response is properly formatted json
+        let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
 
-            guard json is [AnyObject] else {
+        guard json is [AnyObject] else {
+            let error = try jsonDecoder.decode(recipeResponse.self, from: data)
+            if error.message.contains("Token verification error."){
+                throw RecipeError.noToken
+            }
+            else {
                 throw serializerError.formattingError
             }
-
-            print(json)
-
-            print(data)
-
-            let recipes = try jsonDecoder.decode([Recipe].self, from: data)
-
-            synchRecipes(recipes: recipes)
-        } catch {
-            throw serializerError.failedSerialization
         }
+
+        let recipes = try jsonDecoder.decode([Recipe].self, from: data)
+
+        synchRecipes(recipes: recipes)
     }
 
     func serializeUploadedRecipes(input data: Data) throws -> [Recipe]{
@@ -51,37 +56,14 @@ class JSONSerializer {
             }
 
             let recipes = try jsonDecoder.decode([Recipe].self, from: data)
+
             return recipes
         } catch {
             throw serializerError.failedSerialization
         }
     }
 
-    func serializeUser(input data: Data) throws -> String {
-        let jsonDecoder = JSONDecoder()
-
-        do {
-            let response = try jsonDecoder.decode(UserResponse.self, from: data)
-            let msg = response.message
-            let user = response.data
-
-            KeychainWrapper.standard.set(user.email!, forKey: "fr_user_email")
-
-            let recs = Array(user.recipes)
-
-            if (recs.count > 0) {
-
-                synchRecipes(recipes: recs)
-            }
-
-            return msg!
-        } catch {
-            throw serializerError.failedSerialization
-        }
-    }
-
     func synchRecipes(recipes: [Recipe]) {
-        print("synchronizing recipes")
         // Accepts an array of online recipes in the format returned from bulk recipe creation.
         // Compares to locally stored recipes.
         // local recipes, uploading any offline recipes that are not present online,
@@ -100,9 +82,6 @@ class JSONSerializer {
         // Any local recipes without ._id?
         for (index, recipe) in localRecipes.enumerated().reversed() {
             if(recipe._id == "") {
-                print("queueing \(recipe.title ?? "*no-title*") for upload")
-                print(recipe.realmID)
-
                 upload.append(recipe)
                 localRecipes.remove(at: index)
             }
@@ -111,8 +90,8 @@ class JSONSerializer {
         // Any online recipes?
         if(cloudRecipes.count > 0) {
             for recipe in cloudRecipes {
-                let localInstance = localRecipes.index(where: {$0._id == recipe._id})
-                let shouldDelete = deleteRecipes.index(where: {$0 == recipe._id})
+                let localInstance = localRecipes.firstIndex(where: {$0._id == recipe._id})
+                let shouldDelete = deleteRecipes.firstIndex(where: {$0 == recipe._id})
 
                 // Is there an existing local version of this online recipe?
                 if ( localInstance != nil) {
@@ -120,29 +99,9 @@ class JSONSerializer {
                     let webDate = stringToDate(date: recipe.updatedAt!)
                     let locDate = stringToDate(date: localRecipes[localInstance!].updatedAt!)
 
-                    print("Web Date: \(webDate)")
-                    print("Local date: \(locDate)")
-
                     if (NSCalendar.current.isDate(webDate, equalTo: locDate, toGranularity: .second)) {
-                        print("identical recipe")
                     } else if (webDate > locDate) {
-                        print("online recipe is more recent, update realm recipe.")
-                        //                        do {
-                        // If there is no local recipe with a matching id, save recipe to Realm or edit that recipe in Realm to fix it's id.
-
                         realmManager.create(recipe)
-
-                        //                            try realm.write {
-                        //                                localRecipes[localInstance!].setValue(recipe._id, forKey: "_id")
-                        //                                localRecipes[localInstance!].setValue(recipe.updatedAt, forKey: "updatedAt")
-                        //                                localRecipes[localInstance!].setValue(recipe.title, forKey: "title")
-                        //                                localRecipes[localInstance!].setValue(recipe.directions, forKey: "directions")
-                        //                                localRecipes[localInstance!].setValue(recipe.ingredients, forKey: "ingredients")
-                        //                            }
-                        //                        }
-                        //                        catch {
-                        //                            print("Error editing \(recipe.title!) in Realm.")
-                        //                        }
                     } else {
                         // Add the local recipe to update queue
                         update.append(localRecipes[localInstance!])
@@ -158,16 +117,6 @@ class JSONSerializer {
                     os_log("Adding %@ to Realm", recipe.title!)
 
                     realmManager.create(recipe)
-
-                    //                    do {
-                    //                        // If there is no local recipe with a matching id, save recipe to Realm
-                    //                        try realm.write {
-                    //                            realm.add(recipe)
-                    //                        }
-                    //                    }
-                    //                    catch {
-                    //                        print("Error adding \(recipe.title!) to Realm.")
-                    //                    }
 
                 }
             }

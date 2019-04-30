@@ -9,10 +9,11 @@
 import UIKit
 import SwiftKeychainWrapper
 import os
+import Promises
 
 enum loginError: Error {
-    case incompleteUsername
     case noConnection
+    case tokenFailure
 }
 
 class LogInViewController: UIViewController {
@@ -21,42 +22,46 @@ class LogInViewController: UIViewController {
 
     @IBAction func loginButton(_ sender: Any) {
         let email = emailField.text!
-        let pw = passwordField.text!
+        let password = passwordField.text!
 
         self.view.endEditing(true)
+        activateLoadingIndicator()
 
-        do {
-            if !Reachability.isConnectedToNetwork() {
-                throw loginError.noConnection
+/*
+         Google promises.
+         (https://github.com/google/promises)
+*/
+
+        login(email: email, password: password)
+            .then { self.decodeTokenData(data: $0, email: email, password: password) }
+            .then { self.loadRecipes(token: $0.token) }
+            .then { self.decodeRecipeData(data: $0) }
+            .then {
+                if ($0) {
+                    self.deactivateLoadingIndicator()
+                    self.navigationController?.popToRootViewController(animated: false)
+                }
             }
+            .catch { error in
+                self.deactivateLoadingIndicator()
 
-            else {
-                try Validation().isValidEmail(email)
-                try Validation().isValidPW(pw)
+                switch error {
+                    case loginError.noConnection:
+                        self.navigationController!.showToast(message: "No internet connection.")
+                    case validationError.invalidEmail:
+                        self.navigationController!.showToast(message: "Invalid email.")
+                    case validationError.shortPassword:
+                        self.navigationController!.showToast(message: "Password must contain at least 8 characters.")
+                    case validationError.invalidPassword:
+                        self.navigationController!.showToast(message: "Password must contain a number.")
+                    case loginError.tokenFailure:
+                        self.navigationController!.showToast(message: "User not found. Sign up or try again.")
+                    case RecipeError.invalidLogin:
+                        self.navigationController!.showToast(message: "Invalid token. Please log out and log back in.")
+                    default:
+                        self.navigationController!.showToast(message: "Unidentified error.")
+                }
             }
-
-            activateLoadingIndicator()
-
-            try getToken(email: email, pw: pw)
-        }
-        catch loginError.noConnection {
-            self.navigationController!.showToast(message: "No internet connection.")
-        }
-        catch validationError.invalidEmail {
-            self.navigationController!.showToast(message: "Invalid email.")
-        }
-        catch validationError.shortPassword {
-            self.navigationController!.showToast(message: "Password must contain at least 8 characters.")
-        }
-        catch validationError.invalidPassword {
-            self.navigationController!.showToast(message: "Invalid password.")
-        }
-        catch RecipeError.invalidLogin {
-            os_log("those aren't the right credentials")
-        }
-        catch {
-            os_log("Unknown login error")
-        }
     }
 
     @IBAction func dismissLoginButton(_ sender: UIButton) {
@@ -84,37 +89,97 @@ class LogInViewController: UIViewController {
         navigationController?.navigationBar.layer.frame.origin.y = 20
     }
 
-    override var prefersStatusBarHidden: Bool {
-        return true
+//    override var prefersStatusBarHidden: Bool {
+//        return true
+//    }
+
+    func login(email: String, password: String) -> Promise<Data> {
+
+        UserDefaults.standard.set(false, forKey: "fr_isOffline")
+
+        let url = "https://funky-radish-api.herokuapp.com/authenticate"
+        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
+        request.httpMethod = "POST"
+        request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
+        let paramString = "email=" + email + "&password=" + password
+        request.httpBody = paramString.data(using: String.Encoding.utf8)
+
+        return Promise<Data> { (fullfill, reject) in
+            if !Reachability.isConnectedToNetwork() {
+                throw loginError.noConnection
+            }
+
+            try Validation().isValidEmail(email)
+            try Validation().isValidPW(password)
+
+            URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) in
+                if let error = error {
+                    reject(error)
+                    return
+                }
+                guard let data = data else {
+                    let error = NSError(domain: "", code: 100, userInfo: nil)
+                    reject(error)
+                    return
+                }
+
+                fullfill(data)
+            }).resume()
+        }
     }
 
-    func getToken(email: String, pw: String) throws {
-        let API = APIManager()
+    func decodeTokenData(data: Data, email: String, password: String) -> Promise<Token> {
+        return Promise<Token> { (fullfill, reject) in
+            do {
+                let token = try JSONDecoder().decode(Token.self, from: data)
 
-        try API.getToken(email: email, password: pw,
-            onSuccess: {
-                UserDefaults.standard.set(false, forKey: "fr_isOffline")
+                // TODO: I think this can safely be extracted from if statement.
+                if (token.success) {
+                    KeychainWrapper.standard.set(email, forKey: "fr_user_email")
+                    KeychainWrapper.standard.set(password, forKey: "fr_password")
+                    KeychainWrapper.standard.set(token.token, forKey: "fr_token")
 
-                DispatchQueue.main.async {
-                    try! API.loadRecipes(
-                        onSuccess: {
-                            os_log("recipes loaded.")
-                        },
-                        onFailure: { error in
-                            os_log("recipe load failed")
-                        }
-                    )
-
-                    self.deactivateLoadingIndicator()
-                    self.navigationController?.popToRootViewController(animated: false)
+                    fullfill(token)
                 }
-            },
-            onFailure: { error in
-                DispatchQueue.main.async {
-                    self.deactivateLoadingIndicator()
-                    self.navigationController!.showToast(message: "Incorrect email or password.")
+                else {
+                    throw loginError.tokenFailure
                 }
             }
-        )
+            catch {
+                throw loginError.tokenFailure
+            }
+        }
+    }
+
+    func loadRecipes(token: String) -> Promise<Data> {
+        let url = "https://funky-radish-api.herokuapp.com/recipes"
+        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
+        request.httpMethod = "GET"
+        request.addValue(token, forHTTPHeaderField: "x-access-token")
+
+        return Promise<Data> { (fullfill, reject) in
+            URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) in
+                if let error = error {
+                    reject(error)
+                    return
+                }
+                guard let data = data else {
+                    let error = NSError(domain: "", code: 100, userInfo: nil)
+                    reject(error)
+                    return
+                }
+
+                fullfill(data)
+            }).resume()
+        }
+    }
+
+    func decodeRecipeData(data: Data) -> Promise<Bool> {
+        return Promise<Bool> { (fullfill, reject) in
+            do {
+                try JSONSerializer().serialize(input: data)
+                fullfill(true)
+            }
+        }
     }
 }

@@ -10,6 +10,7 @@ target 'funky-radish' do
   pod 'SwiftKeychainWrapper'
   pod 'RealmSwift'
   pod 'SwiftyJSON', '~> 4.0'
+  pod 'PromisesSwift', '~> 1.2.6'
 
   target 'FunkyRadishTests' do
       inherit! :search_paths
