@@ -22,8 +22,22 @@ class RecipeViewController: BaseViewController {
     @IBOutlet weak var recipeInfo: UITextView!
     @IBOutlet weak var contentLabel: UILabel!
 
+    @IBOutlet weak var contentSwitch: UISwitch!
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        self.navigationItem.hidesBackButton = true
+        let newBackButton = UIBarButtonItem(title: "Recipes", style: UIBarButtonItem.Style.plain, target: self, action: #selector(back))
+        self.navigationItem.leftBarButtonItem = newBackButton
+
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(didSwipeRight))
+        swipeRight.direction = UISwipeGestureRecognizer.Direction.left
+        self.view.addGestureRecognizer(swipeRight)
+
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(didSwipeLeft))
+        swipeLeft.direction = UISwipeGestureRecognizer.Direction.right
+        self.view.addGestureRecognizer(swipeLeft)
 
         let recipeBoldFontDescriptor = UIFontDescriptor(name: "Rockwell-Bold", size: 18.0)
         let boldRecipeFont = UIFont(descriptor: recipeBoldFontDescriptor, size: 18.0)
@@ -48,11 +62,80 @@ class RecipeViewController: BaseViewController {
         recipeInfo.font = recipeFont
 
         self.view.applyBackgroundGradient()
+        UIApplication.shared.isIdleTimerDisabled = true
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
         super.touchesBegan(touches, with: event)
+    }
+
+    @objc func back(sender: UIBarButtonItem) {
+        if ingredientView && ingredientText != recipeInfo.text {
+            let alert = UIAlertController(title: "Save ingredients?", message: "Would you like to save changes to your ingredients before continuing?", preferredStyle: .alert)
+
+            let continueAction = UIAlertAction(title: "Yes", style: .default) { (alert: UIAlertAction!) -> Void in
+                self.saveRecipe(title: localRecipes[selectedRecipe].title!, directions: self.directionText, ingredients: self.recipeInfo.text)
+                self.navigationController?.popViewController(animated: true)
+            }
+
+            let cancelAction = UIAlertAction(title: "No", style: .default) { (alert: UIAlertAction!) -> Void in
+                self.navigationController?.popViewController(animated: true)
+            }
+
+            alert.addAction(continueAction)
+            alert.addAction(cancelAction)
+            self.present(alert, animated: true)
+        }
+        else if !ingredientView && directionText != recipeInfo.text {
+            let alert = UIAlertController(title: "Save directions?", message: "Would you like to save changes to your directions before continuing?", preferredStyle: .alert)
+
+            let continueAction = UIAlertAction(title: "Yes", style: .default) { (alert: UIAlertAction!) -> Void in
+                self.saveRecipe(title: localRecipes[selectedRecipe].title!, directions: self.recipeInfo.text, ingredients: self.ingredientText)
+                self.navigationController?.popViewController(animated: true)
+            }
+
+            let cancelAction = UIAlertAction(title: "No", style: .default) { (alert: UIAlertAction!) -> Void in
+                self.navigationController?.popViewController(animated: true)
+            }
+
+            alert.addAction(continueAction)
+            alert.addAction(cancelAction)
+            self.present(alert, animated: true)
+        }
+        else {
+            self.navigationController?.popViewController(animated: true)
+        }
+    }
+
+    @objc func didSwipeRight(gesture: UIGestureRecognizer) {
+        if (!ingredientView) {
+            if (directionText != recipeInfo.text) {
+                saveRecipe(title: localRecipes[selectedRecipe].title!, directions: recipeInfo.text, ingredients: ingredientText)
+            }
+
+            prepareTextForDisplay(recipe: localRecipes[selectedRecipe])
+            ingredientView = true
+            recipeInfo.text = ingredientText
+            contentLabel.text = "Ingredients"
+
+            contentSwitch.isOn = false
+        }
+    }
+
+    @objc func didSwipeLeft(gesture: UIGestureRecognizer) {
+        if (ingredientView) {
+            if (ingredientText != recipeInfo.text) {
+                saveRecipe(title: localRecipes[selectedRecipe].title!, directions: directionText, ingredients: recipeInfo.text)
+            }
+
+            prepareTextForDisplay(recipe: localRecipes[selectedRecipe])
+            ingredientView = false
+            recipeInfo.text = directionText
+            contentLabel.text = "Directions"
+
+            contentSwitch.isOn = true
+        }
     }
 
     @IBAction func saveRecipeButton(_ sender: Any) {
@@ -152,6 +235,10 @@ class RecipeViewController: BaseViewController {
             recipeInfo.text = ingredientText
             contentLabel.text = "Ingredients"
         }
+    }
+
+    @objc func backButtonAction() {
+        os_log("You did tap the back button.")
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {

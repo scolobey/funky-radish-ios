@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="nDw-No-frB">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="nDw-No-frB">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -203,21 +203,6 @@
                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="36"/>
                                 </variation>
                             </label>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="eiR-bG-E22">
-                                <rect key="frame" x="20" y="130" width="335" height="175"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="175" id="kG0-Jp-yJY">
-                                        <variation key="heightClass=regular-widthClass=regular" constant="550"/>
-                                    </constraint>
-                                </constraints>
-                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="no" spellCheckingType="no"/>
-                                <variation key="heightClass=regular-widthClass=regular">
-                                    <fontDescription key="fontDescription" type="system" pointSize="24"/>
-                                </variation>
-                            </textView>
                             <button opaque="NO" clipsSubviews="YES" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="afq-9L-AdY" userLabel="Trash">
                                 <rect key="frame" x="330" y="55" width="30" height="30"/>
                                 <constraints>
@@ -266,7 +251,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7lI-a8-25E">
-                                <rect key="frame" x="286" y="55" width="34" height="30"/>
+                                <rect key="frame" x="276" y="55" width="34" height="30"/>
                                 <color key="backgroundColor" red="0.207204468" green="1" blue="0.73793343321917804" alpha="1" colorSpace="calibratedRGB"/>
                                 <accessibility key="accessibilityConfiguration" label="Save"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
@@ -282,6 +267,21 @@
                                     <action selector="saveRecipeButton:" destination="tJ8-s5-WdQ" eventType="touchUpInside" id="QWQ-a4-XfT"/>
                                 </connections>
                             </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="eiR-bG-E22">
+                                <rect key="frame" x="20" y="129" width="335" height="175"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="175" id="kG0-Jp-yJY">
+                                        <variation key="heightClass=regular-widthClass=regular" constant="550"/>
+                                    </constraint>
+                                </constraints>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="no" spellCheckingType="no"/>
+                                <variation key="heightClass=regular-widthClass=regular">
+                                    <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                </variation>
+                            </textView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
@@ -291,7 +291,7 @@
                             <constraint firstItem="eiR-bG-E22" firstAttribute="centerX" secondItem="ucp-Uy-lnD" secondAttribute="centerX" id="9MY-v2-TxN"/>
                             <constraint firstItem="afq-9L-AdY" firstAttribute="bottom" secondItem="7lI-a8-25E" secondAttribute="bottom" id="AZ4-u7-TZq"/>
                             <constraint firstItem="0QH-hJ-92k" firstAttribute="leading" secondItem="TFI-no-JyF" secondAttribute="leading" constant="15" id="Mwf-eZ-lCO"/>
-                            <constraint firstItem="afq-9L-AdY" firstAttribute="leading" secondItem="7lI-a8-25E" secondAttribute="trailing" constant="10" id="Ndz-Bm-GKU"/>
+                            <constraint firstItem="afq-9L-AdY" firstAttribute="leading" secondItem="7lI-a8-25E" secondAttribute="trailing" constant="20" id="Ndz-Bm-GKU"/>
                             <constraint firstItem="0QH-hJ-92k" firstAttribute="top" secondItem="TFI-no-JyF" secondAttribute="top" constant="35" id="QTF-gm-TAT"/>
                             <constraint firstItem="msO-sj-qpV" firstAttribute="top" secondItem="eiR-bG-E22" secondAttribute="bottom" constant="15" id="Vhh-y5-Ame"/>
                             <constraint firstItem="eiR-bG-E22" firstAttribute="leading" secondItem="TFI-no-JyF" secondAttribute="leading" constant="20" id="c0c-NE-imP"/>
@@ -307,6 +307,7 @@
                     </view>
                     <connections>
                         <outlet property="contentLabel" destination="msO-sj-qpV" id="Z9q-mW-88b"/>
+                        <outlet property="contentSwitch" destination="6B2-pb-DQi" id="bwc-T9-N5V"/>
                         <outlet property="recipeInfo" destination="eiR-bG-E22" id="rGj-Zl-ljF"/>
                         <outlet property="recipeTitle" destination="0QH-hJ-92k" id="ca6-49-RWF"/>
                         <segue destination="e6D-pJ-vfE" kind="show" identifier="returnToSearch" id="UfR-CA-od2"/>
@@ -448,10 +449,10 @@
         </scene>
     </scenes>
     <resources>
-        <image name="close" width="75" height="75"/>
-        <image name="edit" width="75" height="75"/>
+        <image name="close" width="50" height="50"/>
+        <image name="edit" width="50" height="50"/>
         <image name="radish" width="512" height="512"/>
-        <image name="trash" width="256" height="256"/>
+        <image name="trash" width="128" height="128"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="xth-nj-9W2"/>
