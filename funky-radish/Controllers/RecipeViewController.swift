@@ -62,12 +62,15 @@ class RecipeViewController: BaseViewController {
         recipeInfo.font = recipeFont
 
         self.view.applyBackgroundGradient()
-        UIApplication.shared.isIdleTimerDisabled = true
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
         super.touchesBegan(touches, with: event)
+    }
+
+    override func willMove(toParent parent: UIViewController?) {
+        UIApplication.shared.isIdleTimerDisabled = true
     }
 
     @objc func back(sender: UIBarButtonItem) {
@@ -106,6 +109,7 @@ class RecipeViewController: BaseViewController {
         else {
             self.navigationController?.popViewController(animated: true)
         }
+        UIApplication.shared.isIdleTimerDisabled = false
     }
 
     @objc func didSwipeRight(gesture: UIGestureRecognizer) {
