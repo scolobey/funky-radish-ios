@@ -233,9 +233,7 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
 
                 UserDefaults.standard.set(true, forKey: "fr_isOffline")
 
-                // Remove recipes
-                let realmManager = RealmManager()
-                realmManager.clearAll()
+                realmManager.logout()
 
                 self.navigationController?.popViewController(animated: true)
             }

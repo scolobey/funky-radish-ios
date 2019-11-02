@@ -10,10 +10,12 @@ import UIKit
 import SwiftKeychainWrapper
 import os
 import Promises
+import RealmSwift
 
 enum signupError: Error {
     case incompleteUsername
     case noConnection
+    case endpointInaccesible
     case userResponseInvalid
     case userCreationFailed
     case emailTaken
@@ -34,7 +36,9 @@ class SignUpViewController: UIViewController {
 
         signup(email: email, password: password, username: username)
             .then { self.decodeUserResponse(data: $0, email: email, password: password) }
+            .then { self.createRealmUser(token: $0) }
             .then {
+                realmManager.refresh()
                 self.deactivateLoadingIndicator()
                 self.navigationController?.popToRootViewController(animated: false)
             }
@@ -52,6 +56,8 @@ class SignUpViewController: UIViewController {
                     self.navigationController!.showToast(message: "Password must contain a number.")
                 case validationError.invalidUsername:
                     self.navigationController!.showToast(message: "Username required.")
+                case signupError.endpointInaccesible:
+                    self.navigationController!.showToast(message: "User post failed.")
                 case signupError.userResponseInvalid:
                     self.navigationController!.showToast(message: "User response invalid.")
                 case signupError.userCreationFailed:
@@ -98,7 +104,9 @@ class SignUpViewController: UIViewController {
     }
 
     func signup(email: String, password: String, username: String) -> Promise<Data> {
-        let url = "https://funky-radish-api.herokuapp.com/users"
+
+//        let url = "https://funky-radish-api.herokuapp.com/users"
+        let url = "http://localhost:8080/users"
 
         UserDefaults.standard.set(false, forKey: "fr_isOffline")
 
@@ -153,8 +161,8 @@ class SignUpViewController: UIViewController {
             try Validation().isValidUsername(username)
 
             URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) in
-                if let error = error {
-                    reject(error)
+                if error != nil {
+                    reject(signupError.endpointInaccesible)
                     return
                 }
                 guard let data = data else {
@@ -168,8 +176,8 @@ class SignUpViewController: UIViewController {
         }
     }
 
-    func decodeUserResponse(data: Data, email: String, password: String) -> Promise<Void> {
-        return Promise<Void> { (fullfill, reject) in
+    func decodeUserResponse(data: Data, email: String, password: String) -> Promise<String> {
+        return Promise<String> { (fullfill, reject) in
 
                 let userResponse = try JSONDecoder().decode(UserResponse.self, from: data)
 
@@ -193,7 +201,7 @@ class SignUpViewController: UIViewController {
 
                 // Update ._id of local recipes.
                 let realmManager = RealmManager()
-            
+
                 let offlineRecipes = realmManager.read(Recipe.self)
 
                 for recipe in offlineRecipes {
@@ -201,8 +209,31 @@ class SignUpViewController: UIViewController {
                     realmManager.update(recipe, with: ["_id": onlineRecipe._id!])
                 }
 
-                fullfill(())
+                fullfill(userResponse.token!)
+        }
+    }
+
+    func createRealmUser(token: String) -> Promise<Void> {
+        let auth_url = Constants.AUTH_URL
+        let credentials = SyncCredentials.jwt(token)
+
+        return Promise<Void> { (fullfill, reject) in
+
+            os_log("creating a realm user")
+            SyncUser.logIn(with: credentials, server: auth_url) { [weak self] (user, err) in
+                guard let `self` = self else  { return }
+
+                if let error = err {
+                    self.deactivateLoadingIndicator()
+                    let alert = UIAlertController(title: "Uh Oh", message: error.localizedDescription, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Okay!", style: .default, handler: nil))
+                    self.present(alert, animated: true, completion: nil)
+                } else if let _ = user {
+                    fullfill(())
+                }
+            }
 
         }
     }
+
 }

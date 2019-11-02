@@ -10,6 +10,7 @@ import UIKit
 import SwiftKeychainWrapper
 import os
 import Promises
+import RealmSwift
 
 enum loginError: Error {
     case noConnection
@@ -34,13 +35,11 @@ class LogInViewController: UIViewController {
 
         login(email: email, password: password)
             .then { self.decodeTokenData(data: $0, email: email, password: password) }
-            .then { self.loadRecipes(token: $0.token) }
-            .then { self.decodeRecipeData(data: $0) }
+            .then { self.loginRealmUser(token: $0.token) }
             .then {
-                if ($0) {
-                    self.deactivateLoadingIndicator()
-                    self.navigationController?.popToRootViewController(animated: false)
-                }
+                realmManager.refresh()
+                self.deactivateLoadingIndicator()
+                self.navigationController?.popToRootViewController(animated: false)
             }
             .catch { error in
                 self.deactivateLoadingIndicator()
@@ -97,7 +96,9 @@ class LogInViewController: UIViewController {
 
         UserDefaults.standard.set(false, forKey: "fr_isOffline")
 
-        let url = "https://funky-radish-api.herokuapp.com/authenticate"
+        //        let url = "https://funky-radish-api.herokuapp.com/authenticate"
+        let url = "http://localhost:8080/authenticate"
+
         let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
         request.httpMethod = "POST"
         request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
@@ -151,35 +152,26 @@ class LogInViewController: UIViewController {
         }
     }
 
-    func loadRecipes(token: String) -> Promise<Data> {
-        let url = "https://funky-radish-api.herokuapp.com/recipes"
-        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
-        request.httpMethod = "GET"
-        request.addValue(token, forHTTPHeaderField: "x-access-token")
+    func loginRealmUser(token: String) -> Promise<Void> {
+        let auth_url = Constants.AUTH_URL
+        let credentials = SyncCredentials.jwt(token)
 
-        return Promise<Data> { (fullfill, reject) in
-            URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) in
-                if let error = error {
-                    reject(error)
-                    return
+        return Promise<Void> { (fullfill, reject) in
+
+            os_log("authenticating realm user")
+            SyncUser.logIn(with: credentials, server: auth_url) { [weak self] (user, err) in
+                guard let `self` = self else  { return }
+
+                if let error = err {
+                    self.deactivateLoadingIndicator()
+                    let alert = UIAlertController(title: "Uh Oh", message: error.localizedDescription, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Okay!", style: .default, handler: nil))
+                    self.present(alert, animated: true, completion: nil)
+                } else if let _ = user {
+                    fullfill(())
                 }
-                guard let data = data else {
-                    let error = NSError(domain: "", code: 100, userInfo: nil)
-                    reject(error)
-                    return
-                }
-
-                fullfill(data)
-            }).resume()
-        }
-    }
-
-    func decodeRecipeData(data: Data) -> Promise<Bool> {
-        return Promise<Bool> { (fullfill, reject) in
-            do {
-                try JSONSerializer().serialize(input: data)
-                fullfill(true)
             }
+
         }
     }
 }
