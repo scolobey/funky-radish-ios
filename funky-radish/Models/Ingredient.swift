@@ -11,7 +11,12 @@ import Realm
 import RealmSwift
 
 class Ingredient: Object, Decodable {
+    @objc dynamic var realmID = UUID().uuidString
     @objc dynamic var name = ""
+
+    override static func primaryKey() -> String? {
+        return "realmID"
+    }
 
     private enum IngredientCodingKeys: String, CodingKey {
         case name

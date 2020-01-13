@@ -220,6 +220,7 @@ class SignUpViewController: UIViewController {
         return Promise<Void> { (fullfill, reject) in
 
             os_log("creating a realm user")
+            
             SyncUser.logIn(with: credentials, server: auth_url) { [weak self] (user, err) in
                 guard let `self` = self else  { return }
 

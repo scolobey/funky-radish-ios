@@ -231,7 +231,7 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
                 KeychainWrapper.standard.set("", forKey: "fr_user_email")
                 KeychainWrapper.standard.set("", forKey: "fr_password")
 
-                UserDefaults.standard.set(true, forKey: "fr_isOffline")
+//                UserDefaults.standard.set(true, forKey: "fr_isOffline")
 
                 realmManager.logout()
 

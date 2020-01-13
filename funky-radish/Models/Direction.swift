@@ -11,7 +11,12 @@ import Realm
 import RealmSwift
 
 class Direction: Object, Decodable {
+    @objc dynamic var realmID = UUID().uuidString
     @objc dynamic var text: String = ""
+
+    override static func primaryKey() -> String? {
+        return "realmID"
+    }
 
     private enum DirectionCodingKeys: String, CodingKey {
         case text

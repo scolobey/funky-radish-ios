@@ -213,6 +213,14 @@ class RecipeViewController: BaseViewController {
         alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { action in
             let title = alert.textFields?.first?.text
             self.saveRecipe(title: title!, directions: self.directionText, ingredients: self.ingredientText)
+
+            if (self.ingredientView) {
+                self.saveRecipe(title: title!, directions: self.directionText, ingredients: self.recipeInfo.text)
+            }
+            else {
+                self.saveRecipe(title: localRecipes[selectedRecipe].title!, directions: self.recipeInfo.text, ingredients: self.ingredientText)
+            }
+
             self.recipeTitle.text = title!
         }))
 
@@ -255,48 +263,58 @@ class RecipeViewController: BaseViewController {
 
     func saveRecipe(title: String, directions: String, ingredients: String) {
 
-        /* To resolve a bug where, when editing the recipe info field,
-         then saving, then changing the recipe title, the recipe info field
-         is returned to the previous state. */
-        if (ingredientView) {
-            ingredientText = recipeInfo.text
+        var ingredientArray = [Ingredient()]
+        var directionArray = [Direction()]
+
+        // To avoid adding empty ingredients to the Realm.
+        if ingredients.trimmingCharacters(in: .whitespaces).isEmpty {
+            ingredientArray = []
         }
         else {
-            directionText = recipeInfo.text
+            //convert ingredients to Realm list and save
+            ingredientArray = ingredients.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\n").map({
+                (name: String) -> Ingredient in
+                let ingToAdd = Ingredient()
+                ingToAdd.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
+                return ingToAdd
+            })
         }
 
-        let date = Date()
-        let formatter = DateFormatter()
-        formatter.timeZone = TimeZone(identifier: "UTC")
+        // To avoid adding empty directions to the Realm.
+        if directions.trimmingCharacters(in: .whitespaces).isEmpty {
+            directionArray = []
+        }
+        else {
+            //convert directions to Realm list and save
+            directionArray = directions.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\n").map({
+                (text: String) -> Direction in
+                let dirToAdd = Direction()
+                dirToAdd.text = text.trimmingCharacters(in: .whitespaces)
+                return dirToAdd
+            })
+        }
 
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-        let result = formatter.string(from: date)
-
-        //convert ingredients to Realm list and save
-        let ingredientArray = ingredients.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\n").map({
-            (name: String) -> Ingredient in
-            let ingToAdd = Ingredient()
-            ingToAdd.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
-            return ingToAdd
-        })
         let ingredientRealmList = List<Ingredient>()
         ingredientRealmList.append(objectsIn: ingredientArray)
 
-        //convert directions to Realm list and save
-        let directionArray = directions.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\n").map({
-            (text: String) -> Direction in
-            let dirToAdd = Direction()
-            dirToAdd.text = text.trimmingCharacters(in: .whitespaces)
-            return dirToAdd
-        })
         let directionRealmList = List<Direction>()
         directionRealmList.append(objectsIn: directionArray)
+
+        // TODO: There's probably a better way.
+        // I'm manually deleting the ingredients and directions to be replaced with the new ones
+        // Otherwise, the orphaned realm objects remain in the realm.
+        for ing in localRecipes[selectedRecipe].ingredients {
+            realmManager.delete(ing)
+        }
+
+        for ing in localRecipes[selectedRecipe].directions {
+            realmManager.delete(ing)
+        }
 
         realmManager.update(localRecipes[selectedRecipe], with: [
             "title": title,
             "ingredients": ingredientRealmList,
-            "directions": directionRealmList,
-            "updatedAt": result
+            "directions": directionRealmList
             ])
     }
 

@@ -117,6 +117,7 @@ final class RealmManager {
 
     func refresh() {
         os_log("attempting refresh")
+
         if (SyncUser.current != nil) {
             os_log("there is a user")
             let config = SyncUser.current?.configuration(realmURL: Constants.REALM_URL, fullSynchronization: true)

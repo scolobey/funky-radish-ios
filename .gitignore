@@ -65,7 +65,6 @@ fastlane/test_output
  
 ## Other
 Pods
-*.xcodeproj/
  
 ### Xcode Patch ###
 !*.xcodeproj/project.pbxproj
