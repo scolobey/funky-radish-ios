@@ -84,7 +84,6 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        os_log("doing the table")
         return localRecipes.count
     }
 

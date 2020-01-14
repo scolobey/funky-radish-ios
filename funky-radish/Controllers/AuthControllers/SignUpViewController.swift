@@ -109,7 +109,7 @@ class SignUpViewController: UIViewController {
         let url = "http://localhost:8080/users"
 
         UserDefaults.standard.set(false, forKey: "fr_isOffline")
-
+        realmManager.logout()
         let offlineRecipes = realmManager.read(Recipe.self)
         let localRecipes = Array(offlineRecipes)
 

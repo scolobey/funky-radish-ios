@@ -19,15 +19,12 @@ final class RealmManager {
 //        }
 
         if (SyncUser.current != nil) {
-            os_log("there is a user")
             let config = SyncUser.current?.configuration(realmURL: Constants.REALM_URL, fullSynchronization: true)
             self.realm = try! Realm(configuration: config!)
         }
         else {
-            os_log("there is not a user")
             self.realm = try! Realm()
         }
-
 
         SyncManager.shared.errorHandler = { error, session in
             let syncError = error as! SyncError
@@ -116,21 +113,55 @@ final class RealmManager {
     }
 
     func refresh() {
-        os_log("attempting refresh")
-
         if (SyncUser.current != nil) {
-            os_log("there is a user")
+            let offlineRecipes = realmManager.read(Recipe.self)
+            var recipeArray = [Recipe]()
+
+            for rec in offlineRecipes {
+                let recipe = Recipe()
+                let ing = List<Ingredient>()
+                let dir = List<Direction>()
+
+                for ingredient in rec.ingredients {
+                    ing.append(ingredient)
+                }
+
+                for direction in recipe.directions {
+                    dir.append(direction)
+                }
+
+                recipe.title = rec.title
+                recipe.ingredients = ing
+                recipe.directions = dir
+
+                recipeArray.append(recipe)
+                realmManager.delete(rec)
+            }
+
+            // first get the current recipes. If they're not in the realm, add them.
             let config = SyncUser.current?.configuration(realmURL: Constants.REALM_URL, fullSynchronization: true)
             self.realm = try! Realm(configuration: config!)
+
+            if (recipeArray.count > 0) {
+                realmManager.copyRecipes(recipes: recipeArray)
+            }
+
         }
         else {
-            os_log("there is not a user")
             self.realm = try! Realm()
         }
     }
 
-    func registerToken() {
-
+    func copyRecipes(recipes: [Recipe]) {
+        for recipe in recipes {
+            do {
+                try realm.write {
+                    realm.create(Recipe.self, value: recipe)
+                }
+            } catch {
+                os_log("Realm error: %@", error.localizedDescription)
+            }
+        }
     }
     
 }
