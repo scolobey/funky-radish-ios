@@ -167,147 +167,147 @@ class APIManager: NSObject {
         }
     }
 
-    func bulkInsertRecipes(recipes: [Recipe], onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
-
-        // Check for internet connection
-        if !Reachability.isConnectedToNetwork() {
-            throw RecipeError.noInternetConnection
-        }
-
-        // Get the authorization token.
-        guard let retrievedToken: String = KeychainWrapper.standard.string(forKey: "fr_token") else {
-            throw RecipeError.noToken
-        }
-
-        // Structure the data.
-        var json = Array<Any>()
-
-        for recipe in recipes {
-            var ing = Array<String>()
-            for ingredient in recipe.ingredients {
-                ing.append(ingredient.name)
-            }
-
-            var dir = Array<String>()
-            for direction in recipe.directions {
-                dir.append(direction.text)
-            }
-
-            let element = [
-                "title": recipe.title!,
-                "realmID": recipe.realmID,
-                "updatedAt": recipe.updatedAt!,
-                "ingredients": ing,
-                "directions": dir
-                ] as [String : Any]
-
-            json.append(element)
-        }
-
-        let jsonData = try? JSONSerialization.data(withJSONObject: json)
-
-        // Execute request.
-        let url : String = baseURL + recipesEndpoint
-        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
-        request.httpMethod = "POST"
-        request.addValue(retrievedToken, forHTTPHeaderField: "x-access-token")
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
-        
-        request.httpBody = jsonData
-
-        os_log("Bulk insertion: %@", String(data: jsonData!, encoding: .utf8)!)
-
-        URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
-            guard let data = data, error == nil, response != nil else {onFailure(error!); return}
-
-            // Update the recipe Id's
-            do {
-                let uploadedRecipes = try JSONSerializer().serializeUploadedRecipes(input: data)
-
-                // Update ._id of local recipes.
-                let realmManager = RealmManager()
-
-                let offlineRecipes = realmManager.read(Recipe.self)
-
-                for recipe in offlineRecipes {
-                    let onlineRecipes = uploadedRecipes.filter { $0.realmID == recipe.realmID }
-                    if onlineRecipes.count > 0 {
-                        let onlineRecipe = onlineRecipes[0]
-                        realmManager.update(recipe, with: ["_id": onlineRecipe._id!])
-                    }
-                }
-
-//                for example in uploadedRecipes.enumerated() {
-//                    let realmManager = RealmManager()
+//    func bulkInsertRecipes(recipes: [Recipe], onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
 //
-//                    let updatingRecipe = realmManager.fetch(example.element.realmID)
-//                    realmManager.update(updatingRecipe, with: ["_id": example.element.realmID])
+//        // Check for internet connection
+//        if !Reachability.isConnectedToNetwork() {
+//            throw RecipeError.noInternetConnection
+//        }
+//
+//        // Get the authorization token.
+//        guard let retrievedToken: String = KeychainWrapper.standard.string(forKey: "fr_token") else {
+//            throw RecipeError.noToken
+//        }
+//
+//        // Structure the data.
+//        var json = Array<Any>()
+//
+//        for recipe in recipes {
+//            var ing = Array<String>()
+//            for ingredient in recipe.ingredients {
+//                ing.append(ingredient.name)
+//            }
+//
+//            var dir = Array<String>()
+//            for direction in recipe.directions {
+//                dir.append(direction.text)
+//            }
+//
+//            let element = [
+//                "title": recipe.title!,
+//                "realmID": recipe.realmID,
+//                "updatedAt": recipe.updatedAt!,
+//                "ingredients": ing,
+//                "directions": dir
+//                ] as [String : Any]
+//
+//            json.append(element)
+//        }
+//
+//        let jsonData = try? JSONSerialization.data(withJSONObject: json)
+//
+//        // Execute request.
+//        let url : String = baseURL + recipesEndpoint
+//        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
+//        request.httpMethod = "POST"
+//        request.addValue(retrievedToken, forHTTPHeaderField: "x-access-token")
+//        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+//        request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
+//        
+//        request.httpBody = jsonData
+//
+//        os_log("Bulk insertion: %@", String(data: jsonData!, encoding: .utf8)!)
+//
+//        URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
+//            guard let data = data, error == nil, response != nil else {onFailure(error!); return}
+//
+//            // Update the recipe Id's
+//            do {
+//                let uploadedRecipes = try JSONSerializer().serializeUploadedRecipes(input: data)
+//
+//                // Update ._id of local recipes.
+//                let realmManager = RealmManager()
+//
+//                let offlineRecipes = realmManager.read(Recipe.self)
+//
+//                for recipe in offlineRecipes {
+//                    let onlineRecipes = uploadedRecipes.filter { $0.realmID == recipe.realmID }
+//                    if onlineRecipes.count > 0 {
+//                        let onlineRecipe = onlineRecipes[0]
+//                        realmManager.update(recipe, with: ["_id": onlineRecipe._id!])
+//                    }
 //                }
+//
+////                for example in uploadedRecipes.enumerated() {
+////                    let realmManager = RealmManager()
+////
+////                    let updatingRecipe = realmManager.fetch(example.element.realmID)
+////                    realmManager.update(updatingRecipe, with: ["_id": example.element.realmID])
+////                }
+//
+//                onSuccess()
+//            }
+//            catch {
+//                // If no recipes return, we need to let the user know with a notification.
+//                onFailure(error)
+//            }
+//
+//        }).resume()
+//    }
 
-                onSuccess()
-            }
-            catch {
-                // If no recipes return, we need to let the user know with a notification.
-                onFailure(error)
-            }
-
-        }).resume()
-    }
-
-    func bulkUpdateRecipes(recipes: [Recipe], onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
-        // Check for internet connection
-        if !Reachability.isConnectedToNetwork() {
-            throw RecipeError.noInternetConnection
-        }
-
-        // Get the authorization token.
-        guard let retrievedToken: String = KeychainWrapper.standard.string(forKey: "fr_token") else {
-            throw RecipeError.noToken
-        }
-
-        // Structure the data.
-        var json = Array<Any>()
-
-        for recipe in recipes {
-            var ing = Array<String>()
-            for ingredient in recipe.ingredients {
-                ing.append(ingredient.name)
-            }
-
-            var dir = Array<String>()
-            for direction in recipe.directions {
-                dir.append(direction.text)
-            }
-
-            let element = [
-                "_id": recipe._id!,
-                "realmID": recipe.realmID,
-                "title": recipe.title!,
-                "ingredients": ing,
-                "directions": dir,
-                "updatedAt": recipe.updatedAt!
-                ] as [String : Any]
-
-            json.append(element)
-        }
-
-        let jsonData = try? JSONSerialization.data(withJSONObject: json)
-
-        // Execute request.
-        let url : String = baseURL + updateRecipesEndpoint
-        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
-        request.httpMethod = "PUT"
-        request.addValue(retrievedToken, forHTTPHeaderField: "x-access-token")
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
-        request.httpBody = jsonData
-
-        URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
-            guard let _ = data, error == nil, response != nil else {onFailure(error!); return}
-        }).resume()
-
-    }
+//    func bulkUpdateRecipes(recipes: [Recipe], onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
+//        // Check for internet connection
+//        if !Reachability.isConnectedToNetwork() {
+//            throw RecipeError.noInternetConnection
+//        }
+//
+//        // Get the authorization token.
+//        guard let retrievedToken: String = KeychainWrapper.standard.string(forKey: "fr_token") else {
+//            throw RecipeError.noToken
+//        }
+//
+//        // Structure the data.
+//        var json = Array<Any>()
+//
+//        for recipe in recipes {
+//            var ing = Array<String>()
+//            for ingredient in recipe.ingredients {
+//                ing.append(ingredient.name!)
+//            }
+//
+//            var dir = Array<String>()
+//            for direction in recipe.directions {
+//                dir.append(direction.text)
+//            }
+//
+//            let element = [
+//                "_id": recipe._id!,
+//                "realmID": recipe.realmID,
+//                "title": recipe.title!,
+//                "ingredients": ing,
+//                "directions": dir,
+//                "updatedAt": recipe.updatedAt!
+//                ] as [String : Any]
+//
+//            json.append(element)
+//        }
+//
+//        let jsonData = try? JSONSerialization.data(withJSONObject: json)
+//
+//        // Execute request.
+//        let url : String = baseURL + updateRecipesEndpoint
+//        let request: NSMutableURLRequest = NSMutableURLRequest(url: NSURL(string: url)! as URL)
+//        request.httpMethod = "PUT"
+//        request.addValue(retrievedToken, forHTTPHeaderField: "x-access-token")
+//        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+//        request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
+//        request.httpBody = jsonData
+//
+//        URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
+//            guard let _ = data, error == nil, response != nil else {onFailure(error!); return}
+//        }).resume()
+//
+//    }
 
     func deleteRecipe(id: String, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) throws {
         os_log("Recipe deletion.")

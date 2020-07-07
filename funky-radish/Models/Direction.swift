@@ -10,38 +10,37 @@ import Foundation
 import Realm
 import RealmSwift
 
-class Direction: Object, Decodable {
-    @objc dynamic var realmID = UUID().uuidString
+class Direction: Object {
+    @objc dynamic var _id = ObjectId.generate()
+    @objc dynamic var _partition = ""
     @objc dynamic var text: String = ""
 
     override static func primaryKey() -> String? {
-        return "realmID"
+        return "_id"
     }
-
-    private enum DirectionCodingKeys: String, CodingKey {
-        case text
-    }
-
-    convenience init(text: String) {
+    
+    convenience init(partition: String, text: String) {
         self.init()
+        self._partition = partition
         self.text = text
     }
 
-    convenience required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: DirectionCodingKeys.self)
-        let text = try container.decode(String.self, forKey: .text)
-        self.init(text: text)
-    }
+//    private enum DirectionCodingKeys: String, CodingKey {
+//        case text
+//    }
 
-    required init() {
-        super.init()
-    }
-
-    required init(value: Any, schema: RLMSchema) {
-        super.init(value: value, schema: schema)
-    }
-
-    required init(realm: RLMRealm, schema: RLMObjectSchema) {
-        super.init(realm: realm, schema: schema)
-    }
+//    convenience init(text: String) {
+//        self.init()
+//        self.text = text
+//    }
+//
+//    convenience required init(from decoder: Decoder) throws {
+//        let container = try decoder.container(keyedBy: DirectionCodingKeys.self)
+//        let text = try container.decode(String.self, forKey: .text)
+//        self.init(text: text)
+//    }
+//
+//    required init() {
+//        super.init()
+//    }
 }

@@ -15,8 +15,7 @@ class RecipeViewController: BaseViewController {
     var ingredientView: Bool = false
     var ingredientText: String = ""
     var directionText: String = ""
-
-    let realmManager = RealmManager()
+    var rec: Recipe? = nil
 
     @IBOutlet weak var recipeTitle: UILabel!
     @IBOutlet weak var recipeInfo: UITextView!
@@ -41,9 +40,14 @@ class RecipeViewController: BaseViewController {
 
         let recipeBoldFontDescriptor = UIFontDescriptor(name: "Rockwell-Bold", size: 18.0)
         let boldRecipeFont = UIFont(descriptor: recipeBoldFontDescriptor, size: 18.0)
+        
+        rec = localRecipes.filter("_id == %@", selectedRecipe!).first!
+        
+//        os_log("selected recipe: %ld", selectedRecipe)
+//        os_log("local rec length: %ld", localRecipes.count)
 
-        recipeTitle.text = localRecipes[selectedRecipe].title
-        prepareTextForDisplay(recipe: localRecipes[selectedRecipe])
+        recipeTitle.text = rec!.title
+        prepareTextForDisplay(recipe: rec!)
 
         contentLabel.text = "Directions"
 
@@ -78,7 +82,7 @@ class RecipeViewController: BaseViewController {
             let alert = UIAlertController(title: "Save ingredients?", message: "Would you like to save changes to your ingredients before continuing?", preferredStyle: .alert)
 
             let continueAction = UIAlertAction(title: "Yes", style: .default) { (alert: UIAlertAction!) -> Void in
-                self.saveRecipe(title: localRecipes[selectedRecipe].title!, directions: self.directionText, ingredients: self.recipeInfo.text)
+                self.saveRecipe(title: self.rec!.title!, directions: self.directionText, ingredients: self.recipeInfo.text)
                 self.navigationController?.popViewController(animated: true)
             }
 
@@ -94,7 +98,7 @@ class RecipeViewController: BaseViewController {
             let alert = UIAlertController(title: "Save directions?", message: "Would you like to save changes to your directions before continuing?", preferredStyle: .alert)
 
             let continueAction = UIAlertAction(title: "Yes", style: .default) { (alert: UIAlertAction!) -> Void in
-                self.saveRecipe(title: localRecipes[selectedRecipe].title!, directions: self.recipeInfo.text, ingredients: self.ingredientText)
+                self.saveRecipe(title: self.rec!.title!, directions: self.recipeInfo.text, ingredients: self.ingredientText)
                 self.navigationController?.popViewController(animated: true)
             }
 
@@ -115,10 +119,10 @@ class RecipeViewController: BaseViewController {
     @objc func didSwipeRight(gesture: UIGestureRecognizer) {
         if (!ingredientView) {
             if (directionText != recipeInfo.text) {
-                saveRecipe(title: localRecipes[selectedRecipe].title!, directions: recipeInfo.text, ingredients: ingredientText)
+                saveRecipe(title: self.rec!.title!, directions: recipeInfo.text, ingredients: ingredientText)
             }
 
-            prepareTextForDisplay(recipe: localRecipes[selectedRecipe])
+            prepareTextForDisplay(recipe: self.rec!)
             ingredientView = true
             recipeInfo.text = ingredientText
             contentLabel.text = "Ingredients"
@@ -130,10 +134,10 @@ class RecipeViewController: BaseViewController {
     @objc func didSwipeLeft(gesture: UIGestureRecognizer) {
         if (ingredientView) {
             if (ingredientText != recipeInfo.text) {
-                saveRecipe(title: localRecipes[selectedRecipe].title!, directions: directionText, ingredients: recipeInfo.text)
+                saveRecipe(title: self.rec!.title!, directions: directionText, ingredients: recipeInfo.text)
             }
 
-            prepareTextForDisplay(recipe: localRecipes[selectedRecipe])
+            prepareTextForDisplay(recipe: self.rec!)
             ingredientView = false
             recipeInfo.text = directionText
             contentLabel.text = "Directions"
@@ -144,49 +148,50 @@ class RecipeViewController: BaseViewController {
 
     @IBAction func saveRecipeButton(_ sender: Any) {
         if (ingredientView) {
-            saveRecipe(title: localRecipes[selectedRecipe].title!, directions: directionText, ingredients: recipeInfo.text)
+            saveRecipe(title: self.rec!.title!, directions: directionText, ingredients: recipeInfo.text)
         }
         else {
-            saveRecipe(title: localRecipes[selectedRecipe].title!, directions: recipeInfo.text, ingredients: ingredientText)
+            saveRecipe(title: self.rec!.title!, directions: recipeInfo.text, ingredients: ingredientText)
         }
     }
 
     @IBAction func deleteRecipeButton(_ sender: Any) {
-        let deleteId = localRecipes[selectedRecipe]._id
+//        let deleteId = localRecipes[selectedRecipe]._id
 
         // Warn the user these changes are permanent.
         let alertController = UIAlertController(title: "Fair warning!", message: "Once you delete this recipe, it will be lost forever.", preferredStyle: .alert)
 
         let approveAction = UIAlertAction(title: "Delete", style: UIAlertAction.Style.default) { UIAlertAction in
-            do {
-                self.realmManager.delete(localRecipes[selectedRecipe])
-
-                // Delete the recipe from the API if it has an id
-                if (deleteId != nil) {
-                    try APIManager().deleteRecipe(id: deleteId!,
-                                                  onSuccess: {
-                                                    os_log("Recipe deleted.")
-                    },
-                                                  onFailure: { error in
-                                                    os_log("Delete failed.")
-                                                    var delete_queue = UserDefaults.standard.stringArray(forKey: "DeletedQueue") ?? [String]()
-                                                    delete_queue.append(deleteId!)
-                                                    UserDefaults.standard.set(delete_queue, forKey: "DeletedQueue")
-                    })
-                }
-                else {
-                    os_log("This recipe is not in the API.")
-                }
-            }
-            catch RecipeError.noInternetConnection {
-                os_log("no internet connection. adding to queue until internet is restored.")
-                var delete_queue = UserDefaults.standard.stringArray(forKey: "DeletedQueue") ?? [String]()
-                delete_queue.append(deleteId!)
-                UserDefaults.standard.set(delete_queue, forKey: "DeletedQueue")
-            }
-            catch {
-                os_log("Probably a Realm error.")
-            }
+            
+        realmManager.delete(self.rec!)
+            
+//            do {
+//                // Delete the recipe from the API if it has an id
+//                if (deleteId != nil) {
+//                    try APIManager().deleteRecipe(id: deleteId!,
+//                                                  onSuccess: {
+//                                                    os_log("Recipe deleted.")
+//                    },
+//                                                  onFailure: { error in
+//                                                    os_log("Delete failed.")
+//                                                    var delete_queue = UserDefaults.standard.stringArray(forKey: "DeletedQueue") ?? [String]()
+//                                                    delete_queue.append(deleteId!)
+//                                                    UserDefaults.standard.set(delete_queue, forKey: "DeletedQueue")
+//                    })
+//                }
+//                else {
+//                    os_log("This recipe is not in the API.")
+//                }
+//            }
+//            catch RecipeError.noInternetConnection {
+//                os_log("no internet connection. adding to queue until internet is restored.")
+//                var delete_queue = UserDefaults.standard.stringArray(forKey: "DeletedQueue") ?? [String]()
+//                delete_queue.append(deleteId!)
+//                UserDefaults.standard.set(delete_queue, forKey: "DeletedQueue")
+//            }
+//            catch {
+//                os_log("Probably a Realm error.")
+//            }
 
             self.navigationController?.popViewController(animated: true)
         }
@@ -205,7 +210,7 @@ class RecipeViewController: BaseViewController {
         let alert = UIAlertController(title: "Change your recipe title.", message: nil, preferredStyle: .alert)
 
         alert.addTextField(configurationHandler: { textField in
-            textField.text = localRecipes[selectedRecipe].title
+            textField.text = self.rec!.title
         })
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -218,7 +223,7 @@ class RecipeViewController: BaseViewController {
                 self.saveRecipe(title: title!, directions: self.directionText, ingredients: self.recipeInfo.text)
             }
             else {
-                self.saveRecipe(title: localRecipes[selectedRecipe].title!, directions: self.recipeInfo.text, ingredients: self.ingredientText)
+                self.saveRecipe(title: self.rec!.title!, directions: self.recipeInfo.text, ingredients: self.ingredientText)
             }
 
             self.recipeTitle.text = title!
@@ -229,20 +234,20 @@ class RecipeViewController: BaseViewController {
 
     @IBAction func recipeToggle(_ sender: UISwitch) {
         if (ingredientView) {
-            saveRecipe(title: localRecipes[selectedRecipe].title!, directions: directionText, ingredients: recipeInfo.text)
+            saveRecipe(title: self.rec!.title!, directions: directionText, ingredients: recipeInfo.text)
         }
         else {
-            saveRecipe(title: localRecipes[selectedRecipe].title!, directions: recipeInfo.text, ingredients: ingredientText)
+            saveRecipe(title: self.rec!.title!, directions: recipeInfo.text, ingredients: ingredientText)
         }
         
         if (sender.isOn == true) {
-            prepareTextForDisplay(recipe: localRecipes[selectedRecipe])
+            prepareTextForDisplay(recipe: self.rec!)
             ingredientView = false
             recipeInfo.text = directionText
             contentLabel.text = "Directions"
         }
         else {
-            prepareTextForDisplay(recipe: localRecipes[selectedRecipe])
+            prepareTextForDisplay(recipe: self.rec!)
             ingredientView = true
             recipeInfo.text = ingredientText
             contentLabel.text = "Ingredients"
@@ -303,25 +308,31 @@ class RecipeViewController: BaseViewController {
         // TODO: There's probably a better way.
         // I'm manually deleting the ingredients and directions to be replaced with the new ones
         // Otherwise, the orphaned realm objects remain in the realm.
-        for ing in localRecipes[selectedRecipe].ingredients {
-            realmManager.delete(ing)
-        }
+        
+//        for ing in localRecipes[selectedRecipe].ingredients {
+//            os_log("deleting ingredients")
+//            realmManager.delete(ing)
+//        }
+//
+//        for ing in localRecipes[selectedRecipe].directions {
+//            os_log("deleting directions")
+//            realmManager.delete(ing)
+//        }
 
-        for ing in localRecipes[selectedRecipe].directions {
-            realmManager.delete(ing)
-        }
-
-        realmManager.update(localRecipes[selectedRecipe], with: [
+        realmManager.update(self.rec!, with: [
             "title": title,
             "ingredients": ingredientRealmList,
             "directions": directionRealmList
             ])
     }
+    
 
     func prepareTextForDisplay(recipe: Recipe) {
+        
+        os_log("made it into prepare recipe")
+        
         let directions = recipe.directions
         let ingredients = recipe.ingredients
-
         var directionSet: [String] = []
         var ingredientSet: [String] = []
 
@@ -330,7 +341,7 @@ class RecipeViewController: BaseViewController {
         }
 
         for ingredient in ingredients {
-            ingredientSet.append(ingredient.name)
+            ingredientSet.append(ingredient.name!)
         }
 
         directionText = directionSet.joined(separator: "\n")

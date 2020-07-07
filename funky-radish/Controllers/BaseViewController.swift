@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import CoreBluetooth
+import os
 
 var settingsOpen = false
 

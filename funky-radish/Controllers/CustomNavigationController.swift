@@ -9,6 +9,7 @@
 import UIKit
 import SwiftKeychainWrapper
 import os
+import Promises
 
 class CustomNavigationController: UINavigationController {
 
@@ -64,14 +65,17 @@ class CustomNavigationController: UINavigationController {
 
             do {
                 try self.createRecipe(title!)
-
-                //TODO: Need to open the correct recipe.
-                // Add the recipe to localRecipes and us the right index
-                self.performSegue(withIdentifier: "createRecipeSegue", sender: self)
             }
             catch {
                 os_log("Recipe create failed.")
+                //TODO:  handle and probably don't set the selected recipe, as we do below.
             }
+            
+            //TODO: Need to open the correct recipe.
+            // Add the recipe to localRecipes and use the right index
+            
+            os_log("segue to recipe")
+            self.performSegue(withIdentifier: "createRecipeSegue", sender: self)
         }))
 
         self.present(alert, animated: true)
@@ -79,13 +83,37 @@ class CustomNavigationController: UINavigationController {
 
     // Add recipe to Realm
     func createRecipe(_ title: String) throws {
-        let realmManager = RealmManager()
-
         newRecipe = true
-        selectedRecipe = localRecipes.count
-
         let recipe = Recipe()
         recipe.title = title
-        realmManager.create(recipe)
+        os_log("Recipe id: %ld", recipe._id!)
+        selectedRecipe = recipe._id
+        try realmManager.create(recipe)
     }
 }
+
+
+
+//        return Promise<Data> { (fullfill, reject) in
+//            if !Reachability.isConnectedToNetwork() {
+//                throw loginError.noConnection
+//            }
+//
+//            try Validation().isValidEmail(email)
+//            try Validation().isValidPW(password)
+//            try Validation().isValidUsername(username)
+//
+//            URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) in
+//                if error != nil {
+//                    reject(signupError.endpointInaccesible)
+//                    return
+//                }
+//                guard let data = data else {
+//                    let error = NSError(domain: "", code: 100, userInfo: nil)
+//                    reject(error)
+//                    return
+//                }
+//
+//                fullfill(data)
+//            }).resume()
+//        }

@@ -16,21 +16,20 @@ enum AuthError: Error {
     case noPassword
 }
 
-var selectedRecipe = 0
+var selectedRecipe: ObjectId?
 var newRecipe = false
 
 var fruser = KeychainWrapper.standard.string(forKey: "fr_user_email")
 var frpw = KeychainWrapper.standard.string(forKey: "fr_password")
 var offline = UserDefaults.standard.bool(forKey: "fr_isOffline")
 
-let realmManager = RealmManager()
 var localRecipes = realmManager.read(Recipe.self)
-
 var notificationToken: NotificationToken?
 
 var recipeFilter = ""
 
 class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITableViewDataSource{
+    
 
     @IBOutlet weak var recipeList: UITableView!
 
@@ -47,6 +46,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        os_log("search view will appear. loading localRecipes")
         localRecipes = realmManager.read(Recipe.self)
 
         if (recipeFilter.count > 0){
@@ -73,9 +73,11 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
 
     func filterTableView(text: String) {
         if (text.count > 0) {
+             os_log("Filtering localRecipes")
             localRecipes = realmManager.read(Recipe.self).filter("title contains [c] %@", text)
         }
         else {
+            os_log("Filtering localRecipes without recipes")
             localRecipes = realmManager.read(Recipe.self)
             self.searchBar.endEditing(true)
         }
@@ -166,7 +168,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selectedRecipe = indexPath.section
+        selectedRecipe = localRecipes[indexPath.section]._id
         self.performSegue(withIdentifier: "recipeSegue", sender: self)
     }
 }
