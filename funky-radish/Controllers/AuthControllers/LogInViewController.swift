@@ -88,6 +88,9 @@ class LogInViewController: UIViewController {
 //    override var prefersStatusBarHidden: Bool {
 //        return true
 //    }
+    
+    
+    
 
     func login(email: String, password: String) {
 
@@ -101,6 +104,8 @@ class LogInViewController: UIViewController {
                     self!.navigationController!.showToast(message: "Login failed: \(error!.localizedDescription)")
                     return
                 }
+                
+                KeychainWrapper.standard.set(email, forKey: "fr_user_email")
                 realmManager.refresh()
                 self!.navigationController?.popToRootViewController(animated: false)
             }

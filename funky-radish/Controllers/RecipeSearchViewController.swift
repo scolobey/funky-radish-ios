@@ -34,8 +34,10 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     @IBOutlet weak var recipeList: UITableView!
 
     override func viewDidLoad() {
+        os_log("view did load")
+        
         super.viewDidLoad()
-
+           
         // If recipes load from Realm, reload the table before synch
         if (localRecipes.count > 0) {
             recipeList.reloadData()
@@ -46,7 +48,8 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        os_log("search view will appear. loading localRecipes")
+        os_log("view will appear. loading localRecipes")
+     
         localRecipes = realmManager.read(Recipe.self)
 
         if (recipeFilter.count > 0){

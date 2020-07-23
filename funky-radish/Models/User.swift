@@ -15,7 +15,6 @@ import RealmSwift
     @objc dynamic var _id: ObjectId? = ObjectId.generate()
      let __v = RealmOptional<Int>()
      let admin = RealmOptional<Bool>()
-     @objc dynamic var _partition: String = ""
      @objc dynamic var createdAt: Date? = nil
      @objc dynamic var email: String? = nil
      @objc dynamic var name: String? = nil

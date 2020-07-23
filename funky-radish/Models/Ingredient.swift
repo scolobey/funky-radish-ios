@@ -13,7 +13,7 @@ import RealmSwift
 class Ingredient: Object {
     @objc dynamic var _id: ObjectId = ObjectId.generate()
     @objc dynamic var name: String? = nil
-    @objc dynamic var _partition = ""
+    @objc dynamic var _partition = "PUBLIC"
     @objc dynamic var realmID: String? = nil
     @objc dynamic var user: ObjectId? = nil
 
@@ -21,9 +21,8 @@ class Ingredient: Object {
         return "_id"
     }
     
-    convenience init(partition: String, name: String) {
+    convenience init(name: String) {
         self.init()
-        self._partition = partition
         self.name = name
     }
 

@@ -9,6 +9,7 @@
 import SwiftKeychainWrapper
 import os
 import CoreBluetooth
+import Promises
 
 class SettingsViewController: BaseViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -247,16 +248,11 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
             let alertController = UIAlertController(title: "Fair warning!", message: "Once you log out, any unsaved recipes will be lost forever.", preferredStyle: .alert)
 
             let approveAction = UIAlertAction(title: "Continue", style: UIAlertAction.Style.default) { UIAlertAction in
-                // Remove user data
-                KeychainWrapper.standard.set("", forKey: "fr_token")
-                KeychainWrapper.standard.set("", forKey: "fr_user_email")
-                KeychainWrapper.standard.set("", forKey: "fr_password")
-
-//                UserDefaults.standard.set(true, forKey: "fr_isOffline")
-
-                realmManager.logout()
-
-                self.navigationController?.popViewController(animated: true)
+                realmManager.logout(completion: {
+                    os_log("completion")
+                    KeychainWrapper.standard.set("", forKey: "fr_user_email")
+                    self.navigationController?.popViewController(animated: true)
+                })
             }
 
             let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { UIAlertAction in

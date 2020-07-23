@@ -12,16 +12,15 @@ import RealmSwift
 
 class Direction: Object {
     @objc dynamic var _id = ObjectId.generate()
-    @objc dynamic var _partition = ""
+    @objc dynamic var _partition = "PUBLIC"
     @objc dynamic var text: String = ""
 
     override static func primaryKey() -> String? {
         return "_id"
     }
     
-    convenience init(partition: String, text: String) {
+    convenience init(text: String) {
         self.init()
-        self._partition = partition
         self.text = text
     }
 

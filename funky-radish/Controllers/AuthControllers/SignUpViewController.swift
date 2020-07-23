@@ -34,8 +34,40 @@ class SignUpViewController: UIViewController {
         self.view.endEditing(true)
         activateLoadingIndicator()
         
-        signUp(email: email, username: username, password: password)
-        
+        do {
+              try signUp(email: email, username: username, password: password)
+        }
+        catch {
+            deactivateLoadingIndicator()
+            
+            switch error {
+                case loginError.noConnection:
+                    self.navigationController!.showToast(message: "No internet connection.")
+                case validationError.invalidEmail:
+                    self.navigationController!.showToast(message: "Invalid email.")
+                case validationError.shortPassword:
+                    self.navigationController!.showToast(message: "Password must contain at least 8 characters.")
+                case validationError.invalidPassword:
+                    self.navigationController!.showToast(message: "Password must contain a number.")
+                case validationError.invalidUsername:
+                    self.navigationController!.showToast(message: "Username required.")
+                case signupError.endpointInaccesible:
+                    self.navigationController!.showToast(message: "User post failed.")
+                case signupError.userResponseInvalid:
+                    self.navigationController!.showToast(message: "User response invalid.")
+                case signupError.userCreationFailed:
+                    self.navigationController!.showToast(message: "Could not create a user.")
+                case signupError.emailTaken:
+                    self.navigationController!.showToast(message: "Email already associated with an account.")
+                case loginError.tokenFailure:
+                    self.navigationController!.showToast(message: "There's a problem with the token.")
+                case RecipeError.invalidLogin:
+                    self.navigationController!.showToast(message: "Invalid token. Please log out and log back in.")
+                default:
+                    self.navigationController!.showToast(message: "Unidentified error.")
+            }
+        }
+    }
 
 
 //        signup(email: email, password: password, username: username)
@@ -78,9 +110,9 @@ class SignUpViewController: UIViewController {
 //                    self.navigationController!.showToast(message: "Recipe response invalid.")
 //                default:
 //                    self.navigationController!.showToast(message: "Unidentified error.")
-//                }
+//               }
 //        }
-    }
+//    }
 
     @IBAction func dismissSignUp(_ sender: UIButton) {
         self.navigationController?.popToRootViewController(animated: false)
@@ -107,7 +139,16 @@ class SignUpViewController: UIViewController {
         navigationController?.navigationBar.layer.frame.origin.y = 20
     }
     
-    @objc func signUp(email: String, username: String, password: String) {
+    @objc func signUp(email: String, username: String, password: String) throws {
+        
+        if !Reachability.isConnectedToNetwork() {
+            throw loginError.noConnection
+        }
+        
+        try Validation().isValidEmail(email)
+        try Validation().isValidPW(password)
+        try Validation().isValidUsername(username)
+         
         app.usernamePasswordProviderClient().registerEmail(email, password: password, completion: {[weak self](error) in
 
             DispatchQueue.main.sync {
@@ -139,11 +180,7 @@ class SignUpViewController: UIViewController {
                     return
                 }
                 
-                //TODO: log the user so we can see the id and figure out how to partition off that.
-                if(user != nil) {
-                    os_log("gotta figure out how to log the user?")
-                }
-                
+                KeychainWrapper.standard.set(email, forKey: "fr_user_email")                
                 realmManager.refresh()
 
                 self!.navigationController?.popToRootViewController(animated: false)

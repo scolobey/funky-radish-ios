@@ -15,6 +15,7 @@ import RealmSwift
     @objc dynamic var _id: ObjectId? = ObjectId.generate()
     @objc dynamic var title: String? = nil
     @objc dynamic var updatedAt: String? = nil
+    @objc dynamic var _partition: String = "PUBLIC"
     let __v = RealmOptional<Int>()
     @objc dynamic var author: User?
     @objc dynamic var clientID: String? = nil
@@ -89,31 +90,31 @@ import RealmSwift
 
 //TODO: Probably ditch this stuff.
 
-extension Object {
-    func toDictionary() -> [String:AnyObject] {
-        let properties = self.objectSchema.properties.map { $0.name }
-        var dicProps = [String:AnyObject]()
-        for (key, value) in self.dictionaryWithValues(forKeys: properties) {
-            //key = key.uppercased()
-            if let value = value as? ListBase {
-                dicProps[key] = value.toArray1() as AnyObject
-            } else if let value = value as? Object {
-                dicProps[key] = value.toDictionary() as AnyObject
-            } else {
-                dicProps[key] = value as AnyObject
-            }
-        }
-        return dicProps
-    }
-}
-
-extension ListBase {
-    func toArray1() -> [AnyObject] {
-        var _toArray = [AnyObject]()
-        for i in 0..<self._rlmArray.count {
-            let obj = unsafeBitCast(self._rlmArray[i], to: Object.self)
-            _toArray.append(obj.toDictionary() as AnyObject)
-        }
-        return _toArray
-    }
-}
+//extension Object {
+//    func toDictionary() -> [String:AnyObject] {
+//        let properties = self.objectSchema.properties.map { $0.name }
+//        var dicProps = [String:AnyObject]()
+//        for (key, value) in self.dictionaryWithValues(forKeys: properties) {
+//            //key = key.uppercased()
+//            if let value = value as? ListBase {
+//                dicProps[key] = value.toArray1() as AnyObject
+//            } else if let value = value as? Object {
+//                dicProps[key] = value.toDictionary() as AnyObject
+//            } else {
+//                dicProps[key] = value as AnyObject
+//            }
+//        }
+//        return dicProps
+//    }
+//}
+//
+//extension ListBase {
+//    func toArray1() -> [AnyObject] {
+//        var _toArray = [AnyObject]()
+//        for i in 0..<self._rlmArray.count {
+//            let obj = unsafeBitCast(self._rlmArray[i], to: Object.self)
+//            _toArray.append(obj.toDictionary() as AnyObject)
+//        }
+//        return _toArray
+//    }
+//}

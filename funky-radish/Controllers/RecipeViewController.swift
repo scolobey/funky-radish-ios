@@ -268,6 +268,10 @@ class RecipeViewController: BaseViewController {
 
     func saveRecipe(title: String, directions: String, ingredients: String) {
 
+        os_log("saving")
+        os_log("directions: %@", directions)
+        os_log("ingredients: %@", ingredients)
+        
         var ingredientArray = [Ingredient()]
         var directionArray = [Direction()]
 
@@ -308,29 +312,29 @@ class RecipeViewController: BaseViewController {
         // TODO: There's probably a better way.
         // I'm manually deleting the ingredients and directions to be replaced with the new ones
         // Otherwise, the orphaned realm objects remain in the realm.
+        // Also, this editedRec name is lame.
         
-//        for ing in localRecipes[selectedRecipe].ingredients {
-//            os_log("deleting ingredients")
-//            realmManager.delete(ing)
-//        }
-//
-//        for ing in localRecipes[selectedRecipe].directions {
-//            os_log("deleting directions")
-//            realmManager.delete(ing)
-//        }
+        let editedRec = localRecipes.filter("_id == %@", selectedRecipe!).first!
+        
+        for ing in editedRec.ingredients {
+            os_log("deleting ingredients")
+            realmManager.delete(ing)
+        }
+
+        for ing in editedRec.directions {
+            os_log("deleting directions")
+            realmManager.delete(ing)
+        }
 
         realmManager.update(self.rec!, with: [
             "title": title,
             "ingredients": ingredientRealmList,
             "directions": directionRealmList
-            ])
+        ])
     }
     
 
     func prepareTextForDisplay(recipe: Recipe) {
-        
-        os_log("made it into prepare recipe")
-        
         let directions = recipe.directions
         let ingredients = recipe.ingredients
         var directionSet: [String] = []

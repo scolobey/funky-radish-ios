@@ -14,7 +14,7 @@ struct Constants {
     static let REALM_INSTANCE_ADDRESS = "recipe-realm.us1.cloud.realm.io"
     static let REALM_AUTH_URL  = URL(string: "https://\(REALM_INSTANCE_ADDRESS)")!
     static let REALM_URL = URL(string: "realms://\(REALM_INSTANCE_ADDRESS)/~/recipes")!
-    static let REALM_APP_ID = "funky_radish-rjhtp"
+    static let REALM_APP_ID = "funky-radish-twdxv"
     
 //    static let API_ADDRESS = "https://funky-radish-api.herokuapp.com"
     static let API_ADDRESS = "http://localhost:8080"

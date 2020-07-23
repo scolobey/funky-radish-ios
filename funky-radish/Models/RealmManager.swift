@@ -9,6 +9,7 @@
 import Foundation
 import RealmSwift
 import os
+import Promises
 
 enum RealmError: Error {
     case create
@@ -19,7 +20,7 @@ enum RealmError: Error {
 
 final class RealmManager {
     
-    var partitionValue: String = ""
+    var partitionValue: String = "PUBLIC"
     
     var realm:Realm 
 
@@ -61,10 +62,12 @@ final class RealmManager {
 
         if (app.currentUser() != nil) {
             if (partitionValue.count > 0) {
-                partitionValue = "partition_value"
+                os_log("setting partition in user exists zone")
+                partitionValue = "PUBLIC"
             }
             
             let config = app.currentUser()?.configuration(partitionValue: partitionValue)
+
             self.realm = try! Realm(configuration: config!)
             os_log("Realm loaded w user: %@", realm.syncSession?.description ?? "no desc")
         }
@@ -82,6 +85,9 @@ final class RealmManager {
 
     func create<T: Object>(_ object: T) throws {
         do {
+            os_log("creating w/ partition: %@", "PUBLIC")
+            object.setValue("PUBLIC", forKey: "_partition")
+            
             try realm.write {
                 realm.add(object)
             }
@@ -92,9 +98,11 @@ final class RealmManager {
     }
 
     func createOrUpdate<Model, RealmObject: Object>(model: Model, with reverseTransformer: (Model) -> RealmObject) {
-        os_log("Realm loaded create or update: %@", realm.syncSession?.description ?? "no desc")
-        
         let object = reverseTransformer(model)
+        
+        os_log("creating or updating w/ partition: %@", "PUBLIC")
+        object.setValue("PUBLIC", forKey: "_partition")
+        
         try! realm.write {
             realm.add(object, update: .all)
         }
@@ -102,6 +110,11 @@ final class RealmManager {
 
     func create<T: Object>(_ objects: [T]) {
         do {
+            for object in objects {
+                os_log("creating many w/ partition: %@", "PUBLIC")
+                object.setValue("PUBLIC", forKey: "_partition")
+            }
+            
             try realm.write {
                 realm.add(objects, update: .all)
             }
@@ -111,21 +124,22 @@ final class RealmManager {
     }
 
     func read<T: Object>(_ object: T.Type) -> Results<T> {
-        os_log("Realm read: %@", realm.syncSession?.description ?? "no desc")
         let result = realm.objects(object.self)
+        os_log("running read: %@", result.description)
         return result
     }
 
     func fetch<T: Object>(_ id: String) -> T {
-        os_log("Realm fetch: %@", realm.syncSession?.description ?? "no desc")
         let result = realm.object(ofType: T.self, forPrimaryKey: id)
         return result!
     }
 
     func update<T: Object>(_ object: T, with dictionary: [String: Any]) {
-        os_log("Realm update from dictionary: %@", realm.syncSession?.description ?? "no desc")
         do {
             try realm.write {
+                os_log("updating w/ partition: %@", "PUBLIC")
+                object.setValue("PUBLIC", forKey: "_partition")
+                
                 for (key, value) in dictionary {
                     object.setValue(value, forKey: key)
                 }
@@ -147,7 +161,6 @@ final class RealmManager {
     }
 
     func clearAll() {
-        os_log("Realm clear all: %@", realm.syncSession?.description ?? "no desc")
         do {
             try realm.write {
                 realm.deleteAll()
@@ -158,29 +171,28 @@ final class RealmManager {
     }
 
     func subscribe(handler: @escaping (Realm.Notification, Realm) -> Void) -> NotificationToken {
-        os_log("Realm subscribe: %@", realm.syncSession?.description ?? "no desc")
+        os_log("subscribing")
+        
         let token = realm.observe(handler)
         return token
     }
-
-    func logout() {
-        os_log("Realm logout: %@", realm.syncSession?.description ?? "no desc")
-        app.logOut(completion: { (error) in
-            DispatchQueue.main.sync {
-                self.refresh()
-            }
-        })
+    
+    func logout(completion: @escaping () -> Void) {
+        os_log("calling logout")
+        self.realm = try! Realm()
+        completion()
     }
 
+    // TODO: Rename this realmRefresh to encourage a little more caution.
     func refresh() {
-        os_log("Realm refresh: %@", realm.syncSession?.description ?? "no desc")
         
-        if (app.currentUser() != nil) {
-            
-            // Get the current recipes so we can add them if they're not in the realm.
+        os_log("refreshing")
+                
+        if (app.currentUser() != nil) { // you were logged in.
             let offlineRecipes = realmManager.read(Recipe.self)
             var recipeArray = [Recipe]()
 
+            // TODO: confusing that I used rec and recipe in the same function.
             for rec in offlineRecipes {
                 let recipe = Recipe()
                 let ing = List<Ingredient>()
@@ -190,7 +202,7 @@ final class RealmManager {
                     ing.append(ingredient)
                 }
 
-                for direction in recipe.directions {
+                for direction in rec.directions {
                     dir.append(direction)
                 }
 
@@ -200,12 +212,12 @@ final class RealmManager {
 
                 recipeArray.append(recipe)
                 
-                os_log("deleting a recipe here.")
+                os_log("deleting recipe here.")
                 realmManager.delete(rec)
             }
             
             //TODO: Gotta go ahead and pick a better partition.
-            partitionValue = app.currentUser()?.identity ?? "partition"
+            partitionValue = "PUBLIC"
             
             let config = app.currentUser()?.configuration(partitionValue: partitionValue)
             self.realm = try! Realm(configuration: config!)
@@ -223,6 +235,10 @@ final class RealmManager {
     func copyRecipes(recipes: [Recipe]) {
         os_log("copy array of recipes: %@", realm.syncSession?.description ?? "no desc")
         for recipe in recipes {
+            
+//           os_log("copying recipe w/ partition: %@", "PUBLIC")
+//           recipe.setValue("PUBLIC", forKey: "_partition")
+//                    
             do {
                 try realm.write {
                     realm.create(Recipe.self, value: recipe)
@@ -234,3 +250,4 @@ final class RealmManager {
     }
     
 }
+
