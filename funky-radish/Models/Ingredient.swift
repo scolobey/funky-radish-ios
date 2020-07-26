@@ -12,10 +12,8 @@ import RealmSwift
 
 class Ingredient: Object {
     @objc dynamic var _id: ObjectId = ObjectId.generate()
+    @objc dynamic var author: String = ""
     @objc dynamic var name: String? = nil
-    @objc dynamic var _partition = "PUBLIC"
-    @objc dynamic var realmID: String? = nil
-    @objc dynamic var user: ObjectId? = nil
 
     override static func primaryKey() -> String? {
         return "_id"
@@ -25,24 +23,4 @@ class Ingredient: Object {
         self.init()
         self.name = name
     }
-
-//    private enum IngredientCodingKeys: String, CodingKey {
-//        case name
-//    }
-
-//    convenience init(name: String) {
-//        self.init()
-//        self.name = name
-//    }
-
-//    convenience required init(from decoder: Decoder) throws {
-//        let container = try decoder.container(keyedBy: IngredientCodingKeys.self)
-//        let name = try container.decode(String.self, forKey: .name)
-//        self.init(name: name)
-//    }
-//
-//    required init() {
-//        super.init()
-    
-//    }
 }

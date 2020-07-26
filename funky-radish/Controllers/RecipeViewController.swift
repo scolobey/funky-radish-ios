@@ -272,6 +272,9 @@ class RecipeViewController: BaseViewController {
         os_log("directions: %@", directions)
         os_log("ingredients: %@", ingredients)
         
+        let user_id = realmManager.partitionValue
+        os_log("saving to parition: %@", user_id)
+        
         var ingredientArray = [Ingredient()]
         var directionArray = [Direction()]
 
@@ -284,6 +287,7 @@ class RecipeViewController: BaseViewController {
             ingredientArray = ingredients.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\n").map({
                 (name: String) -> Ingredient in
                 let ingToAdd = Ingredient()
+                ingToAdd.author = user_id
                 ingToAdd.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
                 return ingToAdd
             })
@@ -298,6 +302,7 @@ class RecipeViewController: BaseViewController {
             directionArray = directions.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\n").map({
                 (text: String) -> Direction in
                 let dirToAdd = Direction()
+                dirToAdd.author = user_id
                 dirToAdd.text = text.trimmingCharacters(in: .whitespaces)
                 return dirToAdd
             })

@@ -20,9 +20,8 @@ enum RealmError: Error {
 
 final class RealmManager {
     
-    var partitionValue: String = "PUBLIC"
-    
-    var realm:Realm 
+    var partitionValue: String
+    var realm: Realm
 
     init() {
         
@@ -30,7 +29,9 @@ final class RealmManager {
 //            u.value.logOut()
 //        }
         
-        //TODO: verify schema migration works
+        os_log("init realm")
+        
+        //TODO: verify schema migration works / remove deleteRealmIfMigrationNeeded
         let config = Realm.Configuration(
             // Set the new schema version. This must be greater than the previously used
             // version (if you've never set a schema version before, the version is 0).
@@ -57,13 +58,14 @@ final class RealmManager {
             deleteRealmIfMigrationNeeded: true
         )
 
-        // Tell Realm to use this new configuration object for the default Realm
-        Realm.Configuration.defaultConfiguration = config
-
-        if (app.currentUser() != nil) {
+        if (app.currentUser() != nil && app.currentUser()?.identity?.count ?? 0 > 0) {
+            os_log("partition value is Something Okay!")
+            
+            partitionValue = app.currentUser()?.identity! ?? ""
+            
             if (partitionValue.count > 0) {
-                os_log("setting partition in user exists zone")
-                partitionValue = "PUBLIC"
+                let user_id = app.currentUser()?.identity
+                partitionValue = user_id!
             }
             
             let config = app.currentUser()?.configuration(partitionValue: partitionValue)
@@ -72,21 +74,26 @@ final class RealmManager {
             os_log("Realm loaded w user: %@", realm.syncSession?.description ?? "no desc")
         }
         else {
+            os_log("partition value is Nothing Okay!")
+            partitionValue = ""
+            
             self.realm = try! Realm()
             
             os_log("Realm loaded w/o user: %@", realm.syncSession?.debugDescription ?? "no desc")
         }
-
-//        SyncManager.shared.errorHandler = { error, session in
-//            let syncError = error as! SyncError
-//            os_log("Realm Synch error: %@", syncError.localizedDescription)
-//        }
+        
+        // Tell Realm to use this new configuration object for the default Realm
+        Realm.Configuration.defaultConfiguration = config
     }
 
     func create<T: Object>(_ object: T) throws {
         do {
-            os_log("creating w/ partition: %@", "PUBLIC")
-            object.setValue("PUBLIC", forKey: "_partition")
+            let user_id = app.currentUser()?.identity
+            
+            if (user_id != nil) {
+                os_log("creating w/ partition: %@", user_id!)
+                object.setValue(user_id, forKey: "author")
+            }
             
             try realm.write {
                 realm.add(object)
@@ -99,9 +106,13 @@ final class RealmManager {
 
     func createOrUpdate<Model, RealmObject: Object>(model: Model, with reverseTransformer: (Model) -> RealmObject) {
         let object = reverseTransformer(model)
-        
-        os_log("creating or updating w/ partition: %@", "PUBLIC")
-        object.setValue("PUBLIC", forKey: "_partition")
+             
+        let user_id = app.currentUser()?.identity
+
+        if (user_id != nil) {
+            os_log("creating or updating w/ partition: %@", user_id!)
+            object.setValue(user_id, forKey: "author")
+        }
         
         try! realm.write {
             realm.add(object, update: .all)
@@ -111,8 +122,12 @@ final class RealmManager {
     func create<T: Object>(_ objects: [T]) {
         do {
             for object in objects {
-                os_log("creating many w/ partition: %@", "PUBLIC")
-                object.setValue("PUBLIC", forKey: "_partition")
+                let user_id = app.currentUser()?.identity
+      
+                if (user_id != nil) {
+                    os_log("creating many w/ partition: %@", user_id!)
+                    object.setValue(user_id, forKey: "author")
+                }
             }
             
             try realm.write {
@@ -125,7 +140,6 @@ final class RealmManager {
 
     func read<T: Object>(_ object: T.Type) -> Results<T> {
         let result = realm.objects(object.self)
-        os_log("running read: %@", result.description)
         return result
     }
 
@@ -137,9 +151,6 @@ final class RealmManager {
     func update<T: Object>(_ object: T, with dictionary: [String: Any]) {
         do {
             try realm.write {
-                os_log("updating w/ partition: %@", "PUBLIC")
-                object.setValue("PUBLIC", forKey: "_partition")
-                
                 for (key, value) in dictionary {
                     object.setValue(value, forKey: key)
                 }
@@ -151,6 +162,7 @@ final class RealmManager {
 
     func delete<T: Object>(_ object: T) {
         os_log("Realm delete: %@", realm.syncSession?.description ?? "no desc")
+        
         do {
             try realm.write {
                 realm.delete(object)
@@ -179,6 +191,7 @@ final class RealmManager {
     
     func logout(completion: @escaping () -> Void) {
         os_log("calling logout")
+        
         self.realm = try! Realm()
         completion()
     }
@@ -195,29 +208,32 @@ final class RealmManager {
             // TODO: confusing that I used rec and recipe in the same function.
             for rec in offlineRecipes {
                 let recipe = Recipe()
+                let user_id = app.currentUser()?.identity
                 let ing = List<Ingredient>()
                 let dir = List<Direction>()
+                
+                partitionValue = user_id!
 
                 for ingredient in rec.ingredients {
+                    realmManager.update(ingredient, with: ["author": partitionValue])
                     ing.append(ingredient)
                 }
 
                 for direction in rec.directions {
+                    realmManager.update(direction, with: ["author": partitionValue])
                     dir.append(direction)
                 }
 
                 recipe.title = rec.title
+                recipe.author = partitionValue
                 recipe.ingredients = ing
                 recipe.directions = dir
 
                 recipeArray.append(recipe)
-                
-                os_log("deleting recipe here.")
                 realmManager.delete(rec)
             }
             
-            //TODO: Gotta go ahead and pick a better partition.
-            partitionValue = "PUBLIC"
+            os_log("Refreshing Realm w/ partition: %@", partitionValue)
             
             let config = app.currentUser()?.configuration(partitionValue: partitionValue)
             self.realm = try! Realm(configuration: config!)
@@ -228,6 +244,8 @@ final class RealmManager {
 
         }
         else {
+            os_log("Refreshing Realm w/ partition = nothing okay!")
+            
             self.realm = try! Realm()
         }
     }
@@ -235,10 +253,6 @@ final class RealmManager {
     func copyRecipes(recipes: [Recipe]) {
         os_log("copy array of recipes: %@", realm.syncSession?.description ?? "no desc")
         for recipe in recipes {
-            
-//           os_log("copying recipe w/ partition: %@", "PUBLIC")
-//           recipe.setValue("PUBLIC", forKey: "_partition")
-//                    
             do {
                 try realm.write {
                     realm.create(Recipe.self, value: recipe)

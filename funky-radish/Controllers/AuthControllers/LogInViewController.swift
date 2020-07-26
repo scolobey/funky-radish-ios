@@ -28,36 +28,38 @@ class LogInViewController: UIViewController {
         self.view.endEditing(true)
         activateLoadingIndicator()
         
-        login(email: email, password: password)
+        do {
+              try login(email: email, password: password)
+        }
+        catch {
+            deactivateLoadingIndicator()
+            
+            switch error {
+                case loginError.noConnection:
+                    self.navigationController!.showToast(message: "No internet connection.")
+                case validationError.invalidEmail:
+                    self.navigationController!.showToast(message: "Invalid email.")
+                case validationError.shortPassword:
+                    self.navigationController!.showToast(message: "Password must contain at least 8 characters.")
+                case validationError.invalidPassword:
+                    self.navigationController!.showToast(message: "Password must contain a number.")
+                case validationError.invalidUsername:
+                    self.navigationController!.showToast(message: "Username required.")
+                case signupError.endpointInaccesible:
+                    self.navigationController!.showToast(message: "User post failed.")
+                case signupError.userResponseInvalid:
+                    self.navigationController!.showToast(message: "User response invalid.")
+                case signupError.userCreationFailed:
+                    self.navigationController!.showToast(message: "Could not create a user.")
+                case signupError.emailTaken:
+                    self.navigationController!.showToast(message: "Email already associated with an account.")
+                case loginError.tokenFailure:
+                    self.navigationController!.showToast(message: "There's a problem with the token.")
+                default:
+                    self.navigationController!.showToast(message: "Unidentified error.")
+            }
+        }
 
-//        login(email: email, password: password)
-//            .then { self.decodeTokenData(data: $0, email: email, password: password) }
-//            .then { self.loginRealmUser(token: $0.token) }
-//            .then {
-//                realmManager.refresh()
-//                self.deactivateLoadingIndicator()
-//                self.navigationController?.popToRootViewController(animated: false)
-//            }
-//            .catch { error in
-//                self.deactivateLoadingIndicator()
-//
-//                switch error {
-//                    case loginError.noConnection:
-//                        self.navigationController!.showToast(message: "No internet connection.")
-//                    case validationError.invalidEmail:
-//                        self.navigationController!.showToast(message: "Invalid email.")
-//                    case validationError.shortPassword:
-//                        self.navigationController!.showToast(message: "Password must contain at least 8 characters.")
-//                    case validationError.invalidPassword:
-//                        self.navigationController!.showToast(message: "Password must contain a number.")
-//                    case loginError.tokenFailure:
-//                        self.navigationController!.showToast(message: "User not found. Sign up or try again.")
-//                    case RecipeError.invalidLogin:
-//                        self.navigationController!.showToast(message: "Invalid token. Please log out and log back in.")
-//                    default:
-//                        self.navigationController!.showToast(message: "Unidentified error.")
-//                }
-//            }
     }
 
     @IBAction func dismissLoginButton(_ sender: UIButton) {
@@ -85,14 +87,14 @@ class LogInViewController: UIViewController {
         navigationController?.navigationBar.layer.frame.origin.y = 20
     }
 
-//    override var prefersStatusBarHidden: Bool {
-//        return true
-//    }
-    
-    
-    
-
-    func login(email: String, password: String) {
+    func login(email: String, password: String) throws {
+        
+        if !Reachability.isConnectedToNetwork() {
+            throw loginError.noConnection
+        }
+        
+        try Validation().isValidEmail(email)
+        try Validation().isValidPW(password)
 
         UserDefaults.standard.set(false, forKey: "fr_isOffline")
         

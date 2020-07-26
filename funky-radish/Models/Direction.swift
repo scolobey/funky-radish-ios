@@ -12,7 +12,7 @@ import RealmSwift
 
 class Direction: Object {
     @objc dynamic var _id = ObjectId.generate()
-    @objc dynamic var _partition = "PUBLIC"
+    @objc dynamic var author: String = ""
     @objc dynamic var text: String = ""
 
     override static func primaryKey() -> String? {
@@ -23,23 +23,4 @@ class Direction: Object {
         self.init()
         self.text = text
     }
-
-//    private enum DirectionCodingKeys: String, CodingKey {
-//        case text
-//    }
-
-//    convenience init(text: String) {
-//        self.init()
-//        self.text = text
-//    }
-//
-//    convenience required init(from decoder: Decoder) throws {
-//        let container = try decoder.container(keyedBy: DirectionCodingKeys.self)
-//        let text = try container.decode(String.self, forKey: .text)
-//        self.init(text: text)
-//    }
-//
-//    required init() {
-//        super.init()
-//    }
 }
