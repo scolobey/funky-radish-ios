@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -15,7 +15,6 @@
 		CC4505F4213F3B0A0056ED3D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4505F3213F3B0A0056ED3D /* SettingsViewController.swift */; };
 		CC4505F6214826850056ED3D /* Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4505F5214826850056ED3D /* Validation.swift */; };
 		CC4505F82148A6B20056ED3D /* LoadAnimationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4505F72148A6B20056ED3D /* LoadAnimationViewController.swift */; };
-		CC6D92F2210E55D60044C600 /* JSONSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6D92F1210E55D60044C600 /* JSONSerializer.swift */; };
 		CC6D92F42110E2000044C600 /* Ingredient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6D92F32110E2000044C600 /* Ingredient.swift */; };
 		CC6D92F62110E4130044C600 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6D92F52110E4130044C600 /* Direction.swift */; };
 		CC6D92F82110E4430044C600 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6D92F72110E4430044C600 /* User.swift */; };
@@ -31,7 +30,6 @@
 		CC8177BE20EBD8B000D02783 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC8177BD20EBD8B000D02783 /* SignUpViewController.swift */; };
 		CC8177C320EBE1FF00D02783 /* CustomNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC8177C220EBE1FF00D02783 /* CustomNavigationController.swift */; };
 		CC88FC9323F899D40025226F /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC88FC9223F899D40025226F /* ShareViewController.swift */; };
-		CCE3E26D210A3CC5005EB7A9 /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE3E26C210A3CC5005EB7A9 /* APIManager.swift */; };
 		CCE9CA6A23540D0D00038159 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE9CA6923540D0D00038159 /* Constants.swift */; };
 		CCF221D221220CB100FD5C9E /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF221D121220CB100FD5C9E /* SwiftyJSON.framework */; };
 		CCF221DC2128BD0F00FD5C9E /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF221DB2128BD0F00FD5C9E /* Reachability.swift */; };
@@ -66,7 +64,6 @@
 		CC4505F3213F3B0A0056ED3D /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		CC4505F5214826850056ED3D /* Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validation.swift; sourceTree = "<group>"; };
 		CC4505F72148A6B20056ED3D /* LoadAnimationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadAnimationViewController.swift; sourceTree = "<group>"; };
-		CC6D92F1210E55D60044C600 /* JSONSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONSerializer.swift; sourceTree = "<group>"; };
 		CC6D92F32110E2000044C600 /* Ingredient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ingredient.swift; sourceTree = "<group>"; };
 		CC6D92F52110E4130044C600 /* Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
 		CC6D92F72110E4430044C600 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -88,7 +85,6 @@
 		CC8177BD20EBD8B000D02783 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		CC8177C220EBE1FF00D02783 /* CustomNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationController.swift; sourceTree = "<group>"; };
 		CC88FC9223F899D40025226F /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
-		CCE3E26C210A3CC5005EB7A9 /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
 		CCE9CA6923540D0D00038159 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		CCEB7A47210252530071A8B3 /* Realm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Realm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCEB7A492102525F0071A8B3 /* RealmSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -220,7 +216,6 @@
 			isa = PBXGroup;
 			children = (
 				CC739D1420F926560031AAB2 /* StyleHelpers.swift */,
-				CC6D92F1210E55D60044C600 /* JSONSerializer.swift */,
 				CCF221DB2128BD0F00FD5C9E /* Reachability.swift */,
 				CC4505F5214826850056ED3D /* Validation.swift */,
 			);
@@ -250,7 +245,6 @@
 		CC8177A520EBBF9900D02783 /* funky-radish */ = {
 			isa = PBXGroup;
 			children = (
-				CCE3E26B210A3C8B005EB7A9 /* API */,
 				CC739D1320F8FA370031AAB2 /* Helpers */,
 				CC8177B220EBBF9A00D02783 /* Info.plist */,
 				CC8177D220ED3BD500D02783 /* Supporting Files */,
@@ -270,14 +264,6 @@
 				CCE9CA6923540D0D00038159 /* Constants.swift */,
 			);
 			path = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		CCE3E26B210A3C8B005EB7A9 /* API */ = {
-			isa = PBXGroup;
-			children = (
-				CCE3E26C210A3CC5005EB7A9 /* APIManager.swift */,
-			);
-			path = API;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -453,14 +439,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CCE3E26D210A3CC5005EB7A9 /* APIManager.swift in Sources */,
 				CC6D92F42110E2000044C600 /* Ingredient.swift in Sources */,
 				CC4505F4213F3B0A0056ED3D /* SettingsViewController.swift in Sources */,
 				CC6D92F82110E4430044C600 /* User.swift in Sources */,
 				CC739D1520F926560031AAB2 /* StyleHelpers.swift in Sources */,
 				CC8177C320EBE1FF00D02783 /* CustomNavigationController.swift in Sources */,
 				CC8177A720EBBF9900D02783 /* AppDelegate.swift in Sources */,
-				CC6D92F2210E55D60044C600 /* JSONSerializer.swift in Sources */,
 				CC6D92F62110E4130044C600 /* Direction.swift in Sources */,
 				CC8177BE20EBD8B000D02783 /* SignUpViewController.swift in Sources */,
 				CC2D5EE720FA937E0002FB73 /* BaseViewController.swift in Sources */,

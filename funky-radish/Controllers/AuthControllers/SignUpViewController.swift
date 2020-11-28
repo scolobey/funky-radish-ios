@@ -106,8 +106,7 @@ class SignUpViewController: UIViewController {
 
             DispatchQueue.main.sync {
                 
-                //TODO: Wait. Do we really need this? If we just restart it in the next function?
-                
+                //TODO: Wait. Do we really need this? If we just restart it in the next function?          
                 self!.deactivateLoadingIndicator()
                 
                 guard error == nil else {

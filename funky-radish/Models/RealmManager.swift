@@ -63,6 +63,7 @@ final class RealmManager {
             
             partitionValue = app.currentUser()?.identity! ?? ""
             
+            //TODO: Seems awfully redundant?
             if (partitionValue.count > 0) {
                 let user_id = app.currentUser()?.identity
                 partitionValue = user_id!
