@@ -59,7 +59,6 @@ class LogInViewController: UIViewController {
                     self.navigationController!.showToast(message: "Unidentified error.")
             }
         }
-
     }
 
     @IBAction func dismissLoginButton(_ sender: UIButton) {
@@ -84,7 +83,7 @@ class LogInViewController: UIViewController {
     }
 
     func setUpProperties() {
-        navigationController?.navigationBar.layer.frame.origin.y = 20
+    navigationController?.navigationBar.layer.frame.origin.y = 20
     }
 
     func login(email: String, password: String) throws {
@@ -98,98 +97,38 @@ class LogInViewController: UIViewController {
 
         UserDefaults.standard.set(false, forKey: "fr_isOffline")
         
-        app.login(withCredential: AppCredentials(username: email, password: password)) { [weak self](user, error) in
-
-            DispatchQueue.main.sync {
-                self!.deactivateLoadingIndicator()
-                guard error == nil else {
-                    self!.navigationController!.showToast(message: "Login failed: \(error!.localizedDescription)")
-                    return
-                }
-                
-                KeychainWrapper.standard.set(email, forKey: "fr_user_email")
-                realmManager.refresh()
-                self!.navigationController?.popToRootViewController(animated: false)
-            }
-        };
+        try ApiManager().downloadToken(
+                    email: email,
+                    password: password,
+                    onSuccess: {
+                        
+        //                TODO: make these strings into constants.
+                        let token = KeychainWrapper.standard.string(forKey: "fr_token")
+                        
+                        let credentials = AppCredentials.init(jwt: token!)
+                        
+                        app.login(withCredential: credentials, completion: { [weak self](user, err) in
+                            DispatchQueue.main.sync {
+                                self!.deactivateLoadingIndicator()
+                            
+                                if let error = err {
+                                    self!.navigationController!.showToast(message: "Signup failed: \(error.localizedDescription)")
+                                    return;
+                                }
+                                
+                                KeychainWrapper.standard.set(email, forKey: "fr_user_email")
+                                //TODO: Can probably ditch the password.
+                                KeychainWrapper.standard.set(password, forKey: "fr_password")
+                                
+                                print("Login successful!");
+                                self?.navigationController?.popToRootViewController(animated: false)
+                            }
+                        })
+                    },
+                    onFailure: { error in
+                        os_log("failure")
+                        return
+                    })
         
-
-//        let endpoint = Constants.AUTHENTICATION_ENDPOINT
-//
-//        let request: NSMutableURLRequest = NSMutableURLRequest(url: endpoint)
-//        request.httpMethod = "POST"
-//        request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
-//        let paramString = "email=" + email + "&password=" + password
-//        request.httpBody = paramString.data(using: String.Encoding.utf8)
-//
-//        return Promise<Data> { (fullfill, reject) in
-//            if !Reachability.isConnectedToNetwork() {
-//                throw loginError.noConnection
-//            }
-//
-//            try Validation().isValidEmail(email)
-//            try Validation().isValidPW(password)
-//
-//            URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) in
-//                if let error = error {
-//                    reject(error)
-//                    return
-//                }
-//                guard let data = data else {
-//                    let error = NSError(domain: "", code: 100, userInfo: nil)
-//                    reject(error)
-//                    return
-//                }
-//
-//                fullfill(data)
-//            }).resume()
-//        }
     }
-
-//    func decodeTokenData(data: Data, email: String, password: String) -> Promise<Token> {
-//        return Promise<Token> { (fullfill, reject) in
-//            do {
-//                let token = try JSONDecoder().decode(Token.self, from: data)
-//
-//                // TODO: I think this can safely be extracted from if statement.
-//                if (token.success) {
-//                    KeychainWrapper.standard.set(email, forKey: "fr_user_email")
-//                    KeychainWrapper.standard.set(password, forKey: "fr_password")
-//                    KeychainWrapper.standard.set(token.token, forKey: "fr_token")
-//
-//                    fullfill(token)
-//                }
-//                else {
-//                    throw loginError.tokenFailure
-//                }
-//            }
-//            catch {
-//                throw loginError.tokenFailure
-//            }
-//        }
-//    }
-
-//    func loginRealmUser(token: String) -> Promise<Void> {
-//        let auth_url = Constants.REALM_AUTH_URL
-//        let credentials = SyncCredentials.jwt(token)
-//
-//        return Promise<Void> { (fullfill, reject) in
-//
-//            os_log("authenticating realm user")
-//            SyncUser.logIn(with: credentials, server: auth_url) { [weak self] (user, err) in
-//                guard let `self` = self else  { return }
-//
-//                if let error = err {
-//                    self.deactivateLoadingIndicator()
-//                    let alert = UIAlertController(title: "Uh Oh", message: error.localizedDescription, preferredStyle: .alert)
-//                    alert.addAction(UIAlertAction(title: "Okay!", style: .default, handler: nil))
-//                    self.present(alert, animated: true, completion: nil)
-//                } else if let _ = user {
-//                    fullfill(())
-//                }
-//            }
-//
-//        }
-//    }
-    
 }

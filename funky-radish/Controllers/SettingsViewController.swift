@@ -190,8 +190,6 @@ extension SettingsViewController: CBCentralManagerDelegate {
         }
     }
 
-
-
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
 
         os_log("Discovered peripheral: %ds", peripheral)

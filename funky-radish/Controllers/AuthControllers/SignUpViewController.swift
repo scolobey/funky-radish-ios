@@ -126,41 +126,11 @@ class SignUpViewController: UIViewController {
                         self?.navigationController?.popToRootViewController(animated: false)
                     }
                 })
-            
-                
-//                create credentials
-//                login to realm with credentials
-//                set the username
-//                make a copy of recipes if there are some
-//                delete the recipes from the realm if theyve been copied
-//                close the realm
-//                Setup the new synched realm
-//                insert the copied recipes if they exist
-//                hit the callback to dismiss the loader
-//                and load the new recipe view
-//
-                
             },
             onFailure: { error in
                 os_log("failure")
                 return
             })
-         
-//        app.usernamePasswordProviderClient().registerEmail(email, password: password, completion: {[weak self](error) in
-//
-//            DispatchQueue.main.sync {
-//
-//                //TODO: Wait. Do we really need this? If we just restart it in the next function?
-//                self!.deactivateLoadingIndicator()
-//
-//                guard error == nil else {
-//                    self!.navigationController!.showToast(message: "Signup failed: \(error!.localizedDescription)")
-//                    return
-//                }
-//
-//                self!.signIn(email: email, username: username, password: password)
-//            }
-//        })
     }
     
     @objc func signIn(email: String, username: String, password: String) {
