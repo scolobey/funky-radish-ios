@@ -30,7 +30,6 @@ var recipeFilter = ""
 
 class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITableViewDataSource{
     
-
     @IBOutlet weak var recipeList: UITableView!
 
     override func viewDidLoad() {

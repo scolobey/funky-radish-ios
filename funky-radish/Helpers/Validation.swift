@@ -43,14 +43,6 @@ class Validation {
         }
     }
 
-    func isValidUsername(_ username:String) throws {
-        if (username.count == 0){
-            throw validationError.invalidUsername
-        }
-        else {
-            return
-        }
-    }
 }
 
 

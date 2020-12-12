@@ -22,20 +22,18 @@ enum signupError: Error {
 }
 
 class SignUpViewController: UIViewController {
-    @IBOutlet weak var usernameField: UITextField!
     @IBOutlet weak var emailField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
 
     @IBAction func signUpButton(_ sender: Any) {
         let email = emailField.text!
-        let username = usernameField.text!
         let password = passwordField.text!
 
         self.view.endEditing(true)
         activateLoadingIndicator()
         
         do {
-              try signUp(email: email, username: username, password: password)
+              try signUp(email: email, password: password)
         }
         catch {
             deactivateLoadingIndicator()
@@ -92,7 +90,7 @@ class SignUpViewController: UIViewController {
         navigationController?.navigationBar.layer.frame.origin.y = 20
     }
     
-    @objc func signUp(email: String, username: String, password: String) throws {
+    @objc func signUp(email: String, password: String) throws {
         
         if !Reachability.isConnectedToNetwork() {
             throw loginError.noConnection
@@ -100,23 +98,69 @@ class SignUpViewController: UIViewController {
         
         try Validation().isValidEmail(email)
         try Validation().isValidPW(password)
-        try Validation().isValidUsername(username)
+        
+        try ApiManager().downloadToken(
+            email: email,
+            password: password,
+            onSuccess: {
+                
+//                TODO: make these strings into constants.
+                let token = KeychainWrapper.standard.string(forKey: "fr_token")
+                
+                let credentials = AppCredentials.init(jwt: token!)
+                
+                app.login(withCredential: credentials, completion: { [weak self](user, err) in
+                    DispatchQueue.main.sync {
+                        self!.deactivateLoadingIndicator()
+                    
+                        if let error = err {
+                            self!.navigationController!.showToast(message: "Signup failed: \(error.localizedDescription)")
+                            return;
+                        }
+                        
+                        KeychainWrapper.standard.set(email, forKey: "fr_user_email")
+                        //TODO: Can probably ditch the password.
+                        KeychainWrapper.standard.set(password, forKey: "fr_password")
+                        
+                        print("Login successful!");
+                        self?.navigationController?.popToRootViewController(animated: false)
+                    }
+                })
+            
+                
+//                create credentials
+//                login to realm with credentials
+//                set the username
+//                make a copy of recipes if there are some
+//                delete the recipes from the realm if theyve been copied
+//                close the realm
+//                Setup the new synched realm
+//                insert the copied recipes if they exist
+//                hit the callback to dismiss the loader
+//                and load the new recipe view
+//
+                
+            },
+            onFailure: { error in
+                os_log("failure")
+                return
+            })
          
-        app.usernamePasswordProviderClient().registerEmail(email, password: password, completion: {[weak self](error) in
-
-            DispatchQueue.main.sync {
-                
-                //TODO: Wait. Do we really need this? If we just restart it in the next function?          
-                self!.deactivateLoadingIndicator()
-                
-                guard error == nil else {
-                    self!.navigationController!.showToast(message: "Signup failed: \(error!.localizedDescription)")
-                    return
-                }
-                          
-                self!.signIn(email: email, username: username, password: password)
-            }
-        })
+//        app.usernamePasswordProviderClient().registerEmail(email, password: password, completion: {[weak self](error) in
+//
+//            DispatchQueue.main.sync {
+//
+//                //TODO: Wait. Do we really need this? If we just restart it in the next function?
+//                self!.deactivateLoadingIndicator()
+//
+//                guard error == nil else {
+//                    self!.navigationController!.showToast(message: "Signup failed: \(error!.localizedDescription)")
+//                    return
+//                }
+//
+//                self!.signIn(email: email, username: username, password: password)
+//            }
+//        })
     }
     
     @objc func signIn(email: String, username: String, password: String) {

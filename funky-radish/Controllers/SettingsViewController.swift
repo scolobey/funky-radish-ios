@@ -60,110 +60,35 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
             return cell
         }()
 
-        if (!Reachability.isConnectedToNetwork()){
-            os_log("no network connection.")
+        if (fruser?.count ?? 0 > 0){
             if (indexPath.row == 0) {
-                cell.textLabel?.text = "No Wifi Detected"
+                cell.textLabel?.text = fruser!
                 cell.textLabel?.font = font
             }
-
             else if (indexPath.row == 1) {
+                cell.textLabel?.text = "Log Out"
+                cell.textLabel?.font = font
+            }
+            else if (indexPath.row == 2) {
                 cell.textLabel?.text = "Receive Transmission"
                 cell.textLabel?.font = font
             }
         }
-
-        else if (offline && (fruser?.count == 0 || fruser == nil)) {
-            os_log("Offline. No user.")
+        
+        else {
             if (indexPath.row == 0) {
                 cell.textLabel?.text = "Log In"
                 cell.textLabel?.font = font
             }
-
             else if (indexPath.row == 1) {
                 cell.textLabel?.text = "Sign Up!"
                 cell.textLabel?.font = font
             }
-
             else if (indexPath.row == 2) {
-                cell.textLabel?.text = "Currently Offline"
-                cell.textLabel?.font = font
-            }
-
-            else if (indexPath.row == 3) {
                 cell.textLabel?.text = "Receive Transmission"
                 cell.textLabel?.font = font
             }
         }
-
-        else if (offline && fruser?.count ?? 0 > 0) {
-            os_log("Offline. Yes user.")
-            if (indexPath.row == 0) {
-                cell.textLabel?.text = "Toggle Online"
-                cell.textLabel?.font = font
-            }
-
-            else if (indexPath.row == 1) {
-                cell.textLabel?.text = "Receive Transmission"
-                cell.textLabel?.font = font
-            }
-        }
-
-        else if (!offline && fruser?.count ?? 0 > 0){
-            os_log("Online. Yes user.")
-            if (indexPath.row == 0) {
-                cell.textLabel?.text = "Log Out"
-                cell.textLabel?.font = font
-            }
-
-            else if (indexPath.row == 1) {
-                cell.textLabel?.text = fruser!
-                cell.textLabel?.font = font
-            }
-
-            else if (indexPath.row == 2) {
-                cell.textLabel?.text = "Toggle Offline"
-                cell.textLabel?.font = font
-            }
-
-            else if (indexPath.row == 3) {
-                cell.textLabel?.text = "Receive Transmission"
-                cell.textLabel?.font = font
-            }
-        }
-
-        else if (!offline && (fruser == nil || fruser?.count == 0)){
-            os_log("Online. No user.")
-            if (indexPath.row == 0) {
-                cell.textLabel?.text = "Log in"
-                cell.textLabel?.font = font
-            }
-
-            else if (indexPath.row == 1) {
-                cell.textLabel?.text = "Sign Up!"
-                cell.textLabel?.font = font
-            }
-
-            else if (indexPath.row == 2) {
-                cell.textLabel?.text = "Toggle Offline"
-                cell.textLabel?.font = font
-            }
-
-            else if (indexPath.row == 3) {
-                cell.textLabel?.text = "Receive Transmission"
-                cell.textLabel?.font = font
-            }
-        }
-
-
-//        //TODO: remove this else
-//        else {
-//            let fontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
-//            let font = UIFont(descriptor: fontDescriptor, size: 18.0)
-//
-//            cell.textLabel?.text = "settings malfunction!"
-//            cell.textLabel?.font = font
-//        }
 
         return cell
     }
@@ -171,16 +96,20 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         var userState = 0
-
-        if (!Reachability.isConnectedToNetwork()){
+        
+        if (fruser?.count ?? 0 > 0){
             if (indexPath.row == 0) {
-                // no wifi
+                // display user
                 userState = 0
             } else if (indexPath.row == 1) {
+                // log out
+                userState = 3
+            }  else if (indexPath.row == 2) {
                 // bluetooth
-                userState = 6
+                userState = 4
             }
-        } else if (offline && (fruser?.count == 0 || fruser == nil)) {
+        }
+        else {
             if (indexPath.row == 0) {
                 // log in
                 userState = 1
@@ -188,47 +117,8 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
                 // sign up
                 userState = 2
             } else if (indexPath.row == 2) {
-                // no action
-                userState = 0
-            } else if (indexPath.row == 3) {
                 // bluetooth
-                userState = 6
-            }
-        } else if (offline && fruser?.count ?? 0 > 0) {
-            if (indexPath.row == 0) {
-                // toggle online
                 userState = 4
-            } else if (indexPath.row == 1) {
-                // bluetooth
-                userState = 6
-            }
-        } else if (!offline && fruser?.count ?? 0 > 0){
-            if (indexPath.row == 0) {
-                // log out
-                userState = 3
-            } else if (indexPath.row == 1) {
-                // display user
-                userState = 0
-            } else if (indexPath.row == 2) {
-                // toggle offline
-                userState = 5
-            } else if (indexPath.row == 3) {
-                // bluetooth
-                userState = 6
-            }
-        } else if (!offline && (fruser?.count == 0 || fruser == nil)) {
-            if (indexPath.row == 0) {
-                // log out
-                userState = 1
-            } else if (indexPath.row == 1) {
-                // sign up
-                userState = 2
-            } else if (indexPath.row == 2) {
-                // toffle offline
-                userState = 5
-            } else if (indexPath.row == 3) {
-                // bluetooth
-                userState = 6
             }
         }
 
@@ -263,15 +153,7 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
             alertController.addAction(cancelAction)
 
             self.present(alertController, animated: true, completion: nil)
-        // Toggle online.
         case 4:
-            UserDefaults.standard.set(false, forKey: "fr_isOffline")
-            self.navigationController?.popViewController(animated: true)
-        // Toggle offline.
-        case 5:
-            UserDefaults.standard.set(true, forKey: "fr_isOffline")
-            self.navigationController?.popViewController(animated: true)
-        case 6:
             os_log("Queue up a bluetooth interaction.")
             centralManager.scanForPeripherals(withServices: [CBUUID(string: "AF0BADB1-5B99-43CD-917A-A77BC549E3CC")])
 //            centralManager.scanForPeripherals(withServices: [Constants.SERVICE_UUID], options: nil)

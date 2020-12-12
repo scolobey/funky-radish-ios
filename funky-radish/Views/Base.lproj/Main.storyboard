@@ -338,16 +338,8 @@
                                     <constraint firstAttribute="height" constant="200" id="K1N-ky-9tL"/>
                                 </constraints>
                             </imageView>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Username" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Fqw-2q-lfP">
-                                <rect key="frame" x="62.5" y="200" width="250" height="34"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="250" id="HWa-qQ-8n5"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="next" textContentType="nickname"/>
-                            </textField>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="uX1-D7-fdi">
-                                <rect key="frame" x="62.5" y="288" width="250" height="34"/>
+                                <rect key="frame" x="62.5" y="289" width="250" height="34"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="250" id="nIJ-aQ-eMR"/>
                                 </constraints>
@@ -355,7 +347,7 @@
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" returnKeyType="next" secureTextEntry="YES" textContentType="password"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jw9-sO-QZ5">
-                                <rect key="frame" x="62.5" y="332" width="250" height="32"/>
+                                <rect key="frame" x="62.5" y="333" width="250" height="32"/>
                                 <color key="backgroundColor" red="0.22828081189999999" green="1" blue="0.35868297370000002" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="32" id="ZNQ-uh-ARy"/>
@@ -370,7 +362,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mvm-nS-dEn">
-                                <rect key="frame" x="274.5" y="374" width="38" height="30"/>
+                                <rect key="frame" x="274.5" y="375" width="38" height="30"/>
                                 <state key="normal" title="Login"/>
                                 <connections>
                                     <action selector="loginSegue:" destination="FId-Vr-j8d" eventType="touchUpInside" id="0Ch-k6-Sgd"/>
@@ -391,7 +383,7 @@
                                 </connections>
                             </button>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fJ9-MM-gUg">
-                                <rect key="frame" x="62.5" y="244" width="250" height="34"/>
+                                <rect key="frame" x="62.5" y="245" width="250" height="34"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="250" id="u7L-Jw-1Gp"/>
                                 </constraints>
@@ -404,11 +396,9 @@
                             <constraint firstItem="UhR-wO-BaZ" firstAttribute="centerX" secondItem="lRO-U7-Y7U" secondAttribute="centerX" id="73y-Uh-8gf"/>
                             <constraint firstItem="jw9-sO-QZ5" firstAttribute="top" secondItem="uX1-D7-fdi" secondAttribute="bottom" constant="10" id="7Gv-1n-zb9"/>
                             <constraint firstItem="Mvm-nS-dEn" firstAttribute="trailing" secondItem="jw9-sO-QZ5" secondAttribute="trailing" id="BHK-CG-Jcq"/>
-                            <constraint firstItem="fJ9-MM-gUg" firstAttribute="top" secondItem="Fqw-2q-lfP" secondAttribute="bottom" constant="10" id="Huc-Dy-TIW"/>
                             <constraint firstItem="uX1-D7-fdi" firstAttribute="top" secondItem="fJ9-MM-gUg" secondAttribute="bottom" constant="10" id="SZV-Of-nas"/>
-                            <constraint firstItem="Fqw-2q-lfP" firstAttribute="top" secondItem="UhR-wO-BaZ" secondAttribute="bottom" id="UUH-s0-d8M"/>
                             <constraint firstItem="iN5-Ff-LmB" firstAttribute="trailing" secondItem="HnA-Z5-4t1" secondAttribute="trailing" constant="30" id="WZ4-ug-gAL"/>
-                            <constraint firstItem="Fqw-2q-lfP" firstAttribute="centerX" secondItem="lRO-U7-Y7U" secondAttribute="centerX" id="c0t-Sd-L3B"/>
+                            <constraint firstItem="fJ9-MM-gUg" firstAttribute="top" secondItem="UhR-wO-BaZ" secondAttribute="bottom" constant="45" id="cGH-ia-w5X"/>
                             <constraint firstItem="UhR-wO-BaZ" firstAttribute="top" secondItem="iN5-Ff-LmB" secondAttribute="top" id="n6H-kz-QJt">
                                 <variation key="heightClass=regular-widthClass=regular" constant="225"/>
                             </constraint>
@@ -423,7 +413,6 @@
                     <connections>
                         <outlet property="emailField" destination="fJ9-MM-gUg" id="X3n-pc-JGn"/>
                         <outlet property="passwordField" destination="uX1-D7-fdi" id="MhX-OX-zxP"/>
-                        <outlet property="usernameField" destination="Fqw-2q-lfP" id="5Af-Q5-LSy"/>
                         <segue destination="lIw-CJ-enf" kind="presentation" identifier="loginSegue" id="dA5-lt-9bX"/>
                     </connections>
                 </viewController>

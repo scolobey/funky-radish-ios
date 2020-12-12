@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1A93CC99345C53A4D450C6D7 /* Pods_funky_radish.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9189DDA363271AF31D2CA986 /* Pods_funky_radish.framework */; };
 		4D063E124416B96AFAF87CE5 /* Pods_FunkyRadishTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB64E4577B74D25797DEA44E /* Pods_FunkyRadishTests.framework */; };
+		94F7CFC2257DB28B0079A422 /* ApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F7CFC1257DB28B0079A422 /* ApiManager.swift */; };
 		CC184B5A2120A1A600603333 /* FunkyRadishTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC184B592120A1A600603333 /* FunkyRadishTests.swift */; };
 		CC2D5EE720FA937E0002FB73 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2D5EE620FA937E0002FB73 /* BaseViewController.swift */; };
 		CC3886292137519F00AFBB00 /* UserResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC3886282137519F00AFBB00 /* UserResponse.swift */; };
@@ -53,6 +54,7 @@
 		047286B5500F32E00E6B2A78 /* Pods-FunkyRadishTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FunkyRadishTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FunkyRadishTests/Pods-FunkyRadishTests.debug.xcconfig"; sourceTree = "<group>"; };
 		2B0931440A4906A51D8BBCFF /* Pods-FunkyRadishTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FunkyRadishTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-FunkyRadishTests/Pods-FunkyRadishTests.release.xcconfig"; sourceTree = "<group>"; };
 		9189DDA363271AF31D2CA986 /* Pods_funky_radish.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_funky_radish.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		94F7CFC1257DB28B0079A422 /* ApiManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiManager.swift; sourceTree = "<group>"; };
 		AD27E87458801B677AF03C41 /* Pods-funky-radish.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-funky-radish.debug.xcconfig"; path = "Pods/Target Support Files/Pods-funky-radish/Pods-funky-radish.debug.xcconfig"; sourceTree = "<group>"; };
 		B9E868050C94BE6F792BEA9F /* Pods-funky-radish.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-funky-radish.release.xcconfig"; path = "Pods/Target Support Files/Pods-funky-radish/Pods-funky-radish.release.xcconfig"; sourceTree = "<group>"; };
 		BB64E4577B74D25797DEA44E /* Pods_FunkyRadishTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FunkyRadishTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -218,6 +220,7 @@
 				CC739D1420F926560031AAB2 /* StyleHelpers.swift */,
 				CCF221DB2128BD0F00FD5C9E /* Reachability.swift */,
 				CC4505F5214826850056ED3D /* Validation.swift */,
+				94F7CFC1257DB28B0079A422 /* ApiManager.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -449,6 +452,7 @@
 				CC8177BE20EBD8B000D02783 /* SignUpViewController.swift in Sources */,
 				CC2D5EE720FA937E0002FB73 /* BaseViewController.swift in Sources */,
 				CCE9CA6A23540D0D00038159 /* Constants.swift in Sources */,
+				94F7CFC2257DB28B0079A422 /* ApiManager.swift in Sources */,
 				CC88FC9323F899D40025226F /* ShareViewController.swift in Sources */,
 				CC4505F6214826850056ED3D /* Validation.swift in Sources */,
 				CC739D1220F84AF50031AAB2 /* RecipeViewController.swift in Sources */,
