@@ -139,7 +139,6 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
 
             let approveAction = UIAlertAction(title: "Continue", style: UIAlertAction.Style.default) { UIAlertAction in
                 realmManager.logout(completion: {
-                    os_log("completion")
                     KeychainWrapper.standard.set("", forKey: "fr_user_email")
                     self.navigationController?.popViewController(animated: true)
                 })

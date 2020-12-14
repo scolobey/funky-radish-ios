@@ -16,7 +16,7 @@ enum AuthError: Error {
     case noPassword
 }
 
-var selectedRecipe: ObjectId?
+var selectedRecipe: String?
 var newRecipe = false
 
 var fruser = KeychainWrapper.standard.string(forKey: "fr_user_email")

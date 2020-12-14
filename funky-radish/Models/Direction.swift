@@ -11,7 +11,7 @@ import Realm
 import RealmSwift
 
 class Direction: Object {
-    @objc dynamic var _id = ObjectId.generate()
+    @objc dynamic var _id: String? = ObjectId.generate().stringValue
     @objc dynamic var author: String = ""
     @objc dynamic var text: String = ""
 

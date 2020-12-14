@@ -86,8 +86,8 @@ class CustomNavigationController: UINavigationController {
         newRecipe = true
         let recipe = Recipe()
         recipe.title = title
-        os_log("Recipe id: %ld", recipe._id!)
-        selectedRecipe = recipe._id
+        os_log("Recipe id: %ld", recipe._id ?? "")
+        selectedRecipe = recipe._id ?? ""
         try realmManager.create(recipe)
     }
 }

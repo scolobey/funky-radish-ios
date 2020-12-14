@@ -150,6 +150,7 @@ final class RealmManager {
     }
 
     func update<T: Object>(_ object: T, with dictionary: [String: Any]) {
+        os_log("Realm update: ")
         do {
             try realm.write {
                 for (key, value) in dictionary {
@@ -199,21 +200,20 @@ final class RealmManager {
 
     // TODO: Rename this realmRefresh to encourage a little more caution.
     func refresh() {
-        
         os_log("refreshing")
                 
         if (app.currentUser() != nil) { // you were logged in.
             let offlineRecipes = realmManager.read(Recipe.self)
+           
             var recipeArray = [Recipe]()
+            
+            partitionValue = app.currentUser()?.identity ?? ""
 
             // TODO: confusing that I used rec and recipe in the same function.
             for rec in offlineRecipes {
                 let recipe = Recipe()
-                let user_id = app.currentUser()?.identity
                 let ing = List<Ingredient>()
                 let dir = List<Direction>()
-                
-                partitionValue = user_id!
 
                 for ingredient in rec.ingredients {
                     realmManager.update(ingredient, with: ["author": partitionValue])

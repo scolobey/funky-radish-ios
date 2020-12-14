@@ -122,7 +122,9 @@ class SignUpViewController: UIViewController {
                         //TODO: Can probably ditch the password.
                         KeychainWrapper.standard.set(password, forKey: "fr_password")
                         
-                        print("Login successful!");
+                        realmManager.refresh()
+                        
+                        print("Signup successful!");
                         self?.navigationController?.popToRootViewController(animated: false)
                     }
                 })

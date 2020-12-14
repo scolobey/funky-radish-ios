@@ -94,8 +94,6 @@ class LogInViewController: UIViewController {
         
         try Validation().isValidEmail(email)
         try Validation().isValidPW(password)
-
-        UserDefaults.standard.set(false, forKey: "fr_isOffline")
         
         try ApiManager().downloadToken(
                     email: email,
@@ -119,6 +117,8 @@ class LogInViewController: UIViewController {
                                 KeychainWrapper.standard.set(email, forKey: "fr_user_email")
                                 //TODO: Can probably ditch the password.
                                 KeychainWrapper.standard.set(password, forKey: "fr_password")
+                                
+                                realmManager.refresh()
                                 
                                 print("Login successful!");
                                 self?.navigationController?.popToRootViewController(animated: false)

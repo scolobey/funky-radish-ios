@@ -11,7 +11,7 @@ import Realm
 import RealmSwift
 
 @objcMembers class Recipe: Object {
-    @objc dynamic var _id: ObjectId? = ObjectId.generate()
+    @objc dynamic var _id: String? = ObjectId.generate().stringValue
     @objc dynamic var author: String = ""
     @objc dynamic var title: String? = nil
     

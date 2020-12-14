@@ -273,7 +273,7 @@ class RecipeViewController: BaseViewController {
         os_log("ingredients: %@", ingredients)
         
         let user_id = realmManager.partitionValue
-        os_log("saving to parition: %@", user_id)
+        os_log("saving to partition: %@", user_id)
         
         var ingredientArray = [Ingredient()]
         var directionArray = [Direction()]
@@ -350,7 +350,7 @@ class RecipeViewController: BaseViewController {
         }
 
         for ingredient in ingredients {
-            ingredientSet.append(ingredient.name!)
+            ingredientSet.append(ingredient.name)
         }
 
         directionText = directionSet.joined(separator: "\n")
