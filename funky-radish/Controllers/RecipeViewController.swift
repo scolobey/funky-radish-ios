@@ -161,12 +161,10 @@ class RecipeViewController: BaseViewController {
 
         let approveAction = UIAlertAction(title: "Delete", style: UIAlertAction.Style.default) { UIAlertAction in
             for ing in self.rec!.ingredients {
-                os_log("deleting ingredients")
                 realmManager.delete(ing)
             }
 
             for ing in self.rec!.directions {
-                os_log("deleting directions")
                 realmManager.delete(ing)
             }
             
@@ -246,13 +244,8 @@ class RecipeViewController: BaseViewController {
     }
 
     func saveRecipe(title: String, directions: String, ingredients: String) {
-
-        os_log("saving")
-        os_log("directions: %@", directions)
-        os_log("ingredients: %@", ingredients)
-        
         let user_id = realmManager.partitionValue
-        os_log("saving to partition: %@", user_id)
+        os_log("saving recipe to partition: %@", user_id)
         
         var ingredientArray = [Ingredient()]
         var directionArray = [Direction()]
@@ -301,12 +294,10 @@ class RecipeViewController: BaseViewController {
         let editedRec = localRecipes.filter("_id == %@", selectedRecipe!).first!
         
         for ing in editedRec.ingredients {
-            os_log("deleting ingredients")
             realmManager.delete(ing)
         }
 
         for ing in editedRec.directions {
-            os_log("deleting directions")
             realmManager.delete(ing)
         }
 

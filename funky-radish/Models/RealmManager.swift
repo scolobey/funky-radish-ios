@@ -153,6 +153,8 @@ final class RealmManager {
     }
 
     func update<T: Object>(_ object: T, with dictionary: [String: Any]) {
+        // Todo: Someday this should be reworked. the logic is strange here where we're viewing each ingredient in the context of
+        // it's order in the recipe, as opposed to it's relationship with a real-world ingredient.
         os_log("Realm update: ")
         do {
             try realm.write {
@@ -165,9 +167,7 @@ final class RealmManager {
         }
     }
 
-    func delete<T: Object>(_ object: T) {
-        os_log("Realm delete: %@", realm.syncSession?.description ?? "no desc")
-        
+    func delete<T: Object>(_ object: T) {   
         do {
             try realm.write {
                 realm.delete(object)
