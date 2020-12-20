@@ -185,9 +185,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0QH-hJ-92k">
-                                <rect key="frame" x="15" y="35" width="42.5" height="19.5"/>
+                                <rect key="frame" x="15" y="35" width="42.5" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="lessThanOrEqual" constant="70" id="dHk-Ht-PQX"/>
+                                    <constraint firstAttribute="height" constant="40" id="fLu-Rt-VbB"/>
                                     <constraint firstAttribute="width" relation="lessThanOrEqual" constant="200" id="m1K-hI-npL">
                                         <variation key="heightClass=regular-widthClass=regular" constant="800"/>
                                     </constraint>
@@ -200,7 +201,7 @@
                                 </variation>
                             </label>
                             <button opaque="NO" clipsSubviews="YES" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="afq-9L-AdY" userLabel="Trash">
-                                <rect key="frame" x="330" y="24.5" width="30" height="30"/>
+                                <rect key="frame" x="330" y="45" width="30" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="059-jj-nG8">
                                         <variation key="heightClass=regular-widthClass=regular" constant="60"/>
@@ -216,13 +217,13 @@
                                 </connections>
                             </button>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6B2-pb-DQi">
-                                <rect key="frame" x="163" y="330" width="51" height="31"/>
+                                <rect key="frame" x="163" y="350.5" width="51" height="31"/>
                                 <connections>
                                     <action selector="recipeToggle:" destination="tJ8-s5-WdQ" eventType="valueChanged" id="LKz-qQ-eXq"/>
                                 </connections>
                             </switch>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="msO-sj-qpV">
-                                <rect key="frame" x="165.5" y="289.5" width="44.5" height="20.5"/>
+                                <rect key="frame" x="165.5" y="310" width="44.5" height="20.5"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -231,7 +232,7 @@
                                 </variation>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="V7G-Ht-UKG" userLabel="Edit">
-                                <rect key="frame" x="25" y="64.5" width="20" height="20"/>
+                                <rect key="frame" x="25" y="85" width="20" height="20"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="20" id="upl-cq-c1t">
                                         <variation key="heightClass=regular-widthClass=regular" constant="45"/>
@@ -247,7 +248,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7lI-a8-25E">
-                                <rect key="frame" x="217" y="24.5" width="34" height="30"/>
+                                <rect key="frame" x="217" y="45" width="34" height="30"/>
                                 <color key="backgroundColor" red="0.207204468" green="1" blue="0.73793343321917804" alpha="1" colorSpace="calibratedRGB"/>
                                 <accessibility key="accessibilityConfiguration" label="Save"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
@@ -279,7 +280,7 @@
                                 </variation>
                             </textView>
                             <button opaque="NO" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Gl-gs-8IH">
-                                <rect key="frame" x="281" y="33.5" width="19" height="21"/>
+                                <rect key="frame" x="281" y="54" width="19" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="8"/>
                                 <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <state key="normal" image="square.and.arrow.up" catalog="system"/>

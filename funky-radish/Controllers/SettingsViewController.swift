@@ -138,9 +138,14 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
             let alertController = UIAlertController(title: "Fair warning!", message: "Once you log out, any unsaved recipes will be lost forever.", preferredStyle: .alert)
 
             let approveAction = UIAlertAction(title: "Continue", style: UIAlertAction.Style.default) { UIAlertAction in
+                
                 realmManager.logout(completion: {
                     KeychainWrapper.standard.set("", forKey: "fr_user_email")
-                    self.navigationController?.popViewController(animated: true)
+                    KeychainWrapper.standard.set("", forKey: "fr_password")
+                    KeychainWrapper.standard.set("", forKey: "token")
+                    DispatchQueue.main.async {
+                        self.navigationController?.popViewController(animated: true)
+                    }
                 })
             }
 

@@ -156,43 +156,22 @@ class RecipeViewController: BaseViewController {
     }
 
     @IBAction func deleteRecipeButton(_ sender: Any) {
-//        let deleteId = localRecipes[selectedRecipe]._id
-
         // Warn the user these changes are permanent.
         let alertController = UIAlertController(title: "Fair warning!", message: "Once you delete this recipe, it will be lost forever.", preferredStyle: .alert)
 
         let approveAction = UIAlertAction(title: "Delete", style: UIAlertAction.Style.default) { UIAlertAction in
-            
-        realmManager.delete(self.rec!)
-            
-//            do {
-//                // Delete the recipe from the API if it has an id
-//                if (deleteId != nil) {
-//                    try APIManager().deleteRecipe(id: deleteId!,
-//                                                  onSuccess: {
-//                                                    os_log("Recipe deleted.")
-//                    },
-//                                                  onFailure: { error in
-//                                                    os_log("Delete failed.")
-//                                                    var delete_queue = UserDefaults.standard.stringArray(forKey: "DeletedQueue") ?? [String]()
-//                                                    delete_queue.append(deleteId!)
-//                                                    UserDefaults.standard.set(delete_queue, forKey: "DeletedQueue")
-//                    })
-//                }
-//                else {
-//                    os_log("This recipe is not in the API.")
-//                }
-//            }
-//            catch RecipeError.noInternetConnection {
-//                os_log("no internet connection. adding to queue until internet is restored.")
-//                var delete_queue = UserDefaults.standard.stringArray(forKey: "DeletedQueue") ?? [String]()
-//                delete_queue.append(deleteId!)
-//                UserDefaults.standard.set(delete_queue, forKey: "DeletedQueue")
-//            }
-//            catch {
-//                os_log("Probably a Realm error.")
-//            }
+            for ing in self.rec!.ingredients {
+                os_log("deleting ingredients")
+                realmManager.delete(ing)
+            }
 
+            for ing in self.rec!.directions {
+                os_log("deleting directions")
+                realmManager.delete(ing)
+            }
+            
+            realmManager.delete(self.rec!)
+            
             self.navigationController?.popViewController(animated: true)
         }
 

@@ -91,29 +91,3 @@ class CustomNavigationController: UINavigationController {
         try realmManager.create(recipe)
     }
 }
-
-
-
-//        return Promise<Data> { (fullfill, reject) in
-//            if !Reachability.isConnectedToNetwork() {
-//                throw loginError.noConnection
-//            }
-//
-//            try Validation().isValidEmail(email)
-//            try Validation().isValidPW(password)
-//            try Validation().isValidUsername(username)
-//
-//            URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) in
-//                if error != nil {
-//                    reject(signupError.endpointInaccesible)
-//                    return
-//                }
-//                guard let data = data else {
-//                    let error = NSError(domain: "", code: 100, userInfo: nil)
-//                    reject(error)
-//                    return
-//                }
-//
-//                fullfill(data)
-//            }).resume()
-//        }

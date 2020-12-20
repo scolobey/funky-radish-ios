@@ -95,6 +95,8 @@ class LogInViewController: UIViewController {
         try Validation().isValidEmail(email)
         try Validation().isValidPW(password)
         
+        os_log("count: %@", app.allUsers().description)
+        
         try ApiManager().downloadToken(
                     email: email,
                     password: password,

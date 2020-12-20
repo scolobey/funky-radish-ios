@@ -33,29 +33,30 @@ final class RealmManager {
         
         //TODO: verify schema migration works / remove deleteRealmIfMigrationNeeded
         let config = Realm.Configuration(
-            // Set the new schema version. This must be greater than the previously used
-            // version (if you've never set a schema version before, the version is 0).
-            schemaVersion: 1,
-
-            // Set the block which will be called automatically when opening a Realm with
-            // a schema version lower than the one set above
-            migrationBlock: { migration, oldSchemaVersion in
-                // We haven’t migrated anything yet, so oldSchemaVersion == 0
-                if (oldSchemaVersion < 1) {
-                    // Nothing to do!
-                    // Realm will automatically detect new properties and removed properties
-                    // And will update the schema on disk automatically
-
-                    migration.enumerateObjects(ofType: Direction.className()) { oldObject, newObject in
-                        newObject!["realmID"] = UUID().uuidString
-                    }
-
-                    migration.enumerateObjects(ofType: Ingredient.className()) { oldObject, newObject in
-                        newObject!["realmID"] = UUID().uuidString
-                    }
-                }
-            },
-            deleteRealmIfMigrationNeeded: true
+//            // Set the new schema version. This must be greater than the previously used
+//            // version (if you've never set a schema version before, the version is 0).
+//            schemaVersion: 1,
+//
+//            // Set the block which will be called automatically when opening a Realm with
+//            // a schema version lower than the one set above
+//            migrationBlock: { migration, oldSchemaVersion in
+//                // We haven’t migrated anything yet, so oldSchemaVersion == 0
+//                if (oldSchemaVersion < 1) {
+//                    // Nothing to do!
+//                    // Realm will automatically detect new properties and removed properties
+//                    // And will update the schema on disk automatically
+//
+//                    migration.enumerateObjects(ofType: Direction.className()) { oldObject, newObject in
+//                        newObject!["realmID"] = UUID().uuidString
+//                    }
+//
+//                    migration.enumerateObjects(ofType: Ingredient.className()) { oldObject, newObject in
+//                        newObject!["realmID"] = UUID().uuidString
+//                    }
+//                }
+//            },
+            
+//            deleteRealmIfMigrationNeeded: true
         )
 
         if (app.currentUser() != nil && app.currentUser()?.identity?.count ?? 0 > 0) {
@@ -71,14 +72,14 @@ final class RealmManager {
             
             let config = app.currentUser()?.configuration(partitionValue: partitionValue)
 
-            self.realm = try! Realm(configuration: config!)
+            realm = try! Realm(configuration: config!)
             os_log("Realm loaded w user: %@", realm.syncSession?.description ?? "no desc")
         }
         else {
             os_log("partition value is Nothing Okay!")
             partitionValue = ""
             
-            self.realm = try! Realm()
+            realm = try! Realm()
             
             os_log("Realm loaded w/o user: %@", realm.syncSession?.debugDescription ?? "no desc")
         }
@@ -140,6 +141,8 @@ final class RealmManager {
     }
 
     func read<T: Object>(_ object: T.Type) -> Results<T> {
+        os_log("thread: %@", Thread.current)
+        
         let result = realm.objects(object.self)
         return result
     }
@@ -194,8 +197,14 @@ final class RealmManager {
     func logout(completion: @escaping () -> Void) {
         os_log("calling logout")
         
-        self.realm = try! Realm()
-        completion()
+        let user = app.currentUser()
+        
+        if (user != nil) {
+            app.logOut(user!) { [weak self](err) in
+                self?.realm = try! Realm()
+                completion()
+            }
+        }
     }
 
     // TODO: Rename this realmRefresh to encourage a little more caution.
