@@ -143,6 +143,7 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
                     KeychainWrapper.standard.set("", forKey: "fr_user_email")
                     KeychainWrapper.standard.set("", forKey: "fr_password")
                     KeychainWrapper.standard.set("", forKey: "token")
+                                        
                     DispatchQueue.main.async {
                         self.navigationController?.popViewController(animated: true)
                     }

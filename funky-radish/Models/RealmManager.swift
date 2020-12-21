@@ -141,8 +141,6 @@ final class RealmManager {
     }
 
     func read<T: Object>(_ object: T.Type) -> Results<T> {
-        os_log("thread: %@", Thread.current)
-        
         let result = realm.objects(object.self)
         return result
     }
@@ -200,8 +198,8 @@ final class RealmManager {
         let user = app.currentUser()
         
         if (user != nil) {
-            app.logOut(user!) { [weak self](err) in
-                self?.realm = try! Realm()
+            app.logOut(user!) { (err) in
+                //TODO: handle this err
                 completion()
             }
         }
@@ -246,7 +244,7 @@ final class RealmManager {
             os_log("Refreshing Realm w/ partition: %@", partitionValue)
             
             let config = app.currentUser()?.configuration(partitionValue: partitionValue)
-            self.realm = try! Realm(configuration: config!)
+            realm = try! Realm(configuration: config!)
 
             if (recipeArray.count > 0) {
                 realmManager.copyRecipes(recipes: recipeArray)
@@ -256,7 +254,7 @@ final class RealmManager {
         else {
             os_log("Refreshing Realm w/ partition = nothing okay!")
             
-            self.realm = try! Realm()
+            realm = try! Realm()
         }
     }
 

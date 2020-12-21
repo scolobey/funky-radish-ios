@@ -48,18 +48,25 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
 
     override func viewWillAppear(_ animated: Bool) {
         os_log("view will appear. loading localRecipes")
-     
+        realmManager.refresh()
         localRecipes = realmManager.read(Recipe.self)
 
         if (recipeFilter.count > 0){
+            os_log("filtering")
             self.setSearchText(recipeFilter)
             self.filterTableView(text: recipeFilter)
         }
-        else {
-            recipeList.reloadData()
-        }
+//        else {
+//            recipeList.reloadData()
+//        }
+        
+        recipeList.reloadData()
 
+        os_log("setting up notifications")
         notificationToken = realmManager.subscribe(handler: { notification, realm in
+            
+            os_log("reloading data")
+            
             self.recipeList.reloadData()
         })
     }
