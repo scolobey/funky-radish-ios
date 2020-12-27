@@ -19,8 +19,8 @@ enum AuthError: Error {
 var selectedRecipe: String?
 var newRecipe = false
 
-var fruser = KeychainWrapper.standard.string(forKey: "fr_user_email")
-var frpw = KeychainWrapper.standard.string(forKey: "fr_password")
+var fruser = KeychainWrapper.standard.string(forKey: Constants.EMAIL_KEYCHAIN_STRING)
+var frpw = KeychainWrapper.standard.string(forKey: Constants.PASSWORD_KEYCHAIN_STRING)
 var offline = UserDefaults.standard.bool(forKey: "fr_isOffline")
 
 var localRecipes = realmManager.read(Recipe.self)

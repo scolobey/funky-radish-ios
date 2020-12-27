@@ -49,7 +49,7 @@ class ApiManager {
 
              do {
                  let token = try JSONDecoder().decode(Token.self, from: data)
-                 let saveSuccessful = KeychainWrapper.standard.set(token.token, forKey: "fr_token")
+                let saveSuccessful = KeychainWrapper.standard.set(token.token, forKey: Constants.TOKEN_KEYCHAIN_STRING)
                  if (saveSuccessful) {
                     onSuccess()
                  } else {

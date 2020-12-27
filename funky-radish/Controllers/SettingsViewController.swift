@@ -17,8 +17,8 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
     var centralManager: CBCentralManager!
     var recipePeripheral: CBPeripheral!
 
-    var fruser = KeychainWrapper.standard.string(forKey: "fr_user_email")
-    var frpw = KeychainWrapper.standard.string(forKey: "fr_password")
+    var fruser = KeychainWrapper.standard.string(forKey: Constants.EMAIL_KEYCHAIN_STRING)
+    var frpw = KeychainWrapper.standard.string(forKey: Constants.PASSWORD_KEYCHAIN_STRING)
     var offline = UserDefaults.standard.bool(forKey: "fr_isOffline")
 
     override func viewDidLoad() {
@@ -140,9 +140,9 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
             let approveAction = UIAlertAction(title: "Continue", style: UIAlertAction.Style.default) { UIAlertAction in
                 
                 realmManager.logout(completion: {
-                    KeychainWrapper.standard.set("", forKey: "fr_user_email")
-                    KeychainWrapper.standard.set("", forKey: "fr_password")
-                    KeychainWrapper.standard.set("", forKey: "token")
+                    KeychainWrapper.standard.set("", forKey: Constants.EMAIL_KEYCHAIN_STRING)
+                    KeychainWrapper.standard.set("", forKey: Constants.PASSWORD_KEYCHAIN_STRING)
+                    KeychainWrapper.standard.set("", forKey: Constants.TOKEN_KEYCHAIN_STRING)
                                         
                     DispatchQueue.main.async {
                         self.navigationController?.popViewController(animated: true)
