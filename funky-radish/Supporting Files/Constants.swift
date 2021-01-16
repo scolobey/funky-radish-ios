@@ -16,10 +16,10 @@ struct Constants {
     static let REALM_URL = URL(string: "realms://\(REALM_INSTANCE_ADDRESS)/~/recipes")!
     static let REALM_APP_ID = "funky-radish-twdxv"
     
-//    static let API_ADDRESS = "https://funky-radish-api.herokuapp.com"
-    static let API_ADDRESS = "http://localhost:8080"
+    static let API_ADDRESS = "https://funky-radish-api.herokuapp.com"
+//    static let API_ADDRESS = "http://localhost:8080"
     static let USER_ENDPOINT  = URL(string: "\(API_ADDRESS)/users")!
-    static let AUTHENTICATION_ENDPOINT  = URL(string: "\(API_ADDRESS)/authenticate")!
+    static let TOKEN_ENDPOINT  = URL(string: "\(API_ADDRESS)/authenticate")!
     
     static let TOKEN_KEYCHAIN_STRING = "fr_token"
     static let EMAIL_KEYCHAIN_STRING = "fr_user_email"

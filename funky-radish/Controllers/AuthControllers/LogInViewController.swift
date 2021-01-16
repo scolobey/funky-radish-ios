@@ -55,6 +55,8 @@ class LogInViewController: UIViewController {
                     self.navigationController!.showToast(message: "Email already associated with an account.")
                 case loginError.tokenFailure:
                     self.navigationController!.showToast(message: "There's a problem with the token.")
+                case apiError.verificationError:
+                    self.navigationController!.showToast(message: "You gotta verify your email first.")
                 default:
                     self.navigationController!.showToast(message: "Unidentified error.")
             }
