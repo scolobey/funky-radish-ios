@@ -131,30 +131,6 @@ class SignUpViewController: UIViewController {
                     self.present(alert, animated: true)
                 }
                 
-                
-//                TODO: make these strings into constants.
-//                let token = KeychainWrapper.standard.string(forKey: Constants.TOKEN_KEYCHAIN_STRING)
-//                let credentials = AppCredentials.init(jwt: token!)
-              
-//                app.login(withCredential: credentials, completion: { [weak self](user, err) in
-//                    DispatchQueue.main.sync {
-//                        self!.deactivateLoadingIndicator()
-//
-//                        if let error = err {
-//                            self!.navigationController!.showToast(message: "Signup failed: \(error.localizedDescription)")
-//                            return;
-//                        }
-//
-//                        KeychainWrapper.standard.set(email, forKey: Constants.EMAIL_KEYCHAIN_STRING)
-//                        //TODO: Can probably ditch the password.
-//                        KeychainWrapper.standard.set(password, forKey: Constants.PASSWORD_KEYCHAIN_STRING)
-//
-//                        realmManager.refresh()
-//
-//                        print("Signup successful!");
-//                        self?.navigationController?.popToRootViewController(animated: false)
-//                    }
-//                })
             },
             onFailure: { error in
                 os_log("failure: %@", error.localizedDescription)
