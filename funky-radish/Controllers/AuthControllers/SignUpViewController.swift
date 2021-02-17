@@ -103,9 +103,10 @@ class SignUpViewController: UIViewController {
             email: email,
             password: password,
             onSuccess: {
-            
                 DispatchQueue.main.sync {
                     self.deactivateLoadingIndicator()
+                    
+                    os_log("register success.")
 
 //                    if let error = err {
 //                        self!.navigationController!.showToast(message: "Signup failed: \(error.localizedDescription)")
@@ -130,11 +131,18 @@ class SignUpViewController: UIViewController {
 
                     self.present(alert, animated: true)
                 }
-                
             },
             onFailure: { error in
-                os_log("failure: %@", error.localizedDescription)
-                return
+                DispatchQueue.main.sync {
+                    self.deactivateLoadingIndicator()
+                    
+                    if (error == apiError.emailTaken) {
+                        self.navigationController?.showToast(message: "This email is already in use.")
+                    }
+                    else {
+                        self.navigationController?.showToast(message: "This email is already in use.")
+                    }
+                }
             })
     }
     

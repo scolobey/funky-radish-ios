@@ -42,9 +42,6 @@ class RecipeViewController: BaseViewController {
         let boldRecipeFont = UIFont(descriptor: recipeBoldFontDescriptor, size: 18.0)
         
         rec = localRecipes.filter("_id == %@", selectedRecipe!).first!
-        
-//        os_log("selected recipe: %ld", selectedRecipe)
-//        os_log("local rec length: %ld", localRecipes.count)
 
         recipeTitle.text = rec!.title
         prepareTextForDisplay(recipe: rec!)

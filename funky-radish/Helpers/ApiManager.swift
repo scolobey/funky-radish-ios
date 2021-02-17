@@ -23,6 +23,7 @@ enum apiError: Error {
     case noInternetConnection
     case invalidLogin
     case createUserError
+    case emailTaken
     case verificationError
 }
 
@@ -101,6 +102,9 @@ class ApiManager {
                     
                 if (userResponse.message == "Verification email sent.") {
                     onSuccess()
+                }
+                else if (userResponse.message == "User validation failed: email: email is already taken.") {
+                    onFailure(apiError.emailTaken)
                 }
                 else {
                     onFailure(apiError.createUserError)

@@ -199,9 +199,15 @@ final class RealmManager {
         
         if (user != nil) {
             app.logOut(user!) { (err) in
-                //TODO: handle this err
+                if (err != nil) {
+                    os_log("error: %@", err.debugDescription)
+                }
                 completion()
             }
+        }
+        else {
+            // This solves for the random case where the user isn't there, but their records are still held.
+            completion()
         }
     }
 

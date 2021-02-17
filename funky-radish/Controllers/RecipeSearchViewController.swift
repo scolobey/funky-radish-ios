@@ -33,8 +33,6 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     @IBOutlet weak var recipeList: UITableView!
 
     override func viewDidLoad() {
-        os_log("view did load")
-        
         super.viewDidLoad()
            
         // If recipes load from Realm, reload the table before synch
@@ -47,12 +45,10 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        os_log("view will appear. loading localRecipes")
         realmManager.refresh()
         localRecipes = realmManager.read(Recipe.self)
 
         if (recipeFilter.count > 0){
-            os_log("filtering")
             self.setSearchText(recipeFilter)
             self.filterTableView(text: recipeFilter)
         }
@@ -62,11 +58,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         
         recipeList.reloadData()
 
-        os_log("setting up notifications")
         notificationToken = realmManager.subscribe(handler: { notification, realm in
-            
-            os_log("reloading data")
-            
             self.recipeList.reloadData()
         })
     }
@@ -82,11 +74,9 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
 
     func filterTableView(text: String) {
         if (text.count > 0) {
-             os_log("Filtering localRecipes")
             localRecipes = realmManager.read(Recipe.self).filter("title contains [c] %@", text)
         }
         else {
-            os_log("Filtering localRecipes without recipes")
             localRecipes = realmManager.read(Recipe.self)
             self.searchBar.endEditing(true)
         }

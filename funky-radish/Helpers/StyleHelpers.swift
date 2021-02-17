@@ -51,7 +51,8 @@ func setupRecipeListView(_ tableView: UITableView) {
 }
 
 func setupSettingsListView(_ tableView: UITableView) {
-    tableView.backgroundColor = UIColor.white
+    tableView.backgroundColor = .white
+    tableView.backgroundView = .none
     tableView.clipsToBounds = true
 }
 
