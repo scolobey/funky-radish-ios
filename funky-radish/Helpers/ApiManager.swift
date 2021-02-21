@@ -23,6 +23,8 @@ enum apiError: Error {
     case noInternetConnection
     case invalidLogin
     case createUserError
+    case userNotFound
+    case badPassword
     case emailTaken
     case verificationError
 }
@@ -63,6 +65,12 @@ class ApiManager {
                 }
                 else if (token.message == "Email not verified."){
                     onFailure(apiError.verificationError)
+                }
+                else if (token.error == "User not found"){
+                    onFailure(apiError.userNotFound)
+                }
+                else if (token.error == "Incorrect password."){
+                    onFailure(apiError.badPassword)
                 }
                 else if (token.error.count > 0){
                     os_log("API error: %@", token.error)

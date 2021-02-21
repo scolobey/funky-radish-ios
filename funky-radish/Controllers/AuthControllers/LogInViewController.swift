@@ -130,8 +130,19 @@ class LogInViewController: UIViewController {
                         })
                     },
                     onFailure: { error in
-                        os_log("failure")
-                        return
+                        DispatchQueue.main.sync {
+                            self.deactivateLoadingIndicator()
+                            
+                            if (error == apiError.userNotFound) {
+                                self.navigationController?.showToast(message: "User not found.")
+                            }
+                            else if (error == apiError.badPassword) {
+                                self.navigationController?.showToast(message: "Incorrect password.")
+                            }
+                            else {
+                                self.navigationController?.showToast(message: "Login failed.")
+                            }
+                        }
                     })
         
     }
