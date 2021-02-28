@@ -278,7 +278,10 @@
                             <constraint firstItem="V7G-Ht-UKG" firstAttribute="leading" secondItem="TFI-no-JyF" secondAttribute="leading" constant="20" id="Ucx-gB-0Ls"/>
                             <constraint firstItem="V7G-Ht-UKG" firstAttribute="top" secondItem="0QH-hJ-92k" secondAttribute="bottom" constant="10" id="bG3-XN-C4T"/>
                             <constraint firstItem="eiR-bG-E22" firstAttribute="top" secondItem="V7G-Ht-UKG" secondAttribute="bottom" constant="25" id="bw8-IJ-g9c"/>
+                            <constraint firstItem="TFI-no-JyF" firstAttribute="trailing" secondItem="afq-9L-AdY" secondAttribute="trailing" constant="15" id="dUa-gn-i70"/>
+                            <constraint firstItem="afq-9L-AdY" firstAttribute="leading" secondItem="0QH-hJ-92k" secondAttribute="trailing" constant="272.5" id="jgX-gu-23z"/>
                             <constraint firstItem="0QH-hJ-92k" firstAttribute="leading" secondItem="TFI-no-JyF" secondAttribute="leading" constant="15" id="jow-li-Cr7"/>
+                            <constraint firstItem="0QH-hJ-92k" firstAttribute="leading" secondItem="TFI-no-JyF" secondAttribute="leading" constant="15" id="n14-4W-Va9"/>
                             <constraint firstItem="6B2-pb-DQi" firstAttribute="centerX" secondItem="ucp-Uy-lnD" secondAttribute="centerX" id="ogt-Hj-Suk"/>
                         </constraints>
                     </view>
