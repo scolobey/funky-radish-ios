@@ -76,36 +76,12 @@ class RecipeViewController: BaseViewController {
 
     @objc func back(sender: UIBarButtonItem) {
         if ingredientView && ingredientText != recipeInfo.text {
-            let alert = UIAlertController(title: "Save ingredients?", message: "Would you like to save changes to your ingredients before continuing?", preferredStyle: .alert)
-
-            let continueAction = UIAlertAction(title: "Yes", style: .default) { (alert: UIAlertAction!) -> Void in
-                self.saveRecipe(title: self.rec!.title!, directions: self.directionText, ingredients: self.recipeInfo.text)
-                self.navigationController?.popViewController(animated: true)
-            }
-
-            let cancelAction = UIAlertAction(title: "No", style: .default) { (alert: UIAlertAction!) -> Void in
-                self.navigationController?.popViewController(animated: true)
-            }
-
-            alert.addAction(continueAction)
-            alert.addAction(cancelAction)
-            self.present(alert, animated: true)
+            self.saveRecipe(title: self.rec!.title!, directions: self.directionText, ingredients: self.recipeInfo.text)
+            self.navigationController?.popViewController(animated: true)
         }
         else if !ingredientView && directionText != recipeInfo.text {
-            let alert = UIAlertController(title: "Save directions?", message: "Would you like to save changes to your directions before continuing?", preferredStyle: .alert)
-
-            let continueAction = UIAlertAction(title: "Yes", style: .default) { (alert: UIAlertAction!) -> Void in
-                self.saveRecipe(title: self.rec!.title!, directions: self.recipeInfo.text, ingredients: self.ingredientText)
-                self.navigationController?.popViewController(animated: true)
-            }
-
-            let cancelAction = UIAlertAction(title: "No", style: .default) { (alert: UIAlertAction!) -> Void in
-                self.navigationController?.popViewController(animated: true)
-            }
-
-            alert.addAction(continueAction)
-            alert.addAction(cancelAction)
-            self.present(alert, animated: true)
+            self.saveRecipe(title: self.rec!.title!, directions: self.recipeInfo.text, ingredients: self.ingredientText)
+            self.navigationController?.popViewController(animated: true)
         }
         else {
             self.navigationController?.popViewController(animated: true)
@@ -140,15 +116,6 @@ class RecipeViewController: BaseViewController {
             contentLabel.text = "Directions"
 
             contentSwitch.isOn = true
-        }
-    }
-
-    @IBAction func saveRecipeButton(_ sender: Any) {
-        if (ingredientView) {
-            saveRecipe(title: self.rec!.title!, directions: directionText, ingredients: recipeInfo.text)
-        }
-        else {
-            saveRecipe(title: self.rec!.title!, directions: recipeInfo.text, ingredients: ingredientText)
         }
     }
 

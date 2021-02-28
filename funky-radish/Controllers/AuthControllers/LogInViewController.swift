@@ -144,6 +144,5 @@ class LogInViewController: UIViewController {
                             }
                         }
                     })
-        
     }
 }

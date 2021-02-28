@@ -30,7 +30,6 @@
 		CC8177BC20EBD56F00D02783 /* LogInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC8177BB20EBD56F00D02783 /* LogInViewController.swift */; };
 		CC8177BE20EBD8B000D02783 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC8177BD20EBD8B000D02783 /* SignUpViewController.swift */; };
 		CC8177C320EBE1FF00D02783 /* CustomNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC8177C220EBE1FF00D02783 /* CustomNavigationController.swift */; };
-		CC88FC9323F899D40025226F /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC88FC9223F899D40025226F /* ShareViewController.swift */; };
 		CCE9CA6A23540D0D00038159 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE9CA6923540D0D00038159 /* Constants.swift */; };
 		CCF221D221220CB100FD5C9E /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF221D121220CB100FD5C9E /* SwiftyJSON.framework */; };
 		CCF221DC2128BD0F00FD5C9E /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF221DB2128BD0F00FD5C9E /* Reachability.swift */; };
@@ -86,7 +85,6 @@
 		CC8177BB20EBD56F00D02783 /* LogInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInViewController.swift; sourceTree = "<group>"; };
 		CC8177BD20EBD8B000D02783 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		CC8177C220EBE1FF00D02783 /* CustomNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationController.swift; sourceTree = "<group>"; };
-		CC88FC9223F899D40025226F /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		CCE9CA6923540D0D00038159 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		CCEB7A47210252530071A8B3 /* Realm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Realm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCEB7A492102525F0071A8B3 /* RealmSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -188,7 +186,6 @@
 				CC739D0B20F6CFF00031AAB2 /* RecipeSearchViewController.swift */,
 				CC739D1120F84AF50031AAB2 /* RecipeViewController.swift */,
 				CC4505F3213F3B0A0056ED3D /* SettingsViewController.swift */,
-				CC88FC9223F899D40025226F /* ShareViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -453,7 +450,6 @@
 				CC2D5EE720FA937E0002FB73 /* BaseViewController.swift in Sources */,
 				CCE9CA6A23540D0D00038159 /* Constants.swift in Sources */,
 				94F7CFC2257DB28B0079A422 /* ApiManager.swift in Sources */,
-				CC88FC9323F899D40025226F /* ShareViewController.swift in Sources */,
 				CC4505F6214826850056ED3D /* Validation.swift in Sources */,
 				CC739D1220F84AF50031AAB2 /* RecipeViewController.swift in Sources */,
 				CC8177BC20EBD56F00D02783 /* LogInViewController.swift in Sources */,
@@ -675,7 +671,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = P4KPPF3X57;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				ENABLE_ON_DEMAND_RESOURCES = NO;
@@ -685,7 +681,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8.7;
+				MARKETING_VERSION = 1.8.9;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.scolobey.funky-radish";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -699,7 +695,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = P4KPPF3X57;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				ENABLE_ON_DEMAND_RESOURCES = NO;
@@ -710,7 +706,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8.7;
+				MARKETING_VERSION = 1.8.9;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.scolobey.funky-radish";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
