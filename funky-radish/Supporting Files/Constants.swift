@@ -25,7 +25,4 @@ struct Constants {
     static let EMAIL_KEYCHAIN_STRING = "fr_user_email"
     static let PASSWORD_KEYCHAIN_STRING = "fr_password"
     
-    //TODO: Make sure we need both of these. It might be just a one-sided bluetooth transmission and only need 1 id?
-    static let SERVICE_UUID = CBUUID(string: "0679FEB7-D13B-4B5E-A677-F8C6B2A80259")
-    static let CHARACTERISTIC_UUID = CBUUID(string: "B18D6181-52B4-4CB5-A8A8-A5D0869AFEB3")
 }

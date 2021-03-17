@@ -168,6 +168,8 @@ final class RealmManager {
     func delete<T: Object>(_ object: T) {   
         do {
             try realm.write {
+                os_log("Object: %@", object)
+                os_log("Being removed from: %@", realm.self.schema.description)
                 realm.delete(object)
             }
         } catch {
@@ -211,7 +213,6 @@ final class RealmManager {
         }
     }
 
-    // TODO: Rename this realmRefresh to encourage a little more caution.
     func refresh() {
         os_log("refreshing")
                 
