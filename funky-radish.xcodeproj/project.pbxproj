@@ -18,7 +18,6 @@
 		CC4505F82148A6B20056ED3D /* LoadAnimationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4505F72148A6B20056ED3D /* LoadAnimationViewController.swift */; };
 		CC6D92F42110E2000044C600 /* Ingredient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6D92F32110E2000044C600 /* Ingredient.swift */; };
 		CC6D92F62110E4130044C600 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6D92F52110E4130044C600 /* Direction.swift */; };
-		CC6D92F82110E4430044C600 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6D92F72110E4430044C600 /* User.swift */; };
 		CC6D92FA2110E56B0044C600 /* Recipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6D92F92110E56B0044C600 /* Recipe.swift */; };
 		CC739D0C20F6CFF00031AAB2 /* RecipeSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC739D0B20F6CFF00031AAB2 /* RecipeSearchViewController.swift */; };
 		CC739D1220F84AF50031AAB2 /* RecipeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC739D1120F84AF50031AAB2 /* RecipeViewController.swift */; };
@@ -67,7 +66,6 @@
 		CC4505F72148A6B20056ED3D /* LoadAnimationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadAnimationViewController.swift; sourceTree = "<group>"; };
 		CC6D92F32110E2000044C600 /* Ingredient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ingredient.swift; sourceTree = "<group>"; };
 		CC6D92F52110E4130044C600 /* Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
-		CC6D92F72110E4430044C600 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		CC6D92F92110E56B0044C600 /* Recipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recipe.swift; sourceTree = "<group>"; };
 		CC739D0B20F6CFF00031AAB2 /* RecipeSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeSearchViewController.swift; sourceTree = "<group>"; };
 		CC739D1120F84AF50031AAB2 /* RecipeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeViewController.swift; sourceTree = "<group>"; };
@@ -203,7 +201,6 @@
 			children = (
 				CC6D92F32110E2000044C600 /* Ingredient.swift */,
 				CC6D92F52110E4130044C600 /* Direction.swift */,
-				CC6D92F72110E4430044C600 /* User.swift */,
 				CC6D92F92110E56B0044C600 /* Recipe.swift */,
 				CC3886282137519F00AFBB00 /* UserResponse.swift */,
 				CCF9895121EFBE5400B33597 /* RealmManager.swift */,
@@ -441,7 +438,6 @@
 			files = (
 				CC6D92F42110E2000044C600 /* Ingredient.swift in Sources */,
 				CC4505F4213F3B0A0056ED3D /* SettingsViewController.swift in Sources */,
-				CC6D92F82110E4430044C600 /* User.swift in Sources */,
 				CC739D1520F926560031AAB2 /* StyleHelpers.swift in Sources */,
 				CC8177C320EBE1FF00D02783 /* CustomNavigationController.swift in Sources */,
 				CC8177A720EBBF9900D02783 /* AppDelegate.swift in Sources */,
