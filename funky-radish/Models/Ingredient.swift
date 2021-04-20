@@ -11,7 +11,7 @@ import Realm
 import RealmSwift
 
 class Ingredient: Object {
-    @objc dynamic var _id: String? = ObjectId.generate().stringValue
+    @objc dynamic var _id: String? = ObjectId.generate().stringValue 
     @objc dynamic var author: String = ""
     @objc dynamic var name: String = ""
 
