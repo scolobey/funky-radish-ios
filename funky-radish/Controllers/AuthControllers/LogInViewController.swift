@@ -11,6 +11,7 @@ import SwiftKeychainWrapper
 import os
 import Promises
 import RealmSwift
+import CoreTelephony
 
 enum loginError: Error {
     case noConnection
@@ -90,15 +91,13 @@ class LogInViewController: UIViewController {
 
     func login(email: String, password: String) throws {
         
-        if !Reachability.isConnectedToNetwork() {
-            throw loginError.noConnection
-        }
+        //        if !Reachability.isConnectedToNetwork() {
+        //            throw loginError.noConnection
+        //        }
         
         try Validation().isValidEmail(email)
         try Validation().isValidPW(password)
-        
-        os_log("count: %@", app.allUsers().description)
-        
+                
         try ApiManager().downloadToken(
                     email: email,
                     password: password,

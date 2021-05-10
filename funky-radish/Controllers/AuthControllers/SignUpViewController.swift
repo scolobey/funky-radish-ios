@@ -92,9 +92,9 @@ class SignUpViewController: UIViewController {
     
     @objc func signUp(email: String, password: String) throws {
         
-        if !Reachability.isConnectedToNetwork() {
-            throw loginError.noConnection
-        }
+//        if !Reachability.isConnectedToNetwork() {
+//            throw loginError.noConnection
+//        }
         
         try Validation().isValidEmail(email)
         try Validation().isValidPW(password)

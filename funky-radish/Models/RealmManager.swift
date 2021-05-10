@@ -168,8 +168,6 @@ final class RealmManager {
     func delete<T: Object>(_ object: T) {   
         do {
             try realm.write {
-                os_log("Object: %@", object)
-                os_log("Being removed from: %@", realm.self.schema.description)
                 realm.delete(object)
             }
         } catch {

@@ -8,6 +8,8 @@
 
 import Foundation
 import SystemConfiguration
+import CoreTelephony
+import os
 
 public class Reachability {
 
