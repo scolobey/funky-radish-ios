@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-let app = RealmApp(id: Constants.REALM_APP_ID)
+let app = App(id: Constants.REALM_APP_ID)
 let realmManager = RealmManager()
  
 @UIApplicationMain

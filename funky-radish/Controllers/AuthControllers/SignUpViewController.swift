@@ -150,19 +150,21 @@ class SignUpViewController: UIViewController {
       
         activateLoadingIndicator()
 
-        app.login(withCredential: AppCredentials(username: email, password: password)) { [weak self](user, error) in
+        app.login(credentials: Credentials.emailPassword(email: email, password: password)) { [weak self](result) in
 
             DispatchQueue.main.sync {
                 self!.deactivateLoadingIndicator()
-                guard error == nil else {
-                    self!.navigationController!.showToast(message: "Login failed: \(error!.localizedDescription)")
-                    return
-                }
                 
-                KeychainWrapper.standard.set(email, forKey: Constants.EMAIL_KEYCHAIN_STRING)
-                realmManager.refresh()
+                switch result {
+                    case .failure(let error):
+                        self!.navigationController!.showToast(message: "Login failed: \(error.localizedDescription)")
+                        return
+                    case .success(_):
+                        KeychainWrapper.standard.set(email, forKey: Constants.EMAIL_KEYCHAIN_STRING)
+                        realmManager.refresh()
 
-                self!.navigationController?.popToRootViewController(animated: false)
+                        self!.navigationController?.popToRootViewController(animated: false)
+                }
             }
         };
     }

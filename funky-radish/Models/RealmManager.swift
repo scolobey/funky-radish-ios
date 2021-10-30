@@ -59,18 +59,18 @@ final class RealmManager {
 //            deleteRealmIfMigrationNeeded: true
         )
 
-        if (app.currentUser() != nil && app.currentUser()?.identity?.count ?? 0 > 0) {
-            os_log("partition value is Something Okay!")
+        if (app.currentUser != nil && app.currentUser?.id.count ?? 0 > 0) {
+            os_log("There's a currentUser and their id is more than 0 characters")
             
-            partitionValue = app.currentUser()?.identity! ?? ""
+            partitionValue = app.currentUser?.id ?? ""
             
             //TODO: Seems awfully redundant?
             if (partitionValue.count > 0) {
-                let user_id = app.currentUser()?.identity
+                let user_id = app.currentUser?.id
                 partitionValue = user_id!
             }
             
-            let config = app.currentUser()?.configuration(partitionValue: partitionValue)
+            let config = app.currentUser?.configuration(partitionValue: partitionValue)
 
             realm = try! Realm(configuration: config!)
             os_log("Realm loaded w user: %@", realm.syncSession?.description ?? "no desc")
@@ -90,7 +90,7 @@ final class RealmManager {
 
     func create<T: Object>(_ object: T) throws {
         do {
-            let user_id = app.currentUser()?.identity
+            let user_id = app.currentUser?.id
             
             if (user_id != nil) {
                 os_log("creating w/ partition: %@", user_id!)
@@ -109,7 +109,7 @@ final class RealmManager {
     func createOrUpdate<Model, RealmObject: Object>(model: Model, with reverseTransformer: (Model) -> RealmObject) {
         let object = reverseTransformer(model)
              
-        let user_id = app.currentUser()?.identity
+        let user_id = app.currentUser?.id
 
         if (user_id != nil) {
             os_log("creating or updating w/ partition: %@", user_id!)
@@ -124,7 +124,7 @@ final class RealmManager {
     func create<T: Object>(_ objects: [T]) {
         do {
             for object in objects {
-                let user_id = app.currentUser()?.identity
+                let user_id = app.currentUser?.id
       
                 if (user_id != nil) {
                     os_log("creating many w/ partition: %@", user_id!)
@@ -153,7 +153,7 @@ final class RealmManager {
     func update<T: Object>(_ object: T, with dictionary: [String: Any]) {
         // Todo: Someday this should be reworked. the logic is strange here where we're viewing each ingredient in the context of
         // it's order in the recipe, as opposed to it's relationship with a real-world ingredient.
-        os_log("Realm update: ")
+        os_log("Realm update: ", dictionary)
         do {
             try realm.write {
                 for (key, value) in dictionary {
@@ -195,13 +195,11 @@ final class RealmManager {
     func logout(completion: @escaping () -> Void) {
         os_log("calling logout")
         
-        let user = app.currentUser()
+        let user = app.currentUser
         
         if (user != nil) {
-            app.logOut(user!) { (err) in
-                if (err != nil) {
-                    os_log("error: %@", err.debugDescription)
-                }
+            //slightly concerned here. Previous function threw an error.
+            app.currentUser?.logOut { (_) in
                 completion()
             }
         }
@@ -214,14 +212,16 @@ final class RealmManager {
     func refresh() {
         os_log("refreshing")
                 
-        if (app.currentUser() != nil) { // you were logged in.
+        if (app.currentUser != nil) { // you were logged in.
             let offlineRecipes = realmManager.read(Recipe.self)
            
             var recipeArray = [Recipe]()
             
-            partitionValue = app.currentUser()?.identity ?? ""
+            partitionValue = app.currentUser?.id ?? ""
 
             // TODO: confusing that I used rec and recipe in the same function.
+            // Also. Does it really make sense to do all of this?
+            // Also. How do I not do this if the recipes are already synched?
             for rec in offlineRecipes {
                 let recipe = Recipe()
                 let ing = List<Ingredient>()
@@ -248,9 +248,9 @@ final class RealmManager {
             
             os_log("Refreshing Realm w/ partition: %@", partitionValue)
             
-            let config = app.currentUser()?.configuration(partitionValue: partitionValue)
+            let config = app.currentUser?.configuration(partitionValue: partitionValue)
             realm = try! Realm(configuration: config!)
-
+            
             if (recipeArray.count > 0) {
                 realmManager.copyRecipes(recipes: recipeArray)
             }
@@ -262,6 +262,22 @@ final class RealmManager {
             realm = try! Realm()
         }
     }
+    
+    func refreshLite() {
+        os_log("refreshing: the light version")
+                
+        if (app.currentUser != nil) { // you were logged in.
+            partitionValue = app.currentUser?.id ?? ""
+            
+            let config = app.currentUser?.configuration(partitionValue: partitionValue)
+            realm = try! Realm(configuration: config!)
+        }
+        else {
+            os_log("Refreshing Realm w/ partition = nothing okay!")
+            realm = try! Realm()
+        }
+    }
+
 
     func copyRecipes(recipes: [Recipe]) {
         os_log("copy array of recipes: %@", realm.syncSession?.description ?? "no desc")

@@ -45,7 +45,11 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        realmManager.refresh()
+        os_log("View will appear I guess")
+        
+        // Let's replace this with a function that just refreshes, but doesn't necesarily update all of the recipes.
+        realmManager.refreshLite()
+        
         localRecipes = realmManager.read(Recipe.self)
 
         if (recipeFilter.count > 0){
@@ -61,6 +65,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         notificationToken = realmManager.subscribe(handler: { notification, realm in
             self.recipeList.reloadData()
         })
+        
     }
 
     override func viewWillDisappear(_ animated: Bool) {

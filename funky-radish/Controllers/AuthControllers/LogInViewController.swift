@@ -106,25 +106,27 @@ class LogInViewController: UIViewController {
         //                TODO: make these strings into constants.
                         let token = KeychainWrapper.standard.string(forKey: Constants.TOKEN_KEYCHAIN_STRING)
                         
-                        let credentials = AppCredentials.init(jwt: token!)
+                        let credentials = Credentials.jwt(token: token!)
                         
-                        app.login(withCredential: credentials, completion: { [weak self](user, err) in
+                        app.login(credentials: credentials, { [weak self](result) in
                             DispatchQueue.main.sync {
+                                
                                 self!.deactivateLoadingIndicator()
                             
-                                if let error = err {
+                                switch result {
+                                case .failure(let error):
                                     self!.navigationController!.showToast(message: "Signup failed: \(error.localizedDescription)")
                                     return;
+                                case .success(_):
+                                    KeychainWrapper.standard.set(email, forKey: Constants.EMAIL_KEYCHAIN_STRING)
+                                    //TODO: Can probably ditch the password.
+                                    KeychainWrapper.standard.set(password, forKey: Constants.PASSWORD_KEYCHAIN_STRING)
+                                    
+                                    realmManager.refresh()
+                                    
+                                    print("Login successful!");
+                                    self?.navigationController?.popToRootViewController(animated: false)
                                 }
-                                
-                                KeychainWrapper.standard.set(email, forKey: Constants.EMAIL_KEYCHAIN_STRING)
-                                //TODO: Can probably ditch the password.
-                                KeychainWrapper.standard.set(password, forKey: Constants.PASSWORD_KEYCHAIN_STRING)
-                                
-                                realmManager.refresh()
-                                
-                                print("Login successful!");
-                                self?.navigationController?.popToRootViewController(animated: false)
                             }
                         })
                     },
