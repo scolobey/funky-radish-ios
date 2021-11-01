@@ -7,7 +7,7 @@ target 'funky-radish' do
   use_frameworks!
 
   # Pods for funky-radish
-  pod 'SwiftKeychainWrapper'
+  pod 'SwiftKeychainWrapper', '~> 4.0'
   pod 'RealmSwift', '~> 10.18'
   pod 'SwiftyJSON', '~> 4.0'
   pod 'PromisesSwift', '~> 1.2.6'

@@ -7,13 +7,13 @@ PODS:
   - Realm/Headers (10.18.0)
   - RealmSwift (10.18.0):
     - Realm (= 10.18.0)
-  - SwiftKeychainWrapper (3.4.0)
+  - SwiftKeychainWrapper (4.0.1)
   - SwiftyJSON (4.3.0)
 
 DEPENDENCIES:
   - PromisesSwift (~> 1.2.6)
   - RealmSwift (~> 10.18)
-  - SwiftKeychainWrapper
+  - SwiftKeychainWrapper (~> 4.0)
   - SwiftyJSON (~> 4.0)
 
 SPEC REPOS:
@@ -30,9 +30,9 @@ SPEC CHECKSUMS:
   PromisesSwift: 37bad6f4daddb02f7c9c531efe91e8b21c13ee2f
   Realm: b8b0a36bf48c39c50fd8cee7ac34005e6d887ddd
   RealmSwift: fe2f33d731f47aaf4c3618930f9f7cf7b935c33f
-  SwiftKeychainWrapper: 6fc49fbf7d4a6b0772917acb0e53a1639f6078d6
+  SwiftKeychainWrapper: 807ba1d63c33a7d0613288512399cd1eda1e470c
   SwiftyJSON: 6faa0040f8b59dead0ee07436cbf76b73c08fd08
 
-PODFILE CHECKSUM: a9391ea5932625111e34c6c0387d37939c57ed5a
+PODFILE CHECKSUM: 356f3868689029006a4ec58368243be2cdbaea78
 
 COCOAPODS: 1.11.0
