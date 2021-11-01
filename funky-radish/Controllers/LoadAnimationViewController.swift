@@ -9,8 +9,9 @@
 import UIKit
 
 class LoadAnimationViewController: UIViewController {
-    var spinner = UIActivityIndicatorView(style: .whiteLarge)
-
+    
+    var spinner = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
+    
     override func loadView() {
         view = UIView()
         view.backgroundColor = UIColor(white: 0, alpha: 0.7)

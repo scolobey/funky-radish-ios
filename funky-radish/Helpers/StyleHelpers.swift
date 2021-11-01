@@ -23,8 +23,8 @@ func hexStringToUIColor (hex:String) -> UIColor {
         return UIColor.gray
     }
 
-    var rgbValue:UInt32 = 0
-    Scanner(string: cString).scanHexInt32(&rgbValue)
+    var rgbValue:UInt64 = 0
+    Scanner(string: cString).scanHexInt64(&rgbValue)
 
     return UIColor(
         red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
@@ -75,8 +75,7 @@ func showLoader(uiView: UIView) {
     loader.frame = CGRect(x: 0, y: 0, width: 40.0, height: 40.0)
     loader.center = uiView.center
     loader.hidesWhenStopped = true
-    loader.style =
-        UIActivityIndicatorView.Style.whiteLarge
+    loader.style = UIActivityIndicatorView.Style.large
     uiView.addSubview(loader)
     loader.startAnimating()
 }
