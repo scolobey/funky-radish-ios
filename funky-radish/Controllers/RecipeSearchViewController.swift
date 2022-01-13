@@ -59,7 +59,6 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
                         
             let queryFilter: AnyBSON = app.currentUser?.customData["recipes"]! ?? []
 
-            
             do {
                 try realmManager.importWatchedRecipes(
                     recipes: queryFilter,
