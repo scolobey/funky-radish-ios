@@ -41,7 +41,17 @@ class RecipeViewController: BaseViewController {
         let recipeBoldFontDescriptor = UIFontDescriptor(name: "Rockwell-Bold", size: 18.0)
         let boldRecipeFont = UIFont(descriptor: recipeBoldFontDescriptor, size: 18.0)
         
-        rec = localRecipes.filter("_id == %@", selectedRecipe!).first!
+        let recStarter = localRecipes.filter("_id == %@", selectedRecipe!)
+        
+        if (recStarter.count == 0) {
+            for watchedRecipe in otherRecipes {
+                if (watchedRecipe._id == selectedRecipe!) {
+                    rec = watchedRecipe
+                }
+            }
+        } else {
+            rec = localRecipes.filter("_id == %@", selectedRecipe!).first!
+        }
 
         recipeTitle.text = rec!.title
         prepareTextForDisplay(recipe: rec!)
@@ -75,6 +85,7 @@ class RecipeViewController: BaseViewController {
     }
 
     @objc func back(sender: UIBarButtonItem) {
+        
         if ingredientView && ingredientText != recipeInfo.text {
             self.saveRecipe(title: self.rec!.title!, directions: self.directionText, ingredients: self.recipeInfo.text)
             self.navigationController?.popViewController(animated: true)
@@ -120,65 +131,111 @@ class RecipeViewController: BaseViewController {
     }
 
     @IBAction func deleteRecipeButton(_ sender: Any) {
-        // Warn the user these changes are permanent.
-        let alertController = UIAlertController(title: "Fair warning!", message: "Once you delete this recipe, it will be lost forever.", preferredStyle: .alert)
+        
+        let recCheck = localRecipes.filter("_id == %@", selectedRecipe!)
 
-        let approveAction = UIAlertAction(title: "Delete", style: UIAlertAction.Style.default) { UIAlertAction in
-            for ing in self.rec!.ingredients {
-                realmManager.delete(ing)
+        if (recCheck.count > 0) {
+            // Warn the user these changes are permanent.
+            let alertController = UIAlertController(title: "Fair warning!", message: "Once you delete this recipe, it will be lost forever.", preferredStyle: .alert)
+
+            let approveAction = UIAlertAction(title: "Delete", style: UIAlertAction.Style.default) { UIAlertAction in
+                for ing in self.rec!.ingredients {
+                    realmManager.delete(ing)
+                }
+
+                for ing in self.rec!.directions {
+                    realmManager.delete(ing)
+                }
+                
+                realmManager.delete(self.rec!)
+                
+                self.navigationController?.popViewController(animated: true)
             }
 
-            for ing in self.rec!.directions {
-                realmManager.delete(ing)
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { UIAlertAction in
+                return
             }
-            
-            realmManager.delete(self.rec!)
-            
-            self.navigationController?.popViewController(animated: true)
+
+            alertController.addAction(approveAction)
+            alertController.addAction(cancelAction)
+
+            self.present(alertController, animated: true, completion: nil)
+        } else {
+            // Warn the user these changes are permanent.
+            let alertController = UIAlertController(title: "Fair warning!", message: "Are you sure you want to remove this recipe from your list?", preferredStyle: .alert)
+
+            let approveAction = UIAlertAction(title: "Delete", style: UIAlertAction.Style.default) { UIAlertAction in
+                // remove the recipe from otherRecipes.
+                
+                // Remove the recipe id from your User.
+                print("need to implement delete")
+                
+                self.navigationController?.popViewController(animated: true)
+            }
+
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { UIAlertAction in
+                return
+            }
+
+            alertController.addAction(approveAction)
+            alertController.addAction(cancelAction)
+
+            self.present(alertController, animated: true, completion: nil)
         }
-
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { UIAlertAction in
-            return
-        }
-
-        alertController.addAction(approveAction)
-        alertController.addAction(cancelAction)
-
-        self.present(alertController, animated: true, completion: nil)
     }
 
     @IBAction func editTitle(_ sender: Any) {
-        let alert = UIAlertController(title: "Change your recipe title.", message: nil, preferredStyle: .alert)
+        let recCheck = localRecipes.filter("_id == %@", selectedRecipe!)
 
-        alert.addTextField(configurationHandler: { textField in
-            textField.text = self.rec!.title
-        })
+        if (recCheck.count > 0) {
+            let alert = UIAlertController(title: "Change your recipe title.", message: nil, preferredStyle: .alert)
 
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            alert.addTextField(configurationHandler: { textField in
+                textField.text = self.rec!.title
+            })
 
-        alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { action in
-            let title = alert.textFields?.first?.text
-            self.saveRecipe(title: title!, directions: self.directionText, ingredients: self.ingredientText)
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
 
-            if (self.ingredientView) {
-                self.saveRecipe(title: title!, directions: self.directionText, ingredients: self.recipeInfo.text)
+            alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { action in
+                let title = alert.textFields?.first?.text
+                self.saveRecipe(title: title!, directions: self.directionText, ingredients: self.ingredientText)
+
+                if (self.ingredientView) {
+                    self.saveRecipe(title: title!, directions: self.directionText, ingredients: self.recipeInfo.text)
+                }
+                else {
+                    self.saveRecipe(title: self.rec!.title!, directions: self.recipeInfo.text, ingredients: self.ingredientText)
+                }
+
+                self.recipeTitle.text = title!
+            }))
+
+            self.present(alert, animated: true)
+        } else {
+            // Warn the user these changes are permanent.
+            let alertController = UIAlertController(title: "Nope", message: "Sorry, you can only edit your own recipes.", preferredStyle: .alert)
+
+            let cancelAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel) { UIAlertAction in
+                return
             }
-            else {
-                self.saveRecipe(title: self.rec!.title!, directions: self.recipeInfo.text, ingredients: self.ingredientText)
-            }
 
-            self.recipeTitle.text = title!
-        }))
+            alertController.addAction(cancelAction)
 
-        self.present(alert, animated: true)
+            self.present(alertController, animated: true, completion: nil)
+        }
     }
 
     @IBAction func recipeToggle(_ sender: UISwitch) {
+        
         if (ingredientView) {
-            saveRecipe(title: self.rec!.title!, directions: directionText, ingredients: recipeInfo.text)
+            if (ingredientText != recipeInfo.text) {
+                saveRecipe(title: self.rec!.title!, directions: directionText, ingredients: recipeInfo.text)
+            }
         }
         else {
-            saveRecipe(title: self.rec!.title!, directions: recipeInfo.text, ingredients: ingredientText)
+            if (directionText != recipeInfo.text) {
+                saveRecipe(title: self.rec!.title!, directions: recipeInfo.text, ingredients: ingredientText)
+            }
         }
         
         if (sender.isOn == true) {
@@ -208,68 +265,84 @@ class RecipeViewController: BaseViewController {
     }
 
     func saveRecipe(title: String, directions: String, ingredients: String) {
-        let user_id = realmManager.partitionValue
-        os_log("saving recipe to partition: %@", user_id)
-        
-        var ingredientArray = [Ingredient()]
-        var directionArray = [Direction()]
+        let recCheck = localRecipes.filter("_id == %@", selectedRecipe!)
 
-        // To avoid adding empty ingredients to the Realm.
-        if ingredients.trimmingCharacters(in: .whitespaces).isEmpty {
-            ingredientArray = []
+        if (recCheck.count > 0) {
+            let user_id = realmManager.partitionValue
+            os_log("saving recipe to partition: %@", user_id)
+            
+            var ingredientArray = [Ingredient()]
+            var directionArray = [Direction()]
+
+            // To avoid adding empty ingredients to the Realm.
+            if ingredients.trimmingCharacters(in: .whitespaces).isEmpty {
+                ingredientArray = []
+            }
+            else {
+                //convert ingredients to Realm list and save
+                ingredientArray = ingredients.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\n").map({
+                    (name: String) -> Ingredient in
+                    let ingToAdd = Ingredient()
+                    ingToAdd.author = user_id
+                    ingToAdd.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
+                    return ingToAdd
+                })
+            }
+
+            // To avoid adding empty directions to the Realm.
+            if directions.trimmingCharacters(in: .whitespaces).isEmpty {
+                directionArray = []
+            }
+            else {
+                //convert directions to Realm list and save
+                directionArray = directions.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\n").map({
+                    (text: String) -> Direction in
+                    let dirToAdd = Direction()
+                    dirToAdd.author = user_id
+                    dirToAdd.text = text.trimmingCharacters(in: .whitespaces)
+                    return dirToAdd
+                })
+            }
+
+            let ingredientRealmList = List<Ingredient>()
+            ingredientRealmList.append(objectsIn: ingredientArray)
+
+            let directionRealmList = List<Direction>()
+            directionRealmList.append(objectsIn: directionArray)
+
+            // TODO: There's probably a better way.
+            // I'm manually deleting the ingredients and directions to be replaced with the new ones
+            // Otherwise, the orphaned realm objects remain in the realm.
+            // Also, this editedRec name is lame.
+            
+            let editedRec = localRecipes.filter("_id == %@", selectedRecipe!).first!
+            
+            for ing in editedRec.ingredients {
+                realmManager.delete(ing)
+            }
+
+            for ing in editedRec.directions {
+                realmManager.delete(ing)
+            }
+
+            realmManager.update(self.rec!, with: [
+                "title": title,
+                "ingredients": ingredientRealmList,
+                "directions": directionRealmList
+            ])
+        } else {
+            // Warn the user these changes are permanent.
+            let alertController = UIAlertController(title: "Changes Discarded", message: "You're not the author of this recipe, so changes will be discarded.", preferredStyle: .alert)
+
+            let cancelAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel) { UIAlertAction in
+                return
+            }
+
+            alertController.addAction(cancelAction)
+
+            self.present(alertController, animated: true, completion: nil)
         }
-        else {
-            //convert ingredients to Realm list and save
-            ingredientArray = ingredients.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\n").map({
-                (name: String) -> Ingredient in
-                let ingToAdd = Ingredient()
-                ingToAdd.author = user_id
-                ingToAdd.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
-                return ingToAdd
-            })
-        }
-
-        // To avoid adding empty directions to the Realm.
-        if directions.trimmingCharacters(in: .whitespaces).isEmpty {
-            directionArray = []
-        }
-        else {
-            //convert directions to Realm list and save
-            directionArray = directions.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\n").map({
-                (text: String) -> Direction in
-                let dirToAdd = Direction()
-                dirToAdd.author = user_id
-                dirToAdd.text = text.trimmingCharacters(in: .whitespaces)
-                return dirToAdd
-            })
-        }
-
-        let ingredientRealmList = List<Ingredient>()
-        ingredientRealmList.append(objectsIn: ingredientArray)
-
-        let directionRealmList = List<Direction>()
-        directionRealmList.append(objectsIn: directionArray)
-
-        // TODO: There's probably a better way.
-        // I'm manually deleting the ingredients and directions to be replaced with the new ones
-        // Otherwise, the orphaned realm objects remain in the realm.
-        // Also, this editedRec name is lame.
-        
-        let editedRec = localRecipes.filter("_id == %@", selectedRecipe!).first!
-        
-        for ing in editedRec.ingredients {
-            realmManager.delete(ing)
-        }
-
-        for ing in editedRec.directions {
-            realmManager.delete(ing)
-        }
-
-        realmManager.update(self.rec!, with: [
-            "title": title,
-            "ingredients": ingredientRealmList,
-            "directions": directionRealmList
-        ])
+       
     }
     
 

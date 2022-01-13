@@ -3,16 +3,19 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		1A93CC99345C53A4D450C6D7 /* Pods_funky_radish.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9189DDA363271AF31D2CA986 /* Pods_funky_radish.framework */; };
 		4D063E124416B96AFAF87CE5 /* Pods_FunkyRadishTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB64E4577B74D25797DEA44E /* Pods_FunkyRadishTests.framework */; };
+		947A00B327878FB400424844 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947A00B227878FB400424844 /* User.swift */; };
+		947A00B52787E08600424844 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947A00B42787E08600424844 /* Chat.swift */; };
+		947A00B827895E7200424844 /* BSON in Frameworks */ = {isa = PBXBuildFile; productRef = 947A00B727895E7200424844 /* BSON */; };
+		947A00BA278A3E6800424844 /* ColorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947A00B9278A3E6800424844 /* ColorHelper.swift */; };
 		94F7CFC2257DB28B0079A422 /* ApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F7CFC1257DB28B0079A422 /* ApiManager.swift */; };
 		CC184B5A2120A1A600603333 /* FunkyRadishTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC184B592120A1A600603333 /* FunkyRadishTests.swift */; };
 		CC2D5EE720FA937E0002FB73 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2D5EE620FA937E0002FB73 /* BaseViewController.swift */; };
-		CC3886292137519F00AFBB00 /* UserResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC3886282137519F00AFBB00 /* UserResponse.swift */; };
 		CC4505F4213F3B0A0056ED3D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4505F3213F3B0A0056ED3D /* SettingsViewController.swift */; };
 		CC4505F6214826850056ED3D /* Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4505F5214826850056ED3D /* Validation.swift */; };
 		CC4505F82148A6B20056ED3D /* LoadAnimationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4505F72148A6B20056ED3D /* LoadAnimationViewController.swift */; };
@@ -52,6 +55,9 @@
 		047286B5500F32E00E6B2A78 /* Pods-FunkyRadishTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FunkyRadishTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FunkyRadishTests/Pods-FunkyRadishTests.debug.xcconfig"; sourceTree = "<group>"; };
 		2B0931440A4906A51D8BBCFF /* Pods-FunkyRadishTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FunkyRadishTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-FunkyRadishTests/Pods-FunkyRadishTests.release.xcconfig"; sourceTree = "<group>"; };
 		9189DDA363271AF31D2CA986 /* Pods_funky_radish.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_funky_radish.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		947A00B227878FB400424844 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		947A00B42787E08600424844 /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
+		947A00B9278A3E6800424844 /* ColorHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorHelper.swift; sourceTree = "<group>"; };
 		94F7CFC1257DB28B0079A422 /* ApiManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiManager.swift; sourceTree = "<group>"; };
 		AD27E87458801B677AF03C41 /* Pods-funky-radish.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-funky-radish.debug.xcconfig"; path = "Pods/Target Support Files/Pods-funky-radish/Pods-funky-radish.debug.xcconfig"; sourceTree = "<group>"; };
 		B9E868050C94BE6F792BEA9F /* Pods-funky-radish.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-funky-radish.release.xcconfig"; path = "Pods/Target Support Files/Pods-funky-radish/Pods-funky-radish.release.xcconfig"; sourceTree = "<group>"; };
@@ -60,7 +66,6 @@
 		CC184B592120A1A600603333 /* FunkyRadishTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunkyRadishTests.swift; sourceTree = "<group>"; };
 		CC184B5B2120A1A600603333 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CC2D5EE620FA937E0002FB73 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
-		CC3886282137519F00AFBB00 /* UserResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserResponse.swift; sourceTree = "<group>"; };
 		CC4505F3213F3B0A0056ED3D /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		CC4505F5214826850056ED3D /* Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validation.swift; sourceTree = "<group>"; };
 		CC4505F72148A6B20056ED3D /* LoadAnimationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadAnimationViewController.swift; sourceTree = "<group>"; };
@@ -113,6 +118,7 @@
 			files = (
 				CCF221D221220CB100FD5C9E /* SwiftyJSON.framework in Frameworks */,
 				CCF2A1FC210A4E130027080F /* Realm.framework in Frameworks */,
+				947A00B827895E7200424844 /* BSON in Frameworks */,
 				CCF2A1FE210A4E130027080F /* RealmSwift.framework in Frameworks */,
 				CCF2A200210A4E130027080F /* SwiftKeychainWrapper.framework in Frameworks */,
 				1A93CC99345C53A4D450C6D7 /* Pods_funky_radish.framework in Frameworks */,
@@ -202,8 +208,9 @@
 				CC6D92F32110E2000044C600 /* Ingredient.swift */,
 				CC6D92F52110E4130044C600 /* Direction.swift */,
 				CC6D92F92110E56B0044C600 /* Recipe.swift */,
-				CC3886282137519F00AFBB00 /* UserResponse.swift */,
 				CCF9895121EFBE5400B33597 /* RealmManager.swift */,
+				947A00B227878FB400424844 /* User.swift */,
+				947A00B42787E08600424844 /* Chat.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -215,6 +222,7 @@
 				CCF221DB2128BD0F00FD5C9E /* Reachability.swift */,
 				CC4505F5214826850056ED3D /* Validation.swift */,
 				94F7CFC1257DB28B0079A422 /* ApiManager.swift */,
+				947A00B9278A3E6800424844 /* ColorHelper.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -300,6 +308,9 @@
 			dependencies = (
 			);
 			name = "funky-radish";
+			packageProductDependencies = (
+				947A00B727895E7200424844 /* BSON */,
+			);
 			productName = "funky-radish";
 			productReference = CC8177A320EBBF9900D02783 /* funky-radish.app */;
 			productType = "com.apple.product-type.application";
@@ -333,6 +344,9 @@
 				Base,
 			);
 			mainGroup = CC81779A20EBBF9900D02783;
+			packageReferences = (
+				947A00B627895E7200424844 /* XCRemoteSwiftPackageReference "BSON" */,
+			);
 			productRefGroup = CC8177A420EBBF9900D02783 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -452,9 +466,11 @@
 				CCF221DC2128BD0F00FD5C9E /* Reachability.swift in Sources */,
 				CC739D0C20F6CFF00031AAB2 /* RecipeSearchViewController.swift in Sources */,
 				CC6D92FA2110E56B0044C600 /* Recipe.swift in Sources */,
+				947A00B52787E08600424844 /* Chat.swift in Sources */,
 				CCF9895221EFBE5400B33597 /* RealmManager.swift in Sources */,
-				CC3886292137519F00AFBB00 /* UserResponse.swift in Sources */,
 				CC4505F82148A6B20056ED3D /* LoadAnimationViewController.swift in Sources */,
+				947A00BA278A3E6800424844 /* ColorHelper.swift in Sources */,
+				947A00B327878FB400424844 /* User.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -741,6 +757,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		947A00B627895E7200424844 /* XCRemoteSwiftPackageReference "BSON" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/OpenKitten/BSON.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.28;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		947A00B727895E7200424844 /* BSON */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 947A00B627895E7200424844 /* XCRemoteSwiftPackageReference "BSON" */;
+			productName = BSON;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CC81779B20EBBF9900D02783 /* Project object */;
 }

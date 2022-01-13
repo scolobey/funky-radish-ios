@@ -117,7 +117,7 @@ class LogInViewController: UIViewController {
                                 case .failure(let error):
                                     self!.navigationController!.showToast(message: "Signup failed: \(error.localizedDescription)")
                                     return;
-                                case .success(_):
+                                case .success(let user):
                                     KeychainWrapper.standard.set(email, forKey: Constants.EMAIL_KEYCHAIN_STRING)
                                     //TODO: Can probably ditch the password.
                                     KeychainWrapper.standard.set(password, forKey: Constants.PASSWORD_KEYCHAIN_STRING)
@@ -125,6 +125,19 @@ class LogInViewController: UIViewController {
                                     realmManager.refresh()
                                     
                                     print("Login successful!");
+                                    
+                                    os_log("user data on login: %@", user.customData)
+                                    
+                                    user.refreshCustomData { (result) in
+                                        switch result {
+                                        case .failure(let error):
+                                            print("Failed to refresh custom data: \(error.localizedDescription)")
+                                        case .success(let customData):
+                                            print("resp: \(customData["recipes"] ?? "not set")")
+                                            return
+                                        }
+                                    }
+                                    
                                     self?.navigationController?.popToRootViewController(animated: false)
                                 }
                             }

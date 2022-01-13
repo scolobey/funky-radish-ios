@@ -26,6 +26,8 @@ var offline = UserDefaults.standard.bool(forKey: "fr_isOffline")
 var localRecipes = realmManager.read(Recipe.self)
 var notificationToken: NotificationToken?
 
+var otherRecipes = RealmSwift.List<Recipe>()
+
 var recipeFilter = ""
 
 class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITableViewDataSource{
@@ -51,21 +53,51 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         realmManager.refreshLite()
         
         localRecipes = realmManager.read(Recipe.self)
+        
+        // If you're logged in, check for watched recipes.
+        if ((app.currentUser?.isLoggedIn) != nil) {
+                        
+            let queryFilter: AnyBSON = app.currentUser?.customData["recipes"]! ?? []
 
+            
+            do {
+                try realmManager.importWatchedRecipes(
+                    recipes: queryFilter,
+                    onSuccess: { returnedRecipes in
+                        DispatchQueue.main.sync {
+                            // get the list of recipes and append it to localRecipes.
+                            print("mongo recipes: \(returnedRecipes.count)")
+                            print("other recipes: \(otherRecipes.count)")
+                            
+                            otherRecipes = returnedRecipes
+                            
+                            print("other recipes afterwards: \(otherRecipes.count)")
+                            
+                            self.recipeList.reloadData()
+                        }
+                    },
+                    onFailure: { error in
+                        DispatchQueue.main.sync {
+                            self.navigationController?.showToast(message: "Failed to import watched recipes.")
+                        }
+                    })
+            }
+            catch {
+                print("catch on the watched recipe getter")
+            }
+        }
+
+        
         if (recipeFilter.count > 0){
             self.setSearchText(recipeFilter)
             self.filterTableView(text: recipeFilter)
         }
-//        else {
-//            recipeList.reloadData()
-//        }
         
         recipeList.reloadData()
 
         notificationToken = realmManager.subscribe(handler: { notification, realm in
             self.recipeList.reloadData()
         })
-        
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -90,11 +122,17 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return localRecipes.count
+        print("#of sections: \(localRecipes.count + otherRecipes.count )")
+        return localRecipes.count + otherRecipes.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return localRecipes[section].ingredients.count + 1
+        if (section > localRecipes.count-1) {
+            return otherRecipes[section-localRecipes.count].ingredients.count + 1
+        }
+        else {
+            return localRecipes[section].ingredients.count + 1
+        }
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -114,7 +152,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
+        
         // Dequeue a cell
         let cell: UITableViewCell = {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "RecipeListViewCell") else {
@@ -124,55 +162,120 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
             return cell
         }()
 
-        // Top cell
-        if (indexPath.row == 0) {
-            let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
-            let recipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
+        // Watched Recipes Listings
+        if (indexPath.section > localRecipes.count-1) {
+            // Top cell
+            if (indexPath.row == 0) {
+                let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
+                let recipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
 
-            if(localRecipes[indexPath.section].ingredients.count < 1) {
+                if(otherRecipes[indexPath.section - localRecipes.count].ingredients.count < 1) {
+                    let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell-Bold", size: 18.0)
+                    let boldRecipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
+
+                    cell.textLabel?.text = otherRecipes[indexPath.section - localRecipes.count].title
+                    cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 10.0)
+                    cell.textLabel?.font = boldRecipeFont
+                }
+                else {
+                    cell.textLabel?.text = otherRecipes[indexPath.section - localRecipes.count].ingredients[indexPath.row].name
+                    cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 0.0)
+                    cell.textLabel?.font = recipeFont
+                }
+
+                cell.roundCorners(corners: [.topLeft, .topRight], radius: 10.0)
+            }
+
+            // Middle cell
+            else if (indexPath.row < (otherRecipes[indexPath.section - localRecipes.count].ingredients.count)) {
+                let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
+                let recipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
+
+                cell.textLabel?.text = otherRecipes[indexPath.section - localRecipes.count].ingredients[indexPath.row].name
+                cell.textLabel?.font = recipeFont
+
+                cell.roundCorners(corners: [.topLeft, .topRight, .bottomLeft, .bottomRight], radius: 0.0)
+            }
+            
+            // Bottom cell
+            else {
+                let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell-Bold", size: 18.0)
+                let boldRecipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
+
+                cell.textLabel?.text = otherRecipes[indexPath.section - localRecipes.count].title
+                cell.textLabel?.font = boldRecipeFont
+
+                cell.roundCorners(corners: [.topLeft, .topRight], radius: 0.0)
+                cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 10.0)
+            }
+            
+            cell.backgroundColor = UIColor(hexString: "#E1FBFB")
+            return cell
+        }
+        
+        // Authored Recipes Listings
+        else {
+            // Top cell
+            if (indexPath.row == 0) {
+                let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
+                let recipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
+
+                if(localRecipes[indexPath.section].ingredients.count < 1) {
+                    let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell-Bold", size: 18.0)
+                    let boldRecipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
+
+                    cell.textLabel?.text = localRecipes[indexPath.section].title
+                    cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 10.0)
+                    cell.textLabel?.font = boldRecipeFont
+                }
+                else {
+                    cell.textLabel?.text = localRecipes[indexPath.section].ingredients[indexPath.row].name
+                    cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 0.0)
+                    cell.textLabel?.font = recipeFont
+                }
+
+                cell.roundCorners(corners: [.topLeft, .topRight], radius: 10.0)
+            }
+
+                // Middle cell
+            else if (indexPath.row < (localRecipes[indexPath.section].ingredients.count)) {
+                let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
+                let recipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
+
+                cell.textLabel?.text = localRecipes[indexPath.section].ingredients[indexPath.row].name
+                cell.textLabel?.font = recipeFont
+
+                cell.roundCorners(corners: [.topLeft, .topRight, .bottomLeft, .bottomRight], radius: 0.0)
+            }
+
+                // Bottom cell
+            else {
                 let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell-Bold", size: 18.0)
                 let boldRecipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
 
                 cell.textLabel?.text = localRecipes[indexPath.section].title
-                cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 10.0)
                 cell.textLabel?.font = boldRecipeFont
+
+                cell.roundCorners(corners: [.topLeft, .topRight], radius: 0.0)
+                cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 10.0)
             }
-            else {
-                cell.textLabel?.text = localRecipes[indexPath.section].ingredients[indexPath.row].name
-                cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 0.0)
-                cell.textLabel?.font = recipeFont
-            }
-
-            cell.roundCorners(corners: [.topLeft, .topRight], radius: 10.0)
+            
+            cell.backgroundColor = UIColor.white
+            return cell
         }
 
-            // Middle cell
-        else if (indexPath.row < (localRecipes[indexPath.section].ingredients.count)) {
-            let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
-            let recipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
-
-            cell.textLabel?.text = localRecipes[indexPath.section].ingredients[indexPath.row].name
-            cell.textLabel?.font = recipeFont
-
-            cell.roundCorners(corners: [.topLeft, .topRight, .bottomLeft, .bottomRight], radius: 0.0)
-        }
-
-            // Bottom cell
-        else {
-            let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell-Bold", size: 18.0)
-            let boldRecipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
-
-            cell.textLabel?.text = localRecipes[indexPath.section].title
-            cell.textLabel?.font = boldRecipeFont
-
-            cell.roundCorners(corners: [.topLeft, .topRight], radius: 0.0)
-            cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 10.0)
-        }
-        return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selectedRecipe = localRecipes[indexPath.section]._id
+        selectedRecipe = ""
+        
+        if (indexPath.section > localRecipes.count-1) {
+            selectedRecipe = otherRecipes[indexPath.section - localRecipes.count]._id
+        }
+        else {
+            selectedRecipe = localRecipes[indexPath.section]._id
+        }
+        
         self.performSegue(withIdentifier: "recipeSegue", sender: self)
     }
 }
