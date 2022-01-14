@@ -122,6 +122,8 @@ class SettingsViewController: BaseViewController, UITableViewDelegate, UITableVi
                         self.navigationController?.popViewController(animated: true)
                     }
                 })
+                
+                
             }
 
             let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { UIAlertAction in

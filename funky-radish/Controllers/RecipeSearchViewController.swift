@@ -83,6 +83,9 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
                     print("catch on the watched recipe getter")
                 }
             }
+        } else {
+            watchedRecipes = RealmSwift.List<Recipe>()
+            watchedRecipesFiltered = RealmSwift.List<Recipe>()
         }
 
         
