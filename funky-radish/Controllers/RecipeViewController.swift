@@ -44,7 +44,7 @@ class RecipeViewController: BaseViewController {
         let recStarter = localRecipes.filter("_id == %@", selectedRecipe!)
         
         if (recStarter.count == 0) {
-            for watchedRecipe in otherRecipes {
+            for watchedRecipe in watchedRecipesFiltered {
                 if (watchedRecipe._id == selectedRecipe!) {
                     rec = watchedRecipe
                 }

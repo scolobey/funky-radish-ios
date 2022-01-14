@@ -102,7 +102,6 @@ final class RealmManager {
         collection.find(filter: queryFilter) { result in
             switch result {
                 case .failure(let error):
-                    print("Did not find matching documents: \(error.localizedDescription)")
                     onFailure(error)
                 case .success(let document):
                     for rec in document {
@@ -116,9 +115,7 @@ final class RealmManager {
                                 ingredients: ingFilter,
                                 onSuccess: { returnedIngredients in
                                     watchedRecipe.ingredients = returnedIngredients
-                                    
-                                    print("success on ingredients?: \(watchedRecipe)")
-                                    
+                                                                        
                                     let dirFilter: AnyBSON = rec["directions"]! ?? []
                                     
                                     do {
@@ -127,11 +124,8 @@ final class RealmManager {
                                             onSuccess: { returnedDirections in
                                                 watchedRecipe.directions = returnedDirections
                                                 recipeList.append(watchedRecipe)
-                                                
-                                                print("success on directions?: \(watchedRecipe)")
-                                                
+                                                                                                
                                                 if (recipeList.count == recipes.arrayValue?.count) {
-                                                    print("returning?: \(recipeList)")
                                                     onSuccess(recipeList)
                                                 }                                         
                                             },
@@ -150,13 +144,9 @@ final class RealmManager {
                         catch {
                             print("catch on the watched ingredient getter")
                         }
-                
-                        
                     }
             }
         }
-        
-
     }
 
     // TODO: Consolidate these 2 functions that are nearly identical
@@ -173,20 +163,16 @@ final class RealmManager {
         ingCollection.find(filter: ingFilter) { ingResult in
             switch ingResult {
                 case .failure(let error):
-                    print("Did not find matching ingredients: \(error.localizedDescription)")
                     onFailure(error)
                 case .success(let ingredientDocument):
                     
                     for returnedIngredient in ingredientDocument {
-                        print("Found ingredient: \(returnedIngredient.debugDescription)")
-                        
                         let ing = Ingredient()
                         ing._id = returnedIngredient["_id"]??.stringValue
                         ing.name = returnedIngredient["name"]??.stringValue ?? ""
                         embeddedIngredients.append(ing)
                     }
                     
-                    print("embedded ings: \(embeddedIngredients)")
                     onSuccess(embeddedIngredients)
             }
         }
@@ -204,20 +190,16 @@ final class RealmManager {
         dirCollection.find(filter: dirFilter) { dirResult in
             switch dirResult {
                 case .failure(let error):
-                    print("Did not find matching directions: \(error.localizedDescription)")
                     onFailure(error)
                 case .success(let directionDocument):
                     
                     for returnedDirection in directionDocument {
-                        print("Found direction: \(returnedDirection.debugDescription)")
-                        
                         let dir = Direction()
                         dir._id = returnedDirection["_id"]??.stringValue
                         dir.text = returnedDirection["text"]??.stringValue ?? ""
                         embeddedDirections.append(dir)
                     }
                     
-                    print("embedded dirs: \(embeddedDirections)")
                     onSuccess(embeddedDirections)
             }
         }
