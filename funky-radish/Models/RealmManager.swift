@@ -71,9 +71,25 @@ final class RealmManager {
                 partitionValue = user_id!
             }
             
-            let config = app.currentUser?.configuration(partitionValue: partitionValue)
+            // Set the new Flexible Sync Config and open the Realm
+            let config = app.currentUser!.flexibleSyncConfiguration()
+            realm = try! Realm(configuration: config)
+            // Create a Query and Add it to your Subscriptions
+            let subscriptions = realm.subscriptions
+            
+            subscriptions.write {
+                subscriptions.append(QuerySubscription<Recipe>(name: "recipe-feed") {
+                    $0.author == app.currentUser?.id ?? ""
+                })
+            }
+            
+            // Now query the local realm and get your home listings - output is 100 listings
+            // in the results
+            print(realm.objects(Recipe.self).count)
+            
+            let realmConfig = app.currentUser?.configuration(partitionValue: partitionValue)
 
-            realm = try! Realm(configuration: config!)
+            realm = try! Realm(configuration: realmConfig!)
             os_log("Realm loaded w user: %@", realm.syncSession?.description ?? "no desc")
             
         }
