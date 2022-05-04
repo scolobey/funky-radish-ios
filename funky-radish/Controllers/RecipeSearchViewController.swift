@@ -141,10 +141,10 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if (section > localRecipes.count-1) {
-            return watchedRecipesFiltered[section-localRecipes.count].ingredients.count + 1
+            return watchedRecipesFiltered[section-localRecipes.count].ing.count + 1
         }
         else {
-            return localRecipes[section].ingredients.count + 1
+            return localRecipes[section].ing.count + 1
         }
     }
 
@@ -181,8 +181,11 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
             if (indexPath.row == 0) {
                 let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
                 let recipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
+                
+                os_log("row 0")
 
-                if(watchedRecipesFiltered[indexPath.section - localRecipes.count].ingredients.count < 1) {
+                if(watchedRecipesFiltered[indexPath.section - localRecipes.count].ing.count < 1) {
+                    os_log("no ingredients")
                     let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell-Bold", size: 18.0)
                     let boldRecipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
 
@@ -191,7 +194,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
                     cell.textLabel?.font = boldRecipeFont
                 }
                 else {
-                    cell.textLabel?.text = watchedRecipesFiltered[indexPath.section - localRecipes.count].ingredients[indexPath.row].name
+                    cell.textLabel?.text = watchedRecipesFiltered[indexPath.section - localRecipes.count].ing[indexPath.row]
                     cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 0.0)
                     cell.textLabel?.font = recipeFont
                 }
@@ -200,11 +203,11 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
             }
 
             // Middle cell
-            else if (indexPath.row < (watchedRecipesFiltered[indexPath.section - localRecipes.count].ingredients.count)) {
+            else if (indexPath.row < (watchedRecipesFiltered[indexPath.section - localRecipes.count].ing.count)) {
                 let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
                 let recipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
 
-                cell.textLabel?.text = watchedRecipesFiltered[indexPath.section - localRecipes.count].ingredients[indexPath.row].name
+                cell.textLabel?.text = watchedRecipesFiltered[indexPath.section - localRecipes.count].ing[indexPath.row]
                 cell.textLabel?.font = recipeFont
 
                 cell.roundCorners(corners: [.topLeft, .topRight, .bottomLeft, .bottomRight], radius: 0.0)
@@ -233,7 +236,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
                 let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
                 let recipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
 
-                if(localRecipes[indexPath.section].ingredients.count < 1) {
+                if(localRecipes[indexPath.section].ing.count < 1) {
                     let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell-Bold", size: 18.0)
                     let boldRecipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
 
@@ -242,7 +245,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
                     cell.textLabel?.font = boldRecipeFont
                 }
                 else {
-                    cell.textLabel?.text = localRecipes[indexPath.section].ingredients[indexPath.row].name
+                    cell.textLabel?.text = localRecipes[indexPath.section].ing[indexPath.row]
                     cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 0.0)
                     cell.textLabel?.font = recipeFont
                 }
@@ -251,11 +254,11 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
             }
 
                 // Middle cell
-            else if (indexPath.row < (localRecipes[indexPath.section].ingredients.count)) {
+            else if (indexPath.row < (localRecipes[indexPath.section].ing.count)) {
                 let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
                 let recipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
 
-                cell.textLabel?.text = localRecipes[indexPath.section].ingredients[indexPath.row].name
+                cell.textLabel?.text = localRecipes[indexPath.section].ing[indexPath.row]
                 cell.textLabel?.font = recipeFont
 
                 cell.roundCorners(corners: [.topLeft, .topRight, .bottomLeft, .bottomRight], radius: 0.0)

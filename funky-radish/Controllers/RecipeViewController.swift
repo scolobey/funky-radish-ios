@@ -273,10 +273,14 @@ class RecipeViewController: BaseViewController {
             
             var ingredientArray = [Ingredient()]
             var directionArray = [Direction()]
+            
+            var ingArray = Array<String>()
+            var dirArray = Array<String>()
 
             // To avoid adding empty ingredients to the Realm.
             if ingredients.trimmingCharacters(in: .whitespaces).isEmpty {
                 ingredientArray = []
+                ingArray = []
             }
             else {
                 //convert ingredients to Realm list and save
@@ -287,11 +291,19 @@ class RecipeViewController: BaseViewController {
                     ingToAdd.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
                     return ingToAdd
                 })
+                
+                //convert ing to array
+                ingArray = ingredients.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\n").map({
+                    (name: String) -> String in
+                    let newIng = name.trimmingCharacters(in: .whitespacesAndNewlines)
+                    return newIng
+                })
             }
 
             // To avoid adding empty directions to the Realm.
             if directions.trimmingCharacters(in: .whitespaces).isEmpty {
                 directionArray = []
+                ingArray = []
             }
             else {
                 //convert directions to Realm list and save
@@ -302,6 +314,13 @@ class RecipeViewController: BaseViewController {
                     dirToAdd.text = text.trimmingCharacters(in: .whitespaces)
                     return dirToAdd
                 })
+                
+                //convert ing to array
+                dirArray = directions.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\n").map({
+                    (text: String) -> String in
+                    let newDir = text.trimmingCharacters(in: .whitespacesAndNewlines)
+                    return newDir
+                })
             }
 
             let ingredientRealmList = List<Ingredient>()
@@ -309,6 +328,12 @@ class RecipeViewController: BaseViewController {
 
             let directionRealmList = List<Direction>()
             directionRealmList.append(objectsIn: directionArray)
+            
+            let ingRealmList = List<String>()
+            ingRealmList.append(objectsIn: ingArray)
+
+            let dirRealmList = List<String>()
+            dirRealmList.append(objectsIn: dirArray)
 
             // TODO: There's probably a better way.
             // I'm manually deleting the ingredients and directions to be replaced with the new ones
@@ -324,11 +349,15 @@ class RecipeViewController: BaseViewController {
             for ing in editedRec.directions {
                 realmManager.delete(ing)
             }
+            
+            os_log("calling realm update: %@", dirRealmList.description)
 
             realmManager.update(self.rec!, with: [
                 "title": title,
                 "ingredients": ingredientRealmList,
-                "directions": directionRealmList
+                "directions": directionRealmList,
+                "ing": ingRealmList,
+                "dir": dirRealmList
             ])
         } else {
             // Warn the user these changes are permanent.
@@ -347,19 +376,22 @@ class RecipeViewController: BaseViewController {
     
 
     func prepareTextForDisplay(recipe: Recipe) {
-        let directions = recipe.directions
-        let ingredients = recipe.ingredients
+        
+        let directions = recipe.dir
+        let ingredients = recipe.ing
         var directionSet: [String] = []
         var ingredientSet: [String] = []
 
         for direction in directions {
-            directionSet.append(direction.text)
+            directionSet.append(direction)
         }
 
         for ingredient in ingredients {
-            ingredientSet.append(ingredient.name)
+            ingredientSet.append(ingredient)
         }
-
+        print("direction text")
+        print(directionSet)
+        
         directionText = directionSet.joined(separator: "\n")
         ingredientText = ingredientSet.joined(separator: "\n")
     }

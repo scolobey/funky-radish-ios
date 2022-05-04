@@ -113,7 +113,7 @@ final class RealmManager {
 
         let queryFilter: Document = ["_id": ["$in": recipes]]
         
-        var recipeList = RealmSwift.List<Recipe>()
+        let recipeList = RealmSwift.List<Recipe>()
         
         collection.find(filter: queryFilter) { result in
             switch result {
@@ -123,6 +123,21 @@ final class RealmManager {
                     for rec in document {
                         var watchedRecipe: Recipe = Recipe()
                         watchedRecipe.title = rec["title"]??.stringValue
+                        
+                        let ing: AnyBSON = rec["ing"]! ?? []
+                        let dir: AnyBSON = rec["dir"]! ?? []
+                        
+                        for ingEntry in ing.arrayValue ?? [] {
+                            let ingToInsert = ingEntry?.stringValue ?? "no ingredient"
+                            print(ingToInsert)
+                            watchedRecipe.ing.append(ingToInsert)
+                        }
+                        
+                        for dirEntry in dir.arrayValue ?? [] {
+                            let dirToInsert = dirEntry?.stringValue ?? "no direction"
+                            print(dirToInsert)
+                            watchedRecipe.dir.append(dirToInsert)
+                        }
                         
                         let ingFilter: AnyBSON = rec["ingredients"]! ?? []
                         
@@ -287,6 +302,7 @@ final class RealmManager {
         // Todo: Someday this should be reworked. the logic is strange here where we're viewing each ingredient in the context of
         // it's order in the recipe, as opposed to it's relationship with a real-world ingredient.
         os_log("Realm update: ", dictionary)
+        
         do {
             try realm.write {
                 for (key, value) in dictionary {
@@ -397,7 +413,7 @@ final class RealmManager {
     }
     
     func refreshLite() {
-        os_log("refreshing: the light version")
+        os_log("refreshing: the lite version")
                 
         if (app.currentUser != nil) { // you were logged in.
             partitionValue = app.currentUser?.id ?? ""

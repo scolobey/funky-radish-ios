@@ -15,17 +15,23 @@ import RealmSwift
     @objc dynamic var author: String = ""
     @objc dynamic var title: String? = nil
     
+    var dir = List<String>()
+    var ing = List<String>()
+    
     var directions = RealmSwift.List<Direction>()
     var ingredients = RealmSwift.List<Ingredient>()
+    
     
     override static func primaryKey() -> String? {
         return "_id"
     }
 
-    convenience init(title: String, ingredients: List<Ingredient>, directions: List<Direction>) {
+    convenience init(title: String, ingredients: List<Ingredient>, directions: List<Direction>, ing: List<String>, dir: List<String> ) {
         self.init()
         self.title = title
         self.ingredients = ingredients
         self.directions = directions
+        self.ing = ing
+        self.dir = dir
     }
 }

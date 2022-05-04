@@ -16,7 +16,6 @@ import RealmSwift
     @objc dynamic var name: String = ""
     @objc dynamic var email: String = ""
 
-    var chats = RealmSwift.List<Chat>()
     var recipes = RealmSwift.List<Recipe>()
     
     override static func primaryKey() -> String? {
