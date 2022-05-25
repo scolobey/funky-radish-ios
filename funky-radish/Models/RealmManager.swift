@@ -168,6 +168,7 @@ final class RealmManager {
         }
     }
 
+
     // TODO: Consolidate these 2 functions that are nearly identical
     func importWatchedIngredients(ingredients: AnyBSON, onSuccess: @escaping(RealmSwift.List<Ingredient>) -> Void, onFailure: @escaping(Error) -> Void) throws {
         

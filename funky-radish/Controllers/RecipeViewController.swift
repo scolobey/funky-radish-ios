@@ -44,9 +44,16 @@ class RecipeViewController: BaseViewController {
         let recStarter = localRecipes.filter("_id == %@", selectedRecipe!)
         
         if (recStarter.count == 0) {
-            for watchedRecipe in watchedRecipesFiltered {
-                if (watchedRecipe._id == selectedRecipe!) {
-                    rec = watchedRecipe
+            for queriedRecipe in queriedRecipes.recipes {
+                if (queriedRecipe._id == selectedRecipe!) {
+                    let recHolder = Recipe()
+                    recHolder._id = queriedRecipe._id
+                    recHolder.title = queriedRecipe.title
+                    recHolder.author = queriedRecipe.author
+                    recHolder.ing.append(objectsIn: queriedRecipe.ing)
+                    recHolder.dir.append(objectsIn: queriedRecipe.dir)
+                    
+                    rec = recHolder
                 }
             }
         } else {

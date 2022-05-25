@@ -26,8 +26,10 @@ var offline = UserDefaults.standard.bool(forKey: "fr_isOffline")
 var localRecipes = realmManager.read(Recipe.self)
 var notificationToken: NotificationToken?
 
-var watchedRecipes = RealmSwift.List<Recipe>()
-var watchedRecipesFiltered = RealmSwift.List<Recipe>()
+//var watchedRecipes = RealmSwift.List<Recipe>()
+//var watchedRecipesFiltered = RealmSwift.List<Recipe>()
+
+var queriedRecipes = RecipeResponseList(recipes: [])
 
 var recipeFilter = ""
 
@@ -55,38 +57,38 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         
         localRecipes = realmManager.read(Recipe.self)
         
-        // If you're logged in, check for watched recipes.
-        if ((app.currentUser?.isLoggedIn) != nil) {
-                        
-            let queryFilter: AnyBSON = app.currentUser?.customData["recipes"]! ?? []
-            
-            if (queryFilter.arrayValue?.count ?? 0 > 0) {
-                
-                do {
-                    try realmManager.importWatchedRecipes(
-                        recipes: queryFilter,
-                        onSuccess: { returnedRecipes in
-                            DispatchQueue.main.sync {
-                                watchedRecipes = returnedRecipes
-                                watchedRecipesFiltered = watchedRecipes
- 
-                                self.recipeList.reloadData()
-                            }
-                        },
-                        onFailure: { error in
-                            DispatchQueue.main.sync {
-                                self.navigationController?.showToast(message: "Failed to import watched recipes.")
-                            }
-                        })
-                }
-                catch {
-                    print("catch on the watched recipe getter")
-                }
-            }
-        } else {
-            watchedRecipes = RealmSwift.List<Recipe>()
-            watchedRecipesFiltered = RealmSwift.List<Recipe>()
-        }
+//        // If you're logged in, check for watched recipes.
+//        if ((app.currentUser?.isLoggedIn) != nil) {
+//
+//            let queryFilter: AnyBSON = app.currentUser?.customData["recipes"]! ?? []
+//
+//            if (queryFilter.arrayValue?.count ?? 0 > 0) {
+//
+//                do {
+//                    try realmManager.importWatchedRecipes(
+//                        recipes: queryFilter,
+//                        onSuccess: { returnedRecipes in
+//                            DispatchQueue.main.sync {
+//                                watchedRecipes = returnedRecipes
+//                                watchedRecipesFiltered = watchedRecipes
+//
+//                                self.recipeList.reloadData()
+//                            }
+//                        },
+//                        onFailure: { error in
+//                            DispatchQueue.main.sync {
+//                                self.navigationController?.showToast(message: "Failed to import watched recipes.")
+//                            }
+//                        })
+//                }
+//                catch {
+//                    print("catch on the watched recipe getter")
+//                }
+//            }
+//        } else {
+//            watchedRecipes = RealmSwift.List<Recipe>()
+//            watchedRecipesFiltered = RealmSwift.List<Recipe>()
+//        }
 
         
         if (recipeFilter.count > 0){
@@ -109,25 +111,47 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         recipeFilter = ""
         self.filterTableView(text: searchText.lowercased())
     }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let searchQuery = searchBar.text!.lowercased()
+           
+        do {
+            try ApiManager().searchRecipes(
+                query: searchQuery,
+                onSuccess: { res in
+                    os_log("search returned")
+                    DispatchQueue.main.sync {
+                        queriedRecipes = RecipeResponseList(recipes: res)
+                        self.recipeList.reloadData()
+                    }
+                                        
+                },
+                onFailure: { error in
+                    self.navigationController?.showToast(message: "No recipes found")
+                })
+        } catch {
+            os_log("failure to call search API")
+        }
+    }
 
     func filterTableView(text: String) {
         if (text.count > 0) {
             localRecipes = realmManager.read(Recipe.self).filter("title contains [c] %@", text)
             
-            watchedRecipesFiltered = List<Recipe>()
+//            watchedRecipesFiltered = List<Recipe>()
                 
-            for rec in watchedRecipes {
-                
-                if (rec.title!.lowercased().range(of: text) != nil) {
-                    watchedRecipesFiltered.append(rec)
-                }
-                else {
-                }
-            }
+//            for rec in watchedRecipes {
+//
+//                if (rec.title!.lowercased().range(of: text) != nil) {
+//                    watchedRecipesFiltered.append(rec)
+//                }
+//                else {
+//                }
+//            }
         }
         else {
             localRecipes = realmManager.read(Recipe.self)
-            watchedRecipesFiltered = watchedRecipes
+//            watchedRecipesFiltered = watchedRecipes
             
             self.searchBar.endEditing(true)
         }
@@ -136,12 +160,12 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return localRecipes.count + watchedRecipesFiltered.count
+        return localRecipes.count + queriedRecipes.recipes.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if (section > localRecipes.count-1) {
-            return watchedRecipesFiltered[section-localRecipes.count].ing.count + 1
+            return queriedRecipes.recipes[section-localRecipes.count].ing.count + 1
         }
         else {
             return localRecipes[section].ing.count + 1
@@ -181,20 +205,17 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
             if (indexPath.row == 0) {
                 let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
                 let recipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
-                
-                os_log("row 0")
 
-                if(watchedRecipesFiltered[indexPath.section - localRecipes.count].ing.count < 1) {
-                    os_log("no ingredients")
+                if(queriedRecipes.recipes[indexPath.section - localRecipes.count].ing.count < 1) {
                     let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell-Bold", size: 18.0)
                     let boldRecipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
 
-                    cell.textLabel?.text = watchedRecipesFiltered[indexPath.section - localRecipes.count].title
+                    cell.textLabel?.text = queriedRecipes.recipes[indexPath.section - localRecipes.count].title
                     cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 10.0)
                     cell.textLabel?.font = boldRecipeFont
                 }
                 else {
-                    cell.textLabel?.text = watchedRecipesFiltered[indexPath.section - localRecipes.count].ing[indexPath.row]
+                    cell.textLabel?.text = queriedRecipes.recipes[indexPath.section - localRecipes.count].ing[indexPath.row]
                     cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 0.0)
                     cell.textLabel?.font = recipeFont
                 }
@@ -203,11 +224,11 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
             }
 
             // Middle cell
-            else if (indexPath.row < (watchedRecipesFiltered[indexPath.section - localRecipes.count].ing.count)) {
+            else if (indexPath.row < (queriedRecipes.recipes[indexPath.section - localRecipes.count].ing.count)) {
                 let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell", size: 18.0)
                 let recipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
 
-                cell.textLabel?.text = watchedRecipesFiltered[indexPath.section - localRecipes.count].ing[indexPath.row]
+                cell.textLabel?.text = queriedRecipes.recipes[indexPath.section - localRecipes.count].ing[indexPath.row]
                 cell.textLabel?.font = recipeFont
 
                 cell.roundCorners(corners: [.topLeft, .topRight, .bottomLeft, .bottomRight], radius: 0.0)
@@ -218,7 +239,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
                 let recipeFontDescriptor = UIFontDescriptor(name: "Rockwell-Bold", size: 18.0)
                 let boldRecipeFont = UIFont(descriptor: recipeFontDescriptor, size: 18.0)
 
-                cell.textLabel?.text = watchedRecipesFiltered[indexPath.section - localRecipes.count].title
+                cell.textLabel?.text = queriedRecipes.recipes[indexPath.section - localRecipes.count].title
                 cell.textLabel?.font = boldRecipeFont
 
                 cell.roundCorners(corners: [.topLeft, .topRight], radius: 0.0)
@@ -286,7 +307,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         selectedRecipe = ""
         
         if (indexPath.section > localRecipes.count-1) {
-            selectedRecipe = watchedRecipesFiltered[indexPath.section - localRecipes.count]._id
+            selectedRecipe = queriedRecipes.recipes[indexPath.section - localRecipes.count]._id
         }
         else {
             selectedRecipe = localRecipes[indexPath.section]._id

@@ -16,6 +16,18 @@ struct Token: Decodable {
     let error : String
 }
 
+struct RecipeResponseList: Decodable {
+    let recipes : [RecipeResponse]
+}
+
+struct RecipeResponse: Decodable {
+    let _id: String
+    let author: String
+    let title: String
+    let ing: [String]
+    let dir: [String]
+}
+
 enum apiError: Error {
     case endpointFailed
     case noToken
@@ -121,6 +133,40 @@ class ApiManager {
             catch {
                 os_log("Error creating a user: %@", error.localizedDescription)
                 onFailure(apiError.noToken)
+            }
+        }).resume()
+    }
+    
+    func searchRecipes(query: String, onSuccess: @escaping([RecipeResponse]) -> Void, onFailure: @escaping(Error) -> Void) throws {
+        let endpoint = Constants.SEARCH_ENDPOINT
+        
+        let queryEndpoint = URL(string: endpoint + query)!
+        
+        os_log("endpoint: %@", queryEndpoint as CVarArg)
+        
+        let request: NSMutableURLRequest = NSMutableURLRequest(url: queryEndpoint)
+        request.httpMethod = "GET"
+        request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
+           
+
+        // I think the error structuring on this can be improved.
+        URLSession.shared.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) in
+              
+            guard let data = data, error == nil, response != nil else {
+                onFailure(error!)
+                return
+            }
+
+            do {
+                os_log("data: %@", data as CVarArg)
+
+                let recipeSearchResponse = try JSONDecoder().decode(RecipeResponseList.self, from: data)
+                
+                onSuccess(recipeSearchResponse.recipes)
+            }
+            catch {
+                print(String(describing: error))
+//                onFailure(apiError.noToken)
             }
         }).resume()
     }

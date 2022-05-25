@@ -20,6 +20,7 @@ struct Constants {
 //    static let API_ADDRESS = "http://localhost:8080"
     static let USER_ENDPOINT  = URL(string: "\(API_ADDRESS)/users")!
     static let TOKEN_ENDPOINT  = URL(string: "\(API_ADDRESS)/authenticate")!
+    static let SEARCH_ENDPOINT  = "\(API_ADDRESS)/recipes/"
     
     static let TOKEN_KEYCHAIN_STRING = "fr_token"
     static let EMAIL_KEYCHAIN_STRING = "fr_user_email"
