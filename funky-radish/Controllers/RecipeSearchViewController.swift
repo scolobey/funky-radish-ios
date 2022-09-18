@@ -23,7 +23,7 @@ var fruser = KeychainWrapper.standard.string(forKey: Constants.EMAIL_KEYCHAIN_ST
 var frpw = KeychainWrapper.standard.string(forKey: Constants.PASSWORD_KEYCHAIN_STRING)
 var offline = UserDefaults.standard.bool(forKey: "fr_isOffline")
 
-var localRecipes = realmManager.read(Recipe.self)
+var localRecipes = realmManager.read(Recipe.self).sorted(byKeyPath: "lastUpdated", ascending: false)
 var notificationToken: NotificationToken?
 
 //var watchedRecipes = RealmSwift.List<Recipe>()
@@ -55,7 +55,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         // Let's replace this with a function that just refreshes, but doesn't necesarily update all of the recipes.
         realmManager.refreshLite()
         
-        localRecipes = realmManager.read(Recipe.self)
+        localRecipes = realmManager.read(Recipe.self).sorted(byKeyPath: "lastUpdated", ascending: false)
         
 //        // If you're logged in, check for watched recipes.
 //        if ((app.currentUser?.isLoggedIn) != nil) {
@@ -150,7 +150,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
 //            }
         }
         else {
-            localRecipes = realmManager.read(Recipe.self)
+            localRecipes = realmManager.read(Recipe.self).sorted(byKeyPath: "lastUpdated", ascending: false)
 //            watchedRecipesFiltered = watchedRecipes
             
             self.searchBar.endEditing(true)

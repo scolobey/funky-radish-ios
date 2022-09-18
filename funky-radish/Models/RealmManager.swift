@@ -34,10 +34,10 @@ final class RealmManager {
         
         //TODO: verify schema migration works / remove deleteRealmIfMigrationNeeded
         let config = Realm.Configuration(
-//            // Set the new schema version. This must be greater than the previously used
-//            // version (if you've never set a schema version before, the version is 0).
-//            schemaVersion: 1,
-//
+            // Set the new schema version. This must be greater than the previously used
+            // version (if you've never set a schema version before, the version is 0).
+            schemaVersion: 1
+
 //            // Set the block which will be called automatically when opening a Realm with
 //            // a schema version lower than the one set above
 //            migrationBlock: { migration, oldSchemaVersion in
@@ -71,9 +71,9 @@ final class RealmManager {
                 partitionValue = user_id!
             }
             
-            // Set the new Flexible Sync Config and open the Realm
-            let config = app.currentUser!.flexibleSyncConfiguration()
-            realm = try! Realm(configuration: config)
+//            // Set the new Flexible Sync Config and open the Realm
+//            let config = app.currentUser!.flexibleSyncConfiguration()
+//            realm = try! Realm(configuration: config)
             
             let realmConfig = app.currentUser?.configuration(partitionValue: partitionValue)
 
@@ -351,6 +351,7 @@ final class RealmManager {
         os_log("refreshing")
                 
         if (app.currentUser != nil) { // you were logged in.
+            
             let offlineRecipes = realmManager.read(Recipe.self)
            
             var recipeArray = [Recipe]()
@@ -392,7 +393,6 @@ final class RealmManager {
             if (recipeArray.count > 0) {
                 realmManager.copyRecipes(recipes: recipeArray)
             }
-
         }
         else {
             os_log("Refreshing Realm w/ partition = nothing okay!")
