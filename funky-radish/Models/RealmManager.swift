@@ -36,7 +36,7 @@ final class RealmManager {
         let config = Realm.Configuration(
             // Set the new schema version. This must be greater than the previously used
             // version (if you've never set a schema version before, the version is 0).
-            schemaVersion: 1
+            schemaVersion: 1,
 
 //            // Set the block which will be called automatically when opening a Realm with
 //            // a schema version lower than the one set above
@@ -57,7 +57,7 @@ final class RealmManager {
 //                }
 //            },
             
-//            deleteRealmIfMigrationNeeded: true
+            deleteRealmIfMigrationNeeded: true
         )
 
         if (app.currentUser != nil && app.currentUser?.id.count ?? 0 > 0) {
@@ -109,7 +109,7 @@ final class RealmManager {
                     onFailure(error)
                 case .success(let document):
                     for rec in document {
-                        var watchedRecipe: Recipe = Recipe()
+                        let watchedRecipe: Recipe = Recipe()
                         watchedRecipe.title = rec["title"]??.stringValue
                         
                         let ing: AnyBSON = rec["ing"]! ?? []
@@ -176,7 +176,7 @@ final class RealmManager {
         let database = client.database(named: "funky_radish_db")
         let ingCollection = database.collection(withName: "Ingredient")
         
-        var embeddedIngredients = RealmSwift.List<Ingredient>()
+        let embeddedIngredients = RealmSwift.List<Ingredient>()
         let ingFilter: Document = ["_id": ["$in": ingredients]]
         
      
@@ -204,7 +204,7 @@ final class RealmManager {
         let database = client.database(named: "funky_radish_db")
         let dirCollection = database.collection(withName: "Direction")
         
-        var embeddedDirections = RealmSwift.List<Direction>()
+        let embeddedDirections = RealmSwift.List<Direction>()
         let dirFilter: Document = ["_id": ["$in": directions]]
         
         dirCollection.find(filter: dirFilter) { dirResult in
