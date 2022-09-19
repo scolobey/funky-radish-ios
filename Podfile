@@ -8,8 +8,8 @@ target 'funky-radish' do
 
   # Pods for funky-radish
   pod 'SwiftKeychainWrapper', '~> 4.0.1'
-  pod 'RealmSwift', '~> 10.24.0'
-  pod 'SwiftyJSON', '~> 4.0'
+  pod 'RealmSwift', '~> 10.29.0'
+  pod 'SwiftyJSON', '~> 5.0'
   pod 'PromisesSwift', '~> 1.2.6'
 
   target 'FunkyRadishTests' do
