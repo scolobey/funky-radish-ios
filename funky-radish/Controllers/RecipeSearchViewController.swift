@@ -50,7 +50,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        os_log("View will appear I guess")
+        os_log("View will appear")
         
         // Let's replace this with a function that just refreshes, but doesn't necesarily update all of the recipes.
         realmManager.refreshLite()
@@ -99,6 +99,7 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         recipeList.reloadData()
 
         notificationToken = realmManager.subscribe(handler: { notification, realm in
+            os_log("reloading realm data due to notif.")
             self.recipeList.reloadData()
         })
     }
@@ -135,6 +136,8 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
     }
 
     func filterTableView(text: String) {
+        queriedRecipes = RecipeResponseList(recipes: [])
+        
         if (text.count > 0) {
             localRecipes = realmManager.read(Recipe.self).filter("title contains [c] %@", text)
             

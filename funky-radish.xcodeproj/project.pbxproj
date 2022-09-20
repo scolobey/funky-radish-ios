@@ -54,6 +54,7 @@
 		2B0931440A4906A51D8BBCFF /* Pods-FunkyRadishTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FunkyRadishTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-FunkyRadishTests/Pods-FunkyRadishTests.release.xcconfig"; sourceTree = "<group>"; };
 		9189DDA363271AF31D2CA986 /* Pods_funky_radish.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_funky_radish.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		947A00B9278A3E6800424844 /* ColorHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorHelper.swift; sourceTree = "<group>"; };
+		94DCABD828D942B90050AA2A /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		94F7CFC1257DB28B0079A422 /* ApiManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiManager.swift; sourceTree = "<group>"; };
 		AD27E87458801B677AF03C41 /* Pods-funky-radish.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-funky-radish.debug.xcconfig"; path = "Pods/Target Support Files/Pods-funky-radish/Pods-funky-radish.debug.xcconfig"; sourceTree = "<group>"; };
 		B9E868050C94BE6F792BEA9F /* Pods-funky-radish.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-funky-radish.release.xcconfig"; path = "Pods/Target Support Files/Pods-funky-radish/Pods-funky-radish.release.xcconfig"; sourceTree = "<group>"; };
@@ -158,6 +159,14 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		94DCABDA28D94DC20050AA2A /* xcuserdata */ = {
+			isa = PBXGroup;
+			children = (
+				94DCABD828D942B90050AA2A /* Config.xcconfig */,
+			);
+			path = xcuserdata;
+			sourceTree = "<group>";
+		};
 		CC184B582120A1A600603333 /* FunkyRadishTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -224,6 +233,7 @@
 		CC81779A20EBBF9900D02783 = {
 			isa = PBXGroup;
 			children = (
+				94DCABDA28D94DC20050AA2A /* xcuserdata */,
 				CC8177A520EBBF9900D02783 /* funky-radish */,
 				CC184B582120A1A600603333 /* FunkyRadishTests */,
 				CC8177A420EBBF9900D02783 /* Products */,
@@ -555,6 +565,7 @@
 		};
 		CC8177B320EBBF9A00D02783 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 94DCABD828D942B90050AA2A /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -616,6 +627,7 @@
 		};
 		CC8177B420EBBF9A00D02783 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 94DCABD828D942B90050AA2A /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;

@@ -26,17 +26,19 @@ final class RealmManager {
     var realm: Realm
 
     init() {
+        
+        
 //        for u in SyncUser.all {
 //            u.value.logOut()
 //        }
-        
-        os_log("init realm")
+
         
         //TODO: verify schema migration works / remove deleteRealmIfMigrationNeeded
         let config = Realm.Configuration(
             // Set the new schema version. This must be greater than the previously used
             // version (if you've never set a schema version before, the version is 0).
-            schemaVersion: 1,
+
+//            schemaVersion: 1,
 
 //            // Set the block which will be called automatically when opening a Realm with
 //            // a schema version lower than the one set above
@@ -57,7 +59,7 @@ final class RealmManager {
 //                }
 //            },
             
-            deleteRealmIfMigrationNeeded: true
+//            deleteRealmIfMigrationNeeded: true
         )
 
         if (app.currentUser != nil && app.currentUser?.id.count ?? 0 > 0) {
@@ -71,18 +73,13 @@ final class RealmManager {
                 partitionValue = user_id!
             }
             
-//            // Set the new Flexible Sync Config and open the Realm
-//            let config = app.currentUser!.flexibleSyncConfiguration()
-//            realm = try! Realm(configuration: config)
-            
             let realmConfig = app.currentUser?.configuration(partitionValue: partitionValue)
 
             realm = try! Realm(configuration: realmConfig!)
             os_log("Realm loaded w user: %@", realm.syncSession?.description ?? "no desc")
-            
         }
         else {
-            os_log("partition value is Nothing Okay!")
+            os_log("partition value is not present")
             partitionValue = ""
             
             realm = try! Realm()
@@ -94,136 +91,136 @@ final class RealmManager {
         Realm.Configuration.defaultConfiguration = config
     }
     
-    func importWatchedRecipes(recipes: AnyBSON, onSuccess: @escaping(RealmSwift.List<Recipe>) -> Void, onFailure: @escaping(Error) -> Void) throws {
-        let client = app.currentUser!.mongoClient("mongodb-atlas")
-        let database = client.database(named: "funky_radish_db")
-        let collection = database.collection(withName: "Recipe")
+//    func importWatchedRecipes(recipes: AnyBSON, onSuccess: @escaping(RealmSwift.List<Recipe>) -> Void, onFailure: @escaping(Error) -> Void) throws {
+//        let client = app.currentUser!.mongoClient("mongodb-atlas")
+//        let database = client.database(named: "funky_radish_db")
+//        let collection = database.collection(withName: "Recipe")
+//
+//        let queryFilter: Document = ["_id": ["$in": recipes]]
+//
+//        let recipeList = RealmSwift.List<Recipe>()
+//
+//        collection.find(filter: queryFilter) { result in
+//            switch result {
+//                case .failure(let error):
+//                    onFailure(error)
+//                case .success(let document):
+//                    for rec in document {
+//                        let watchedRecipe: Recipe = Recipe()
+//                        watchedRecipe.title = rec["title"]??.stringValue
+//
+//                        let ing: AnyBSON = rec["ing"]! ?? []
+//                        let dir: AnyBSON = rec["dir"]! ?? []
+//
+//                        for ingEntry in ing.arrayValue ?? [] {
+//                            let ingToInsert = ingEntry?.stringValue ?? "no ingredient"
+//                            print(ingToInsert)
+//                            watchedRecipe.ing.append(ingToInsert)
+//                        }
+//
+//                        for dirEntry in dir.arrayValue ?? [] {
+//                            let dirToInsert = dirEntry?.stringValue ?? "no direction"
+//                            print(dirToInsert)
+//                            watchedRecipe.dir.append(dirToInsert)
+//                        }
+//
+//                        let ingFilter: AnyBSON = rec["ingredients"]! ?? []
+//
+//                        do {
+//                            try self.importWatchedIngredients(
+//                                ingredients: ingFilter,
+//                                onSuccess: { returnedIngredients in
+//                                    watchedRecipe.ingredients = returnedIngredients
+//
+//                                    let dirFilter: AnyBSON = rec["directions"]! ?? []
+//
+//                                    do {
+//                                        try self.importWatchedDirections(
+//                                            directions: dirFilter,
+//                                            onSuccess: { returnedDirections in
+//                                                watchedRecipe.directions = returnedDirections
+//                                                recipeList.append(watchedRecipe)
+//
+//                                                if (recipeList.count == recipes.arrayValue?.count) {
+//                                                    onSuccess(recipeList)
+//                                                }
+//                                            },
+//                                            onFailure: { error in
+//                                                onFailure(error)
+//                                            })
+//                                    }
+//                                    catch {
+//                                        print("catch on the watched direction getter")
+//                                    }
+//                                },
+//                                onFailure: { error in
+//                                    onFailure(error)
+//                                })
+//                        }
+//                        catch {
+//                            print("catch on the watched ingredient getter")
+//                        }
+//                    }
+//            }
+//        }
+//    }
 
-        let queryFilter: Document = ["_id": ["$in": recipes]]
-        
-        let recipeList = RealmSwift.List<Recipe>()
-        
-        collection.find(filter: queryFilter) { result in
-            switch result {
-                case .failure(let error):
-                    onFailure(error)
-                case .success(let document):
-                    for rec in document {
-                        let watchedRecipe: Recipe = Recipe()
-                        watchedRecipe.title = rec["title"]??.stringValue
-                        
-                        let ing: AnyBSON = rec["ing"]! ?? []
-                        let dir: AnyBSON = rec["dir"]! ?? []
-                        
-                        for ingEntry in ing.arrayValue ?? [] {
-                            let ingToInsert = ingEntry?.stringValue ?? "no ingredient"
-                            print(ingToInsert)
-                            watchedRecipe.ing.append(ingToInsert)
-                        }
-                        
-                        for dirEntry in dir.arrayValue ?? [] {
-                            let dirToInsert = dirEntry?.stringValue ?? "no direction"
-                            print(dirToInsert)
-                            watchedRecipe.dir.append(dirToInsert)
-                        }
-                        
-                        let ingFilter: AnyBSON = rec["ingredients"]! ?? []
-                        
-                        do {
-                            try self.importWatchedIngredients(
-                                ingredients: ingFilter,
-                                onSuccess: { returnedIngredients in
-                                    watchedRecipe.ingredients = returnedIngredients
-                                                                        
-                                    let dirFilter: AnyBSON = rec["directions"]! ?? []
-                                    
-                                    do {
-                                        try self.importWatchedDirections(
-                                            directions: dirFilter,
-                                            onSuccess: { returnedDirections in
-                                                watchedRecipe.directions = returnedDirections
-                                                recipeList.append(watchedRecipe)
-                                                                                                
-                                                if (recipeList.count == recipes.arrayValue?.count) {
-                                                    onSuccess(recipeList)
-                                                }                                         
-                                            },
-                                            onFailure: { error in
-                                                onFailure(error)
-                                            })
-                                    }
-                                    catch {
-                                        print("catch on the watched direction getter")
-                                    }
-                                },
-                                onFailure: { error in
-                                    onFailure(error)
-                                })
-                        }
-                        catch {
-                            print("catch on the watched ingredient getter")
-                        }
-                    }
-            }
-        }
-    }
-
-
-    // TODO: Consolidate these 2 functions that are nearly identical
-    func importWatchedIngredients(ingredients: AnyBSON, onSuccess: @escaping(RealmSwift.List<Ingredient>) -> Void, onFailure: @escaping(Error) -> Void) throws {
-        
-        let client = app.currentUser!.mongoClient("mongodb-atlas")
-        let database = client.database(named: "funky_radish_db")
-        let ingCollection = database.collection(withName: "Ingredient")
-        
-        let embeddedIngredients = RealmSwift.List<Ingredient>()
-        let ingFilter: Document = ["_id": ["$in": ingredients]]
-        
-     
-        ingCollection.find(filter: ingFilter) { ingResult in
-            switch ingResult {
-                case .failure(let error):
-                    onFailure(error)
-                case .success(let ingredientDocument):
-                    
-                    for returnedIngredient in ingredientDocument {
-                        let ing = Ingredient()
-                        ing._id = returnedIngredient["_id"]??.stringValue
-                        ing.name = returnedIngredient["name"]??.stringValue ?? ""
-                        embeddedIngredients.append(ing)
-                    }
-                    
-                    onSuccess(embeddedIngredients)
-            }
-        }
-    }
+//
+//    // TODO: Consolidate these 2 functions that are nearly identical
+//    func importWatchedIngredients(ingredients: AnyBSON, onSuccess: @escaping(RealmSwift.List<Ingredient>) -> Void, onFailure: @escaping(Error) -> Void) throws {
+//
+//        let client = app.currentUser!.mongoClient("mongodb-atlas")
+//        let database = client.database(named: "funky_radish_db")
+//        let ingCollection = database.collection(withName: "Ingredient")
+//
+//        let embeddedIngredients = RealmSwift.List<Ingredient>()
+//        let ingFilter: Document = ["_id": ["$in": ingredients]]
+//
+//
+//        ingCollection.find(filter: ingFilter) { ingResult in
+//            switch ingResult {
+//                case .failure(let error):
+//                    onFailure(error)
+//                case .success(let ingredientDocument):
+//
+//                    for returnedIngredient in ingredientDocument {
+//                        let ing = Ingredient()
+//                        ing._id = returnedIngredient["_id"]??.stringValue
+//                        ing.name = returnedIngredient["name"]??.stringValue ?? ""
+//                        embeddedIngredients.append(ing)
+//                    }
+//
+//                    onSuccess(embeddedIngredients)
+//            }
+//        }
+//    }
     
-    func importWatchedDirections(directions: AnyBSON, onSuccess: @escaping(RealmSwift.List<Direction>) -> Void, onFailure: @escaping(Error) -> Void) throws {
-        
-        let client = app.currentUser!.mongoClient("mongodb-atlas")
-        let database = client.database(named: "funky_radish_db")
-        let dirCollection = database.collection(withName: "Direction")
-        
-        let embeddedDirections = RealmSwift.List<Direction>()
-        let dirFilter: Document = ["_id": ["$in": directions]]
-        
-        dirCollection.find(filter: dirFilter) { dirResult in
-            switch dirResult {
-                case .failure(let error):
-                    onFailure(error)
-                case .success(let directionDocument):
-                    
-                    for returnedDirection in directionDocument {
-                        let dir = Direction()
-                        dir._id = returnedDirection["_id"]??.stringValue
-                        dir.text = returnedDirection["text"]??.stringValue ?? ""
-                        embeddedDirections.append(dir)
-                    }
-                    
-                    onSuccess(embeddedDirections)
-            }
-        }
-    }
+//    func importWatchedDirections(directions: AnyBSON, onSuccess: @escaping(RealmSwift.List<Direction>) -> Void, onFailure: @escaping(Error) -> Void) throws {
+//
+//        let client = app.currentUser!.mongoClient("mongodb-atlas")
+//        let database = client.database(named: "funky_radish_db")
+//        let dirCollection = database.collection(withName: "Direction")
+//
+//        let embeddedDirections = RealmSwift.List<Direction>()
+//        let dirFilter: Document = ["_id": ["$in": directions]]
+//
+//        dirCollection.find(filter: dirFilter) { dirResult in
+//            switch dirResult {
+//                case .failure(let error):
+//                    onFailure(error)
+//                case .success(let directionDocument):
+//
+//                    for returnedDirection in directionDocument {
+//                        let dir = Direction()
+//                        dir._id = returnedDirection["_id"]??.stringValue
+//                        dir.text = returnedDirection["text"]??.stringValue ?? ""
+//                        embeddedDirections.append(dir)
+//                    }
+//
+//                    onSuccess(embeddedDirections)
+//            }
+//        }
+//    }
     
     func create<T: Object>(_ object: T) throws {
         do {
@@ -278,7 +275,9 @@ final class RealmManager {
     }
 
     func read<T: Object>(_ object: T.Type) -> Results<T> {
+        os_log("reading realm")
         let result = realm.objects(object.self)
+        
         return result
     }
 
@@ -395,7 +394,7 @@ final class RealmManager {
             }
         }
         else {
-            os_log("Refreshing Realm w/ partition = nothing okay!")
+            os_log("Refreshing Realm w/ no partition")
             
             realm = try! Realm()
         }
@@ -406,6 +405,8 @@ final class RealmManager {
                 
         if (app.currentUser != nil) { // you were logged in.
             partitionValue = app.currentUser?.id ?? ""
+            
+            os_log("partition: %@", partitionValue)
             
             let config = app.currentUser?.configuration(partitionValue: partitionValue)
             realm = try! Realm(configuration: config!)

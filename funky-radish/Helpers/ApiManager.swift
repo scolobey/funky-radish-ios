@@ -138,15 +138,24 @@ class ApiManager {
     }
     
     func searchRecipes(query: String, onSuccess: @escaping([RecipeResponse]) -> Void, onFailure: @escaping(Error) -> Void) throws {
+        // Get the realm key in order to get access to the search endpoint.
+        let realmKey = Bundle.main.object(forInfoDictionaryKey: "REALM_KEY") as? String
+        
+        guard let key = realmKey, !key.isEmpty else {
+            os_log("API key does not exist")
+            return
+        }
+        
         let endpoint = Constants.SEARCH_ENDPOINT
         
-        let queryEndpoint = URL(string: endpoint + query)!
+        let queryEndpoint = URL(string: endpoint + query.replacingOccurrences(of: " ", with: "%20"))!
         
         os_log("endpoint: %@", queryEndpoint as CVarArg)
         
         let request: NSMutableURLRequest = NSMutableURLRequest(url: queryEndpoint)
         request.httpMethod = "GET"
         request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
+        request.addValue(key, forHTTPHeaderField: "x-access-token")
            
 
         // I think the error structuring on this can be improved.
