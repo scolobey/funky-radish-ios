@@ -14,7 +14,7 @@ import RealmSwift
     @objc dynamic var _id: String? = ObjectId.generate().stringValue
     @objc dynamic var author: String = ""
     @objc dynamic var title: String? = nil
-    @objc dynamic var lastUpdated: Date? = nil
+    @objc dynamic var lastUpdated: Date? = Date()
     
     var dir = List<String>()
     var ing = List<String>()

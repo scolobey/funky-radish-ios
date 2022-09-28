@@ -60,6 +60,9 @@ class RecipeViewController: BaseViewController {
             rec = localRecipes.filter("_id == %@", selectedRecipe!).first!
         }
 
+        os_log("rec set. Updating")
+        updateLastUpdated()
+        
         recipeTitle.text = rec!.title
         prepareTextForDisplay(recipe: rec!)
 
@@ -92,7 +95,6 @@ class RecipeViewController: BaseViewController {
     }
 
     @objc func back(sender: UIBarButtonItem) {
-        
         if ingredientView && ingredientText != recipeInfo.text {
             self.saveRecipe(title: self.rec!.title!, directions: self.directionText, ingredients: self.recipeInfo.text)
             self.navigationController?.popViewController(animated: true)
@@ -260,7 +262,7 @@ class RecipeViewController: BaseViewController {
     }
 
     @objc func backButtonAction() {
-        os_log("You did tap the back button.")
+        os_log("back button.")
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -310,7 +312,7 @@ class RecipeViewController: BaseViewController {
             // To avoid adding empty directions to the Realm.
             if directions.trimmingCharacters(in: .whitespaces).isEmpty {
                 directionArray = []
-                ingArray = []
+                dirArray = []
             }
             else {
                 //convert directions to Realm list and save
@@ -356,15 +358,14 @@ class RecipeViewController: BaseViewController {
             for ing in editedRec.directions {
                 realmManager.delete(ing)
             }
-            
-            os_log("calling realm update: %@", dirRealmList.description)
 
             realmManager.update(self.rec!, with: [
                 "title": title,
                 "ingredients": ingredientRealmList,
                 "directions": directionRealmList,
                 "ing": ingRealmList,
-                "dir": dirRealmList
+                "dir": dirRealmList,
+                "lastUpdated": Date()
             ])
         } else {
             // Warn the user these changes are permanent.
@@ -379,6 +380,16 @@ class RecipeViewController: BaseViewController {
             self.present(alertController, animated: true, completion: nil)
         }
        
+    }
+    
+    func updateLastUpdated() {
+        let recCheck = localRecipes.filter("_id == %@", selectedRecipe!)
+
+        if (recCheck.count > 0) {
+            realmManager.update(self.rec!, with: [
+                "lastUpdated": Date()
+            ])
+        }
     }
     
 

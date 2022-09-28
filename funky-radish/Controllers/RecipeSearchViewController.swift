@@ -97,7 +97,8 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         }
         
         recipeList.reloadData()
-
+        recipeList.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+        
         notificationToken = realmManager.subscribe(handler: { notification, realm in
             os_log("reloading realm data due to notif.")
             self.recipeList.reloadData()

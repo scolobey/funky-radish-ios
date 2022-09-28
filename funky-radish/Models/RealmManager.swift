@@ -275,9 +275,7 @@ final class RealmManager {
     }
 
     func read<T: Object>(_ object: T.Type) -> Results<T> {
-        os_log("reading realm")
         let result = realm.objects(object.self)
-        
         return result
     }
 
