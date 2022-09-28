@@ -97,7 +97,11 @@ class RecipeSearchViewController: BaseViewController, UITableViewDelegate, UITab
         }
         
         recipeList.reloadData()
-        recipeList.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+        
+        // make sure there are items in the table view before scrolling to the top.
+        if (recipeList.numberOfSections > 0 && recipeList.numberOfRows(inSection: 0) > 0) {
+            recipeList.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+        }
         
         notificationToken = realmManager.subscribe(handler: { notification, realm in
             os_log("reloading realm data due to notif.")
